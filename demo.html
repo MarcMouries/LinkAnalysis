@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script type="text/javascript" src="trigo.js"></script>
+	<script type="text/javascript" src="links_icons.js"></script>
+	<script type="text/javascript" src="image_utils.js"></script>
+    <script type="text/javascript" src="MCanvas.js"></script>
+    <script type="text/javascript" src="LinkAnalysis.js"></script>
+</head>
+
+<style type="text/css">
+	:root {
+		--radius: 3px;
+		--small: 0.5em;
+		--medium: 1em;
+		--large: 1.5em;
+		--shadow: 0 1px 2px rgba(16, 10, 9, 0.15);
+		--gray-400: #d3d0c9;
+	}
+
+	#chart_container {
+		width: 100%;
+		height: 100%;
+		background: white;
+	}
+
+	#chart_container_OLD {
+		position: fixed;
+		width: 1200px;
+		height: 1000px;
+		top: 0;
+		left: 0;
+		right: 23em;
+		bottom: 0;
+	}
+
+	body {
+		margin: 0;
+	}
+
+	.wrapper {
+		min-height: 100vh;
+		_background: #ccc;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.header,
+	.footer {
+		height: 50px;
+		background: #666;
+		color: #fff;
+	}
+
+	.content {
+		display: flex;
+		flex: 1;
+		background: #999;
+		color: #000;
+	}
+
+	.columns {
+		display: flex;
+		flex: 1;
+	}
+
+
+
+	.main {
+		flex: 1;
+		order: 2;
+		background: #eee;
+	}
+
+	.sidebar-first {
+		width: 20%;
+		background: #ccc;
+		order: 1;
+	}
+
+	.sidebar-second {
+		width: 20%;
+		order: 3;
+		background: #ddd;
+	}
+
+	.box {
+		display: block;
+		background: #fff;
+		border-radius: var(--radius);
+		box-shadow: var(--shadow);
+		padding: var(--small);
+		transition: box-shadow var(--transition);
+		font: 100%/1.5 Helvtica Neue, Helvetica, sans-serif;
+		margin: 5px;
+	}
+
+	table {
+		width: 100%;
+		text-align: left;
+		border-collapse: collapse;
+		background: #fff;
+		color: var(--gray-800);
+	}
+
+	table input[type=text] {
+		padding: 0 var(--small);
+	}
+
+	tr {
+		border-bottom: thin solid var(--gray-400);
+	}
+
+	tr:focus-within {
+		background: highlight
+	}
+
+	th h3 {
+		padding: 0 var(--small);
+	}
+
+	h3 {
+		font-weight: 500;
+		line-height: 1;
+		font-size: 1em;
+		margin-bottom: var(--radius);
+	}
+
+	.value-column input {
+		font: 100%/1.4 monospace
+	}
+
+
+
+	.box header {
+		font-size: 1.2em;
+		margin: 0;
+		font-weight: 400;
+	}
+
+	table input {
+		border: 0;
+	}
+
+	canvas {
+		width: 100%;
+		min-height: 400px;
+		border: solid 2px red;
+	}
+</style>
+
+<body>
+	<div class="wrapper">
+		<header class="header">Header: Fixed height</header>
+		<section class="content">
+			<div class="columns">
+				<main class="box main">
+					<div id="chart_container"></div>
+				</main>
+				<aside class="box sidebar-first">Sidebar first: Fixed width</aside>
+				<aside class="box sidebar-second">
+					<header>Data</header>
+					<div class="data-table">
+						<table>
+							<thead>
+								<tr>
+									<th class="name-column">
+										<h3>Name</h3>
+									</th>
+									<th class="value-column">
+										<h3>Value</h3>
+									</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr id="row-7xkan8q5">
+									<td class="name-column"><input type="text" value="First Name"></td>
+									<td class="value-column"><input type="text" value="Joe"></td>
+								</tr>
+								<tr id="row-7xkan8q5">
+									<td class="name-column"><input type="text" value="Last Name"></td>
+									<td class="value-column"><input type="text" value="Smith"></td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</aside>
+			</div>
+		</section>
+		<footer class="footer">Footer: Fixed height</footer>
+	</div>
+</body>
+
+<script>
+	window.onload = function () {
+
+			// =============================================================
+				//                          MAIN FUNCTIONS
+				// =============================================================
+				var IconByNodeType = {
+					"case": {
+						"url": icon_case_base64
+					},
+					"arrest": {
+						"url": icon_arrest_base64
+					}
+				};
+
+
+				var chart_container = document.getElementById("chart_container");
+				var linkAnalysis = new LinkAnalysis(chart_container);
+				var options = {};
+				//	linkAnalysis.draw(graph_data, options);
+
+				var ceo_smith = {
+					id: "CEO Smith",
+					name: "CEO Smith",
+					type: "person"
+				};
+				var vp_north = {
+					id: "VP North",
+					name: "VP North",
+					type: "person"
+				};
+				var vp_east = {
+					id: "VP East",
+					name: "VP East",
+					type: "person"
+				};
+				var vp_south = {
+					id: "VP South",
+					name: "VP South",
+					type: "person"
+				};
+				var vp_west = {
+					id: "VP West",
+					name: "VP West",
+					type: "person"
+				};
+
+				linkAnalysis.addObject(ceo_smith);
+
+				linkAnalysis.addObject(vp_east); linkAnalysis.addLink("CEO Smith", "VP East");
+
+				linkAnalysis.addObject(vp_south); linkAnalysis.addLink("CEO Smith", "VP South");
+
+				linkAnalysis.addObject(vp_west); linkAnalysis.addLink("CEO Smith", "VP West");
+
+				linkAnalysis.addObject(vp_north); linkAnalysis.addLink("CEO Smith", "VP North");
+
+				add_objects_and_links(linkAnalysis, 3, "East", "VP East"); 
+				add_objects_and_links(linkAnalysis, 3, "West", "VP West"); 
+				add_objects_and_links(linkAnalysis, 3, "South", "VP South"); 
+				add_objects_and_links(linkAnalysis, 3, "North", "VP North");
+
+				/*  SCENARIO 
+				
+				could work by making the link line a curve
+				- if line intersects with another line -> increase curvature 
+				
+					 digraph {
+						a -> b
+						a -> c
+						b -> d
+						c -> d
+					}
+						var dir_east_west = { id: "East_West", name: "East_West", type: "person" };
+						linkAnalysis.addObject(dir_east_west);
+						linkAnalysis.addLink("VP East", "East_West");
+						linkAnalysis.addLink("VP West", "East_West");
+				*/
+
+
+				linkAnalysis.setNodeClickHandler(function (node) {
+					console.log("NODE CLICKED: " + node.id);
+				});
+
+				linkAnalysis.render();
+
+
+
+				/*
+						var main_person = {id: "p_123", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
+						linkAnalysis.addObject(main_person);
+
+						var vehicle = { name: "vehicle", type: "vehicle" };
+						linkAnalysis.addObject(vehicle);
+						linkAnalysis.addLink(vehicle, main_person);
+
+						var fugitive_case = { name: "FCS0001089", type: "case" };
+						linkAnalysis.addLink(fugitive_case, main_person);
+				
+						var node_arrest = { name: "AR-784723", type: "arrest" };
+						linkAnalysis.addLink(node_arrest, main_person);
+				
+						var node_family = { name: "Family" };
+						linkAnalysis.addLink(node_family, main_person);
+				
+						var node_Lisa = { "name": "FOX, Lisa", "relationship": "Wife", "age": "42", "degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+						var node_Edward = { "name": "FOX, Edward", "relationship": "Son", "age": "18", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" };
+						var node_Cindy = { "name": "FOX, Cindy", "relationship": "Daughter", "age": "16", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+						//var nodes_family = [node_Lisa, node_Edward, node_Cindy];
+						// {"name":"PARK, Carlos","relationship":"Cousin","age":"38","degree_of_relationship":"3","photo":"https://dojopsdemo.service-now.com/c09393281bf01090f76f20252a4bcb1a.iix"}]
+						linkAnalysis.addLink(node_Lisa, node_family);
+						linkAnalysis.addLink(node_Edward, node_family);
+						linkAnalysis.addLink(node_Cindy, node_family);
+				
+				
+						var node_known_addresses = { name: "Known Addresses", "type": "location" };
+						linkAnalysis.addLink(node_known_addresses, main_person);
+						var node_place_A = { name: "808 W. Spokane Blvd., Spokane WA", "type": "address" };
+						var node_place_B = { name: "188 Hunters Dr, Los Angeles CA", "type": "address" };
+						var node_place_C = { name: "3256 East Market St, Los Angeles CA", "type": "address" };
+						linkAnalysis.addLink(node_place_A, node_known_addresses);
+						linkAnalysis.addLink(node_place_B, node_known_addresses);
+						linkAnalysis.addLink(node_place_C, node_known_addresses);
+				*/
+
+				linkAnalysis.setIconByNodeType(IconByNodeType);
+
+				//@TODO  LOAD
+				//loadAllImages(ICON_LIST, start);
+				//
+			}
+
+
+			function add_objects_and_links(linkAnalysis, object_count, prefix, target) {
+				for (var index = 0; index < object_count; index++) {
+					var object_id = prefix + " " + index;
+					var object = {
+						id: object_id,
+						name: object_id,
+						type: "person"
+					};
+					linkAnalysis.addObject(object);
+					linkAnalysis.addLink(target, object_id);
+				}
+			}
+</script>
+
+</html>
