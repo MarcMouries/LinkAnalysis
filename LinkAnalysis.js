@@ -325,11 +325,16 @@ var LinkAnalysis = (function () {
 
 	var mcanvas = null;
 
-	function LinkAnalysis(chart_container) {
+	function LinkAnalysis(chart_container, options) {
+		options || (options = { });
 
+	// =============================================================
+	//  DEFAULT VALUES
+	// =============================================================
 		this.background_color = "#FFFFFF"; //"#F5F5F5";
-		COLOR_NODE_SELECTED = "#3b6978";
-		COLOR_HOVER_NODE = "#84a9ac";
+		COLOR_HOVER_NODE = options.color_hover_node || "#84a9ac";
+		COLOR_SELECTED_NODE = options.color_selected_node || "#3b6978";
+		this.NODE_RADIUS = 20;
 
 		var NODE_GROUP_CLASS = "nodeXXX";
 		var image_width = 35;
@@ -337,7 +342,6 @@ var LinkAnalysis = (function () {
 		var node_width = image_width;
 		var node_height = image_width;
 
-		this.NODE_RADIUS = 20;
 		var icon_width = 40;
 		var icon_heigth = 40;
 
@@ -376,7 +380,7 @@ var LinkAnalysis = (function () {
 		var renderLink = function (link) {
 			//log("renderLink " + link.id);
 			var strokeStyle = "grey";
-			var lineWidth = "1";
+			var lineWidth = 3;
 			mcanvas.drawLine(link.source.x, link.source.y, link.target.x, link.target.y,
 				strokeStyle,
 				lineWidth);
@@ -402,7 +406,7 @@ var LinkAnalysis = (function () {
 			//mcanvas.drawText(node.x, y, "C. " + node.data.name, font, text_color, maxLineWidth, ",");
 
 			if (node.isClicked) {
-				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_NODE_SELECTED, "", 5);
+				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_SELECTED_NODE, "", 5);
 
 			} else if (node.isBelowMouse) {
 				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_HOVER_NODE,	"", 5);

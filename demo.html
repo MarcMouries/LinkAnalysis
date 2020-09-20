@@ -197,9 +197,7 @@
 <script>
 	window.onload = function () {
 
-			// =============================================================
-				//                          MAIN FUNCTIONS
-				// =============================================================
+
 				var IconByNodeType = {
 					"case": {
 						"url": icon_case_base64
@@ -241,27 +239,43 @@
 					type: "person"
 				};
 
+
+
 				linkAnalysis.addObject(ceo_smith);
-
-				linkAnalysis.addObject(vp_east); linkAnalysis.addLink("CEO Smith", "VP East");
-
-				linkAnalysis.addObject(vp_south); linkAnalysis.addLink("CEO Smith", "VP South");
-
-				linkAnalysis.addObject(vp_west); linkAnalysis.addLink("CEO Smith", "VP West");
-
-				linkAnalysis.addObject(vp_north); linkAnalysis.addLink("CEO Smith", "VP North");
+				linkAnalysis.addObject(vp_east); 
+				linkAnalysis.addLink("CEO Smith", "VP East");
+				linkAnalysis.addObject(vp_south); 
+				linkAnalysis.addLink("CEO Smith", "VP South");
+				linkAnalysis.addObject(vp_west); 
+				linkAnalysis.addLink("CEO Smith", "VP West");
+				linkAnalysis.addObject(vp_north); 
+				linkAnalysis.addLink("CEO Smith", "VP North");
 
 				add_objects_and_links(linkAnalysis, 3, "East", "VP East"); 
 				add_objects_and_links(linkAnalysis, 3, "West", "VP West"); 
 				add_objects_and_links(linkAnalysis, 3, "South", "VP South"); 
 				add_objects_and_links(linkAnalysis, 3, "North", "VP North");
 
+
+				function add_objects_and_links(linkAnalysis, object_count, prefix, target) {
+				for (var index = 0; index < object_count; index++) {
+					var object_id = prefix + " " + index;
+					var object = {
+						id: object_id,
+						name: object_id,
+						type: "person"
+					};
+					linkAnalysis.addObject(object);
+					linkAnalysis.addLink(target, object_id);
+				}
+			}
+
 				/*  SCENARIO 
 				
 				could work by making the link line a curve
 				- if line intersects with another line -> increase curvature 
 				
-					 digraph {
+					 graph {
 						a -> b
 						a -> c
 						b -> d
@@ -327,18 +341,7 @@
 			}
 
 
-			function add_objects_and_links(linkAnalysis, object_count, prefix, target) {
-				for (var index = 0; index < object_count; index++) {
-					var object_id = prefix + " " + index;
-					var object = {
-						id: object_id,
-						name: object_id,
-						type: "person"
-					};
-					linkAnalysis.addObject(object);
-					linkAnalysis.addLink(target, object_id);
-				}
-			}
+			
 </script>
 
 </html>
