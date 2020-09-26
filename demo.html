@@ -5,8 +5,8 @@
 	<script type="text/javascript" src="trigo.js"></script>
 	<script type="text/javascript" src="links_icons.js"></script>
 	<script type="text/javascript" src="image_utils.js"></script>
-    <script type="text/javascript" src="MCanvas.js"></script>
-    <script type="text/javascript" src="LinkAnalysis.js"></script>
+	<script type="text/javascript" src="MCanvas.js"></script>
+	<script type="text/javascript" src="LinkAnalysis.js"></script>
 </head>
 
 <style type="text/css">
@@ -198,150 +198,160 @@
 	window.onload = function () {
 
 
-				var IconByNodeType = {
-					"case": {
-						"url": icon_case_base64
-					},
-					"arrest": {
-						"url": icon_arrest_base64
-					}
-				};
-
-
-				var chart_container = document.getElementById("chart_container");
-				var linkAnalysis = new LinkAnalysis(chart_container);
-				var options = {};
-				//	linkAnalysis.draw(graph_data, options);
-
-				var ceo_smith = {
-					id: "CEO Smith",
-					name: "CEO Smith",
-					type: "person"
-				};
-				var vp_north = {
-					id: "VP North",
-					name: "VP North",
-					type: "person"
-				};
-				var vp_east = {
-					id: "VP East",
-					name: "VP East",
-					type: "person"
-				};
-				var vp_south = {
-					id: "VP South",
-					name: "VP South",
-					type: "person"
-				};
-				var vp_west = {
-					id: "VP West",
-					name: "VP West",
-					type: "person"
-				};
-
-
-
-				linkAnalysis.addObject(ceo_smith);
-				linkAnalysis.addObject(vp_east); 
-				linkAnalysis.addLink("CEO Smith", "VP East");
-				linkAnalysis.addObject(vp_south); 
-				linkAnalysis.addLink("CEO Smith", "VP South");
-				linkAnalysis.addObject(vp_west); 
-				linkAnalysis.addLink("CEO Smith", "VP West");
-				linkAnalysis.addObject(vp_north); 
-				linkAnalysis.addLink("CEO Smith", "VP North");
-
-				add_objects_and_links(linkAnalysis, 3, "East", "VP East"); 
-				add_objects_and_links(linkAnalysis, 3, "West", "VP West"); 
-				add_objects_and_links(linkAnalysis, 3, "South", "VP South"); 
-				add_objects_and_links(linkAnalysis, 3, "North", "VP North");
-
-
-				function add_objects_and_links(linkAnalysis, object_count, prefix, target) {
-				for (var index = 0; index < object_count; index++) {
-					var object_id = prefix + " " + index;
-					var object = {
-						id: object_id,
-						name: object_id,
-						type: "person"
-					};
-					linkAnalysis.addObject(object);
-					linkAnalysis.addLink(target, object_id);
-				}
+		var IconByNodeType = {
+			"case": {
+				"url": icon_case_base64
+			},
+			"arrest": {
+				"url": icon_arrest_base64
 			}
-
-				/*  SCENARIO 
-				
-				could work by making the link line a curve
-				- if line intersects with another line -> increase curvature 
-				
-					 graph {
-						a -> b
-						a -> c
-						b -> d
-						c -> d
-					}
-						var dir_east_west = { id: "East_West", name: "East_West", type: "person" };
-						linkAnalysis.addObject(dir_east_west);
-						linkAnalysis.addLink("VP East", "East_West");
-						linkAnalysis.addLink("VP West", "East_West");
-				*/
+		};
 
 
-				linkAnalysis.setNodeClickHandler(function (node) {
-					console.log("NODE CLICKED: " + node.id);
-				});
-
-				linkAnalysis.render();
+		var chart_container = document.getElementById("chart_container");
+		var linkAnalysis = new LinkAnalysis(chart_container);
+		var options = {};
+		//	linkAnalysis.draw(graph_data, options);
 
 
 
-				/*
-						var main_person = {id: "p_123", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
-						linkAnalysis.addObject(main_person);
 
-						var vehicle = { name: "vehicle", type: "vehicle" };
-						linkAnalysis.addObject(vehicle);
-						linkAnalysis.addLink(vehicle, main_person);
+		// =============================================================
+		// Sample data : Org graph
+		// -------------------------------------------------------------
 
-						var fugitive_case = { name: "FCS0001089", type: "case" };
-						linkAnalysis.addLink(fugitive_case, main_person);
-				
-						var node_arrest = { name: "AR-784723", type: "arrest" };
-						linkAnalysis.addLink(node_arrest, main_person);
-				
-						var node_family = { name: "Family" };
-						linkAnalysis.addLink(node_family, main_person);
-				
-						var node_Lisa = { "name": "FOX, Lisa", "relationship": "Wife", "age": "42", "degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
-						var node_Edward = { "name": "FOX, Edward", "relationship": "Son", "age": "18", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" };
-						var node_Cindy = { "name": "FOX, Cindy", "relationship": "Daughter", "age": "16", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
-						//var nodes_family = [node_Lisa, node_Edward, node_Cindy];
-						// {"name":"PARK, Carlos","relationship":"Cousin","age":"38","degree_of_relationship":"3","photo":"https://dojopsdemo.service-now.com/c09393281bf01090f76f20252a4bcb1a.iix"}]
-						linkAnalysis.addLink(node_Lisa, node_family);
-						linkAnalysis.addLink(node_Edward, node_family);
-						linkAnalysis.addLink(node_Cindy, node_family);
-				
-				
-						var node_known_addresses = { name: "Known Addresses", "type": "location" };
-						linkAnalysis.addLink(node_known_addresses, main_person);
-						var node_place_A = { name: "808 W. Spokane Blvd., Spokane WA", "type": "address" };
-						var node_place_B = { name: "188 Hunters Dr, Los Angeles CA", "type": "address" };
-						var node_place_C = { name: "3256 East Market St, Los Angeles CA", "type": "address" };
-						linkAnalysis.addLink(node_place_A, node_known_addresses);
-						linkAnalysis.addLink(node_place_B, node_known_addresses);
-						linkAnalysis.addLink(node_place_C, node_known_addresses);
-				*/
 
-				linkAnalysis.setIconByNodeType(IconByNodeType);
+		var ceo_smith = {
+			id: "CEO Smith",
+			name: "CEO Smith",
+			type: "person"
+		};
+		var vp_north = {
+			id: "VP North",
+			name: "VP North",
+			type: "person"
+		};
+		var vp_east = {
+			id: "VP East",
+			name: "VP East",
+			type: "person"
+		};
+		var vp_south = {
+			id: "VP South",
+			name: "VP South",
+			type: "person"
+		};
+		var vp_west = {
+			id: "VP West",
+			name: "VP West",
+			type: "person"
+		};
 
-				//@TODO  LOAD
-				//loadAllImages(ICON_LIST, start);
-				//
+
+
+		linkAnalysis.addObject(ceo_smith);
+		linkAnalysis.addObject(vp_east);
+		linkAnalysis.addLink("CEO Smith", "VP East");
+		linkAnalysis.addObject(vp_south);
+		linkAnalysis.addLink("CEO Smith", "VP South");
+		linkAnalysis.addObject(vp_west);
+		linkAnalysis.addLink("CEO Smith", "VP West");
+		linkAnalysis.addObject(vp_north);
+		linkAnalysis.addLink("CEO Smith", "VP North");
+
+		add_objects_and_links(linkAnalysis, 3, "East", "VP East");
+		add_objects_and_links(linkAnalysis, 3, "West", "VP West");
+		add_objects_and_links(linkAnalysis, 3, "South", "VP South");
+		add_objects_and_links(linkAnalysis, 3, "North", "VP North");
+
+
+		function add_objects_and_links(linkAnalysis, object_count, prefix, target) {
+			for (var index = 0; index < object_count; index++) {
+				var object_id = prefix + " " + index;
+				var object = {
+					id: object_id,
+					name: object_id,
+					type: "person"
+				};
+				linkAnalysis.addObject(object);
+				linkAnalysis.addLink(target, object_id);
 			}
+		}
+
+		/*  SCENARIO 
+		
+		could work by making the link line a curve
+		- if line intersects with another line -> increase curvature 
+		
+			 graph {
+				a -> b
+				a -> c
+				b -> d
+				c -> d
+			}
+				var dir_east_west = { id: "East_West", name: "East_West", type: "person" };
+				linkAnalysis.addObject(dir_east_west);
+				linkAnalysis.addLink("VP East", "East_West");
+				linkAnalysis.addLink("VP West", "East_West");
+		*/
 
 
-			
+		linkAnalysis.setNodeClickHandler(function (node) {
+			console.log("NODE CLICKED: " + node.id);
+		});
+
+		linkAnalysis.render();
+
+
+		// =============================================================
+		// Sample data : Criminals graph
+		// -------------------------------------------------------------
+		/*
+				var main_person = {id: "p_123", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
+				linkAnalysis.addObject(main_person);
+
+				var vehicle = { name: "vehicle", type: "vehicle" };
+				linkAnalysis.addObject(vehicle);
+				linkAnalysis.addLink(vehicle, main_person);
+
+				var fugitive_case = { name: "FCS0001089", type: "case" };
+				linkAnalysis.addLink(fugitive_case, main_person);
+		
+				var node_arrest = { name: "AR-784723", type: "arrest" };
+				linkAnalysis.addLink(node_arrest, main_person);
+		
+				var node_family = { name: "Family" };
+				linkAnalysis.addLink(node_family, main_person);
+		
+				var node_Lisa = { "name": "FOX, Lisa", "relationship": "Wife", "age": "42", "degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+				var node_Edward = { "name": "FOX, Edward", "relationship": "Son", "age": "18", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" };
+				var node_Cindy = { "name": "FOX, Cindy", "relationship": "Daughter", "age": "16", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+				//var nodes_family = [node_Lisa, node_Edward, node_Cindy];
+				// {"name":"PARK, Carlos","relationship":"Cousin","age":"38","degree_of_relationship":"3","photo":"https://dojopsdemo.service-now.com/c09393281bf01090f76f20252a4bcb1a.iix"}]
+				linkAnalysis.addLink(node_Lisa, node_family);
+				linkAnalysis.addLink(node_Edward, node_family);
+				linkAnalysis.addLink(node_Cindy, node_family);
+		
+		
+				var node_known_addresses = { name: "Known Addresses", "type": "location" };
+				linkAnalysis.addLink(node_known_addresses, main_person);
+				var node_place_A = { name: "808 W. Spokane Blvd., Spokane WA", "type": "address" };
+				var node_place_B = { name: "188 Hunters Dr, Los Angeles CA", "type": "address" };
+				var node_place_C = { name: "3256 East Market St, Los Angeles CA", "type": "address" };
+				linkAnalysis.addLink(node_place_A, node_known_addresses);
+				linkAnalysis.addLink(node_place_B, node_known_addresses);
+				linkAnalysis.addLink(node_place_C, node_known_addresses);
+		*/
+
+		linkAnalysis.setIconByNodeType(IconByNodeType);
+
+		//@TODO  LOAD
+		//loadAllImages(ICON_LIST, start);
+		//
+	}
+
+
+
 </script>
 
 </html>
