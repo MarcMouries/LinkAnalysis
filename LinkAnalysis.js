@@ -420,18 +420,17 @@ var LinkAnalysis = (function () {
 
 
 		var handleMouseDown = function (event, callback) {
-			console.log("handleMouse_Down");
 			//event.preventDefault();
 
 			var mouse = linkAnalysis.getMouse(event);
-			console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
+			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
 
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
 				if (pointInCircle(mouse.x, mouse.y, node)) {
 					//	if (pointInCircle(event.clientX, event.clientY, node)) {
-					console.log("handleMouse_Down node '" + node.data.name + "' isClicked");
+					//console.log("handleMouse_Down node '" + node.data.name + "' isClicked");
 					node.isClicked = true;
 					linkAnalysis.selection = node;
 					linkAnalysis.dragoffx = mouse.x - node.x;
@@ -449,7 +448,6 @@ var LinkAnalysis = (function () {
 			linkAnalysis.render();
 		}
 		var handleMouseMove = function (event) {
-			console.log("in handleMouse_Move");
 			//event.stopPropagation();
 			var mouse = linkAnalysis.getMouse(event);
 
