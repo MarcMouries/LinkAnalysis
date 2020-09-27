@@ -504,13 +504,16 @@ else {
 			handleMouseDown(event, linkAnalysis.nodeClickHandler);
 		});
 
-		LinkAnalysis.prototype.render = function () {
+		LinkAnalysis.prototype.render = function ({node_id_to_center_on}) {
 			//console.log("LinkAnalysis.render");
+			console.log("LinkAnalysis.node_id_to_center_on = "  + node_id_to_center_on);
+			var starting_vertex = this.graph.getNode(node_id_to_center_on);
+			console.log ("starting_vertex = " + starting_vertex);
+
 			//console.log("==> LinkAnalysis this.graph = ");
 			//console.log(this.graph);
 
 			// RADIAL
-			var starting_vertex = this.graph.getNode("CEO Smith");
 			//console.log("==> LinkAnalysis starting_vertex = " + starting_vertex.id);
 
 			if (this.nodes_at_level.length == 0) {

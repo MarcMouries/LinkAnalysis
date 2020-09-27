@@ -213,43 +213,22 @@
 		var options = {};
 		//	linkAnalysis.draw(graph_data, options);
 
-
-
-
 		// =============================================================
 		// Sample data : Org graph
 		// -------------------------------------------------------------
 
 
-		var ceo_smith = {
-			id: "CEO Smith",
-			name: "CEO Smith",
-			type: "person"
-		};
-		var vp_north = {
-			id: "VP North",
-			name: "VP North",
-			type: "person"
-		};
-		var vp_east = {
-			id: "VP East",
-			name: "VP East",
-			type: "person"
-		};
-		var vp_south = {
-			id: "VP South",
-			name: "VP South",
-			type: "person"
-		};
-		var vp_west = {
-			id: "VP West",
-			name: "VP West",
-			type: "person"
-		};
+//		var ceo_smith = {id: "CEO Smith",name: "CEO Smith",	type: "person"};
+//		linkAnalysis.addObject(ceo_smith);
+
+		/*
+		var vp_north = {id: "VP North",	name: "VP North", 	type: "person"	};
+		var vp_east = {id: "VP East",	name: "VP East",	type: "person"	};
+		var vp_south = {id: "VP South", name: "VP South",	type: "person"	};
+		var vp_west = {id: "VP West",	name: "VP West", type: "person"	};
 
 
 
-		linkAnalysis.addObject(ceo_smith);
 		linkAnalysis.addObject(vp_east);
 		linkAnalysis.addLink("CEO Smith", "VP East");
 		linkAnalysis.addObject(vp_south);
@@ -278,6 +257,8 @@
 			}
 		}
 
+	*/
+
 		/*  SCENARIO 
 		
 		could work by making the link line a curve
@@ -296,20 +277,18 @@
 		*/
 
 
-		linkAnalysis.setNodeClickHandler(function (node) {
-			console.log("NODE CLICKED: " + node.id);
-		});
-
-		linkAnalysis.render();
-
-
 		// =============================================================
 		// Sample data : Criminals graph
 		// -------------------------------------------------------------
-		/*
-				var main_person = {id: "p_123", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
-				linkAnalysis.addObject(main_person);
+		
+		var joe_smith = {id: "Joe Smith",name: "Joe Smith",	type: "person"};
+		linkAnalysis.addObject(joe_smith);
 
+	//	var main_person = {id: "Eric Fox", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
+	//	linkAnalysis.addObject(main_person);
+//		linkAnalysis.addObject(ceo_smith);
+
+/*
 				var vehicle = { name: "vehicle", type: "vehicle" };
 				linkAnalysis.addObject(vehicle);
 				linkAnalysis.addLink(vehicle, main_person);
@@ -341,7 +320,18 @@
 				linkAnalysis.addLink(node_place_A, node_known_addresses);
 				linkAnalysis.addLink(node_place_B, node_known_addresses);
 				linkAnalysis.addLink(node_place_C, node_known_addresses);
-		*/
+*/
+
+
+		linkAnalysis.setNodeClickHandler(function (node) {
+			console.log("NODE CLICKED: " + node.id);
+		});
+
+
+		//starting_vertex 
+		linkAnalysis.render(
+			{node_id_to_center_on: "Joe Smith"}
+		);
 
 		linkAnalysis.setIconByNodeType(IconByNodeType);
 
