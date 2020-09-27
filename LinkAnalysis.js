@@ -554,7 +554,7 @@ else {
 		}
 	}
 
-
+	
 
 
 	LinkAnalysis.prototype = {
@@ -585,6 +585,16 @@ else {
 			this.graph.addLink(sourceNode_id, targetNode_id);
 			//linkAnalysis.updateGraph();
 		},
+
+		/**
+		 * accepts variable number of arguments
+		 */
+		addNodes: function() {
+			for (var i = 0; i < arguments.length; i++) {
+				console.log(arguments[i]);
+			}
+		},
+
 
 		setNodeClickHandler: function (nodeClickHandler) {
 			this.nodeClickHandler = nodeClickHandler;

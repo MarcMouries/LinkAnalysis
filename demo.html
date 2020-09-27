@@ -284,6 +284,20 @@
 		var main_person = {id: "Joe Smith", name: "Joe Smith", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
 		linkAnalysis.addObject(main_person);
 
+		var json_string = `{
+			"nodes": [
+				{"id": "Joe Smith", "name": "Joe Smith", "type": "person", "photo": "https://randomuser.me/api/portraits/men/22.jpg" }
+			],
+			"edges": [
+			]
+		}`;
+		var object = JSON.parse( json_string );
+		console.log(object);
+
+
+
+		linkAnalysis.addNodes("main_person");
+
 
 /*
 				var vehicle = { name: "vehicle", type: "vehicle" };
