@@ -509,6 +509,9 @@ else {
 			console.log("LinkAnalysis.node_id_to_center_on = "  + node_id_to_center_on);
 			var starting_vertex = this.graph.getNode(node_id_to_center_on);
 			console.log ("starting_vertex = " + starting_vertex);
+			if (starting_vertex == undefined) {
+				throw new TypeError("node_id_to_center_on: invalid node id: " + node_id_to_center_on);
+			}
 
 			//console.log("==> LinkAnalysis this.graph = ");
 			//console.log(this.graph);
