@@ -334,6 +334,9 @@ var LinkAnalysis = (function () {
 		this.background_color = "#FFFFFF"; //"#F5F5F5";
 		COLOR_HOVER_NODE = options.color_hover_node || "#84a9ac";
 		COLOR_SELECTED_NODE = options.color_selected_node || "#3b6978";
+		LINK_COLOR = options.link_color || "#3b6978";
+		LINK_LINE_WIDTH = options.link_line_width || "3";
+
 		this.NODE_RADIUS = 20;
 
 		var NODE_GROUP_CLASS = "nodeXXX";
@@ -379,8 +382,8 @@ var LinkAnalysis = (function () {
 
 		var renderLink = function (link) {
 			//log("renderLink " + link.id);
-			var strokeStyle = "grey";
-			var lineWidth = 3;
+			var strokeStyle = LINK_COLOR;
+			var lineWidth = LINK_LINE_WIDTH;
 			mcanvas.drawLine(link.source.x, link.source.y, link.target.x, link.target.y,
 				strokeStyle,
 				lineWidth);
