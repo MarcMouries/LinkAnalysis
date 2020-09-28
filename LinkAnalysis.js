@@ -438,7 +438,7 @@ var LinkAnalysis = (function () {
 					linkAnalysis.dragging = true;
 					linkAnalysis.valid = false;
 
-					// @TODO: Add Callback to listerer(node);
+					// Callback to listerer(node);
 					callback(node);
 					return;
 				} else {
