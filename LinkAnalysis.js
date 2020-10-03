@@ -254,9 +254,9 @@ function build_nodes_at_level() {
 function MRadialLayout() {}
 
 MRadialLayout.Calculate_Positions = function (graph, starting_vertex, center) {
-	//log(`MRadialLayout.Calculate_Positions: ${starting_vertex.data.name}`);
+	//log(`MRadialLayout.Calculate_Positions: ${starting_vertex.data.id}`);
 
-	var RADIUS_LEVEL = 150;
+	var RADIUS_LEVEL = 140;
 
 	if (!graph || graph.getNodes().length == 0) {
 		console.error("MRadialLayout: can't run on an empty graph.");
@@ -272,10 +272,12 @@ MRadialLayout.Calculate_Positions = function (graph, starting_vertex, center) {
 		return;
 	}
 
+	// start angle = //Math.PI * 1.5;
+	
 	if (graph.isRoot(starting_vertex)) {
 		starting_vertex.x = center.x;
 		starting_vertex.y = center.y;
-		starting_vertex.angle = 0;
+		starting_vertex.angle = 0; 
 		starting_vertex.angleRange = 2 * Math.PI;
 		//log(`*** MRadialLayout ROOT id=${starting_vertex.id}, 
 		//			x=${starting_vertex.x}, y=${starting_vertex.y}, depth=${starting_vertex.depth},
@@ -326,7 +328,7 @@ var LinkAnalysis = (function () {
 	var mcanvas = null;
 
 	function LinkAnalysis(chart_container, options) {
-		options || (options = { });
+		options || (options = {});
 
 	// =============================================================
 	//  DEFAULT VALUES
@@ -336,6 +338,8 @@ var LinkAnalysis = (function () {
 		COLOR_SELECTED_NODE = options.color_selected_node || "#3b6978";
 		LINK_COLOR = options.link_color || "#3b6978";
 		LINK_LINE_WIDTH = options.link_line_width || "3";
+		this.node_id_to_center_on = options.node_id_to_center_on;
+		console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
 
 		this.NODE_RADIUS = 20;
 
@@ -389,7 +393,7 @@ var LinkAnalysis = (function () {
 				lineWidth);
 		}
 		var renderNode = function (node) {
-			//log(`MChartView.renderNode: ${node.data.name}: ${node.x},${node.y} `);
+			//log(`MChartView.renderNode: ${node.data.id}: ${node.x},${node.y} `);
 
 			if (node.type == "person") {
 				//console.log("it's  a person");
@@ -399,14 +403,16 @@ var LinkAnalysis = (function () {
 
 			var font = "12px Arial"
 			var text_color = "#333";
-			mcanvas.drawPoint(node.x, node.y, node.radius, "A. " + node.data.name);
-			//mcanvas.drawTextBG("B. " + node.data.name, node.x, node.y, font, 0, this.background_color);
+
+			mcanvas.drawPoint(node.x, node.y, node.radius, node.data.type);
+
+			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, this.background_color);
 
 			var padding_node_title = 0;
 			var maxLineWidth = 1.5 * (2 * node.radius);
 			// CENTER TEXT
 			var y = node.y + padding_node_title;
-			//mcanvas.drawText(node.x, y, "C. " + node.data.name, font, text_color, maxLineWidth, ",");
+			mcanvas.drawText(node.x, y, node.data.id, font, text_color, maxLineWidth, ",");
 
 			if (node.isClicked) {
 				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_SELECTED_NODE, "", 5);
@@ -433,7 +439,7 @@ var LinkAnalysis = (function () {
 				var node = nodes[i];
 				if (pointInCircle(mouse.x, mouse.y, node)) {
 					//	if (pointInCircle(event.clientX, event.clientY, node)) {
-					//console.log("handleMouse_Down node '" + node.data.name + "' isClicked");
+					//console.log("handleMouse_Down node '" + node.data.id + "' isClicked");
 					node.isClicked = true;
 					linkAnalysis.selection = node;
 					linkAnalysis.dragoffx = mouse.x - node.x;
@@ -460,7 +466,7 @@ var LinkAnalysis = (function () {
 				var node = nodes[i];
 				if (pointInCircle(mouse.x, mouse.y, node)) {
 					//if (pointInCircle(event.clientX, event.clientY, node)) {
-					console.log("handleMouse_Move node '" + node.data.name + "' isBelowMouse");
+					console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
 
 					node.isBelowMouse = true;
 				} else {
@@ -493,7 +499,7 @@ else {
 }
 */
 			if (linkAnalysis.current_node) {
-				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.name +
+				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id +
 					" isClicked");
 				linkAnalysis.nodeClickHandler(controller.current_node);
 			}
@@ -507,13 +513,20 @@ else {
 			handleMouseDown(event, linkAnalysis.nodeClickHandler);
 		});
 
-		LinkAnalysis.prototype.render = function ({node_id_to_center_on}) {
-			//console.log("LinkAnalysis.render");
-			console.log("LinkAnalysis.node_id_to_center_on = "  + node_id_to_center_on);
-			var starting_vertex = this.graph.getNode(node_id_to_center_on);
-			console.log ("starting_vertex = " + starting_vertex);
-			if (starting_vertex == undefined) {
-				throw new TypeError("node_id_to_center_on: invalid node id: " + node_id_to_center_on);
+		LinkAnalysis.prototype.render = function () {
+			console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
+
+			if (this.node_id_to_center_on) {
+				console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
+				var starting_vertex = this.graph.getNode(this.node_id_to_center_on);
+				console.log ("starting_vertex = " + starting_vertex);
+				if (starting_vertex == undefined) {
+					throw new TypeError(`node_id_to_center_on: invalid node id: "${this.node_id_to_center_on}"`);
+				}
+				
+			}
+			else {
+
 			}
 
 			//console.log("==> LinkAnalysis this.graph = ");
@@ -557,9 +570,6 @@ else {
 		}
 	}
 
-	
-
-
 	LinkAnalysis.prototype = {
 
 		getContext: function () {
@@ -593,11 +603,28 @@ else {
 		 * accepts variable number of arguments
 		 */
 		addNodes: function() {
+			console.log("=== addNodes ===" );
 			for (var i = 0; i < arguments.length; i++) {
 				console.log(arguments[i]);
 			}
 		},
 
+		loadJSON: function (json_string) {
+			//console.error("loadJSON  NOT IMPLEMENTED");
+			var json_object = JSON.parse( json_string );
+
+			var nodes = json_object['nodes'];
+			for (let index = 0; index < nodes.length; index++) {
+				var node = nodes[index];
+				this.addObject(node);
+			}
+
+			var links = json_object['links'];
+			for (let index = 0; index < links.length; index++) {
+				var link = links[index];
+				this.addLink(link.source, link.target);
+			}
+		},
 
 		setNodeClickHandler: function (nodeClickHandler) {
 			this.nodeClickHandler = nodeClickHandler;
