@@ -78,14 +78,10 @@ Graph.prototype.addNode = function (node) {
  * Check if the specified node is a target in the list of links
  */
 Graph.prototype.isRoot = function (node) {
-	//  console.log(" IS ROOT ?");
-	//  console.log("node: " + node_id);
 	var exist = false;
 	this.linkList.forEach(function (link, index) {
 		if (link.target.id === node.id) {
 			exist = true;
-			// console.log("link source: " + link.source.id);
-			// console.log("link target: " + link.target.id);
 		}
 	});
 	return (is_root = !exist);
@@ -111,7 +107,6 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 	this.linkList.forEach(function (item) {
 		if (link.id === item.id) {
 			exists = true;
-			//console.log("link " + link.id + " exists? = " + exists);
 		}
 	});
 
