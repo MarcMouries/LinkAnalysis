@@ -198,19 +198,15 @@
 	window.onload = function () {
 
 
-		var IconByNodeType = {
-			"case": {
-				"url": icon_case_base64
-			},
-			"arrest": {
-				"url": icon_arrest_base64
-			}
-		};
-
+		//linkAnalysis.setIconByNodeType(IconByNodeType);
 
 		var chart_container = document.getElementById("chart_container");
 		var settings = {
-			node_id_to_center_on: "Joe Smith"
+			node_id_to_center_on: "Joe Smith",
+			icon_by_node_type: {
+				"case": { "url": icon_case_base64 },
+				"arrest": { "url": icon_arrest_base64 }
+			}
 		};
 		var linkAnalysis = new LinkAnalysis(chart_container, settings);
 
@@ -222,8 +218,8 @@
 		// -------------------------------------------------------------
 
 
-//		var ceo_smith = {id: "CEO Smith",name: "CEO Smith",	type: "person"};
-//		linkAnalysis.addObject(ceo_smith);
+		//		var ceo_smith = {id: "CEO Smith",name: "CEO Smith",	type: "person"};
+		//		linkAnalysis.addObject(ceo_smith);
 
 		/*
 		var vp_north = {id: "VP North",	name: "VP North", 	type: "person"	};
@@ -282,24 +278,24 @@
 		// =============================================================
 		// Sample data : Criminals graph
 		// -------------------------------------------------------------
-		
+
 		//var main_person = {id: "Joe Smith", name: "Joe Smith", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
 		//linkAnalysis.addObject(main_person);
 
 		var json_string = `{
 			"nodes": [
-				{ "id": "Joe Smith", "name": "Joe Smith", "type": "person", "photo": "https://randomuser.me/api/portraits/men/22.jpg" },
-				{ "id": "AR-784723", "type": "arrest" },
-				{ "id": "vehicle", "type": "vehicle" },
+				{ "id": "Joe Smith",  "type": "person", "name": "Joe Smith", "photo": "https://randomuser.me/api/portraits/men/22.jpg" },
+				{ "id": "AR-784723",  "type": "arrest" },
+				{ "id": "vehicle",    "type": "vehicle" },
 				{ "id": "FU-0001089", "type": "case" },
-				{ "id": "robbery", "type": "robbery" },
+				{ "id": "robbery",    "type": "robbery" },
 
 				{ "id": "family", "type": "Family" },
-					{ "id": "Lisa Smith", "relationship": "Wife", "age": "42", 
+					{ "id": "Lisa Smith", "type": "person", "relationship": "Wife", "age": "42", 
 							"degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" },
-					{ "id": "Edward Smith", "relationship": "Son", "age": "18", 
+					{ "id": "Edward Smith", "type": "person", "relationship": "Son", "age": "18", 
 							"degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" },
-					{ "id": "Cindy Smith", "relationship": "Daughter", "age": "16", 
+					{ "id": "Cindy Smith", "type": "person", "relationship": "Daughter", "age": "16", 
 							"degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" },
 
 				{ "id": "Known Addresses", "type": "location" },
@@ -308,55 +304,55 @@
 					{ "id": "3256 East Market St, Los Angeles CA", "type": "address" }
 			],
 			"links": [
-			{ "source" : "Joe Smith", "target": "AR-784723" },
-			{ "source" : "AR-784723", "target": "robbery" },
-				{ "source" : "Joe Smith", "target": "Known Addresses" },
-				{ "source" : "Joe Smith", "target": "family" },
-				{ "source" : "Joe Smith", "target": "vehicle" },
-				{ "source" : "Joe Smith", "target": "FU-0001089" },
-				{ "source" : "Joe Smith", "target": "AR-784723" },
-				{ "source" : "family", "target": "Lisa Smith" },
-				{ "source" : "family", "target": "Edward Smith" },
-				{ "source" : "family", "target": "Cindy Smith" },
+				{ "source" : "Joe Smith",       "target": "AR-784723" },
+				{ "source" : "AR-784723",       "target": "robbery" },
+				{ "source" : "Joe Smith",       "target": "Known Addresses" },
+				{ "source" : "Joe Smith",       "target": "family" },
+				{ "source" : "Joe Smith",       "target": "vehicle" },
+				{ "source" : "Joe Smith",       "target": "FU-0001089" },
+				{ "source" : "Joe Smith",       "target": "AR-784723" },
+				{ "source" : "family",          "target": "Lisa Smith" },
+				{ "source" : "family",          "target": "Edward Smith" },
+				{ "source" : "family",          "target": "Cindy Smith" },
 				{ "source" : "Known Addresses", "target": "808 W. Spokane Blvd., Spokane WA" },
 				{ "source" : "Known Addresses", "target": "188 Hunters Dr, Los Angeles CA" },
 				{ "source" : "Known Addresses", "target": "3256 East Market St, Los Angeles CA" }
 			]
 		}`;
 		linkAnalysis.loadJSON(json_string);
-/*
-				var vehicle = { name: "vehicle", type: "vehicle" };
-				linkAnalysis.addObject(vehicle);
-				linkAnalysis.addLink(vehicle, main_person);
+		/*
+						var vehicle = { name: "vehicle", type: "vehicle" };
+						linkAnalysis.addObject(vehicle);
+						linkAnalysis.addLink(vehicle, main_person);
 
-				var fugitive_case = { name: "FCS0001089", type: "case" };
-				linkAnalysis.addLink(fugitive_case, main_person);
-		
-				var node_arrest = { name: "AR-784723", type: "arrest" };
-				linkAnalysis.addLink(node_arrest, main_person);
-		
-				var node_family = { name: "Family" };
-				linkAnalysis.addLink(node_family, main_person);
-		
-				var node_Lisa = { "name": "FOX, Lisa", "relationship": "Wife", "age": "42", "degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
-				var node_Edward = { "name": "FOX, Edward", "relationship": "Son", "age": "18", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" };
-				var node_Cindy = { "name": "FOX, Cindy", "relationship": "Daughter", "age": "16", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
-				//var nodes_family = [node_Lisa, node_Edward, node_Cindy];
-				// {"name":"PARK, Carlos","relationship":"Cousin","age":"38","degree_of_relationship":"3","photo":"https://dojopsdemo.service-now.com/c09393281bf01090f76f20252a4bcb1a.iix"}]
-				linkAnalysis.addLink(node_Lisa, node_family);
-				linkAnalysis.addLink(node_Edward, node_family);
-				linkAnalysis.addLink(node_Cindy, node_family);
-		
-		
-				var node_known_addresses = { name: "Known Addresses", "type": "location" };
-				linkAnalysis.addLink(node_known_addresses, main_person);
-				var node_place_A = { name: "808 W. Spokane Blvd., Spokane WA", "type": "address" };
-				var node_place_B = { name: "188 Hunters Dr, Los Angeles CA", "type": "address" };
-				var node_place_C = { name: "3256 East Market St, Los Angeles CA", "type": "address" };
-				linkAnalysis.addLink(node_place_A, node_known_addresses);
-				linkAnalysis.addLink(node_place_B, node_known_addresses);
-				linkAnalysis.addLink(node_place_C, node_known_addresses);
-*/
+						var fugitive_case = { name: "FCS0001089", type: "case" };
+						linkAnalysis.addLink(fugitive_case, main_person);
+
+						var node_arrest = { name: "AR-784723", type: "arrest" };
+						linkAnalysis.addLink(node_arrest, main_person);
+
+						var node_family = { name: "Family" };
+						linkAnalysis.addLink(node_family, main_person);
+
+						var node_Lisa = { "name": "FOX, Lisa", "type": "person", "relationship": "Wife", "age": "42", "degree_of_relationship": "0", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+						var node_Edward = { "name": "FOX, Edward", "type": "person", "relationship": "Son", "age": "18", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/men/22.jpg" };
+						var node_Cindy = { "name": "FOX, Cindy", "type": "person", "relationship": "Daughter", "age": "16", "degree_of_relationship": "1", "photo": "https://randomuser.me/api/portraits/women/33.jpg" };
+						//var nodes_family = [node_Lisa, node_Edward, node_Cindy];
+						// {"name":"PARK, Carlos","relationship":"Cousin","age":"38","degree_of_relationship":"3","photo":"https://dojopsdemo.service-now.com/c09393281bf01090f76f20252a4bcb1a.iix"}]
+						linkAnalysis.addLink(node_Lisa, node_family);
+						linkAnalysis.addLink(node_Edward, node_family);
+						linkAnalysis.addLink(node_Cindy, node_family);
+
+
+						var node_known_addresses = { name: "Known Addresses", "type": "location" };
+						linkAnalysis.addLink(node_known_addresses, main_person);
+						var node_place_A = { name: "808 W. Spokane Blvd., Spokane WA", "type": "address" };
+						var node_place_B = { name: "188 Hunters Dr, Los Angeles CA", "type": "address" };
+						var node_place_C = { name: "3256 East Market St, Los Angeles CA", "type": "address" };
+						linkAnalysis.addLink(node_place_A, node_known_addresses);
+						linkAnalysis.addLink(node_place_B, node_known_addresses);
+						linkAnalysis.addLink(node_place_C, node_known_addresses);
+		*/
 
 
 		linkAnalysis.setNodeClickHandler(function (node) {
@@ -367,7 +363,6 @@
 		//starting_vertex 
 		linkAnalysis.render();
 
-		linkAnalysis.setIconByNodeType(IconByNodeType);
 
 		//@TODO  LOAD
 		//loadAllImages(ICON_LIST, start);

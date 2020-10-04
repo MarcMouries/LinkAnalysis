@@ -333,8 +333,22 @@ var LinkAnalysis = (function () {
 		COLOR_SELECTED_NODE = options.color_selected_node || "#3b6978";
 		LINK_COLOR = options.link_color || "#3b6978";
 		LINK_LINE_WIDTH = options.link_line_width || "3";
-		this.node_id_to_center_on = options.node_id_to_center_on;
-		console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
+		node_id_to_center_on = options.node_id_to_center_on;
+		icon_by_node_type = options.icon_by_node_type || [];
+
+		console.log("LinkAnalysis");
+		console.log("node_id_to_center_on = "  + node_id_to_center_on);
+		console.log("icon_by_node_type = "  + icon_by_node_type);
+		console.log(icon_by_node_type);
+
+
+
+
+
+		var font = "12px Arial"
+		var text_color = "#333";
+
+
 
 		this.NODE_RADIUS = 20;
 
@@ -396,8 +410,30 @@ var LinkAnalysis = (function () {
 				//console.log("it's  a person");
 			}
 
-			var font = "12px Arial"
-			var text_color = "#333";
+			var image_url = null;
+			if (node.data.type) {
+				if (node.data.type == "case")      { image_url= "icon_case_base64";        }
+				if (node.data.type == "arrest")    { image_url= "icon_arrest_base64";      }
+				if (node.data.type == "vehicle")   { image_url= "icon_vehicle_base64"      }
+				if (node.data.type == "address")   { image_url= "icon_home_base64";        }
+				if (node.data.type == "location")  { image_url= "icon_location_base64";    }
+				if (node.data.type == "court_case"){ image_url= "icon_court_base64";       }
+				if (node.data.type == "person")    {
+					if (node.data.photo) {
+						image_url= node.data.photo;
+					} 
+				}
+
+				console.log(node.data.type + " = " + image_url);
+
+
+				//var icon_element = icon_by_node_type[node.data.type];
+				//console.log(node.data.type + " = " + icon_element);
+
+				//console.log();
+				
+			}
+
 
 			mcanvas.drawPoint(node.x, node.y, node.radius, node.data.type);
 
@@ -483,16 +519,7 @@ var LinkAnalysis = (function () {
 			//console.log(" handleMouse UP");
 			linkAnalysis.dragging = false;
 
-			/*
-if (controller.current_node != null) {
-	controller.current_node.isClicked = true;
-	//controller.current_node = null;
-}
-else {
-	controller.current_node.isClicked = false;
-	controller.current_node = null;
-}
-*/
+
 			if (linkAnalysis.current_node) {
 				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id +
 					" isClicked");
@@ -511,24 +538,12 @@ else {
 		LinkAnalysis.prototype.render = function () {
 			console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
 
-			if (this.node_id_to_center_on) {
-				console.log("LinkAnalysis.node_id_to_center_on = "  + this.node_id_to_center_on);
-				var starting_vertex = this.graph.getNode(this.node_id_to_center_on);
-				console.log ("starting_vertex = " + starting_vertex);
+			if (node_id_to_center_on) {
+				var starting_vertex = this.graph.getNode(node_id_to_center_on);
 				if (starting_vertex == undefined) {
-					throw new TypeError(`node_id_to_center_on: invalid node id: "${this.node_id_to_center_on}"`);
+					throw new TypeError(`node_id_to_center_on: invalid node id: "${node_id_to_center_on}"`);
 				}
-				
 			}
-			else {
-
-			}
-
-			//console.log("==> LinkAnalysis this.graph = ");
-			//console.log(this.graph);
-
-			// RADIAL
-			//console.log("==> LinkAnalysis starting_vertex = " + starting_vertex.id);
 
 			if (this.nodes_at_level.length == 0) {
 				// calculate the depth of each node from the starting vertex
@@ -548,7 +563,7 @@ else {
 			mcanvas.clear();
 			//mcanvas.drawBorder();
 
-			// LINKS 
+			// LINKS
 			var links = this.graph.getLinks();
 			for (var i = 0; i < links.length; i++) {
 				var link = links[i];
@@ -674,9 +689,6 @@ else {
 	}
 
 
-	LinkAnalysis.prototype.setIconByNodeType = function (IconByNodeType) {
-		this.IconByNodeType = IconByNodeType;
-	}
 
 	function Circle(x, y, radius, fill, stroke) {
 		this.startingAngle = 0;
