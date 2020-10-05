@@ -404,6 +404,16 @@ var LinkAnalysis = (function () {
 		var renderNode = function (node) {
 			//log(`MChartView.renderNode: ${node.data.id}: ${node.x},${node.y} `);
 
+			var ring_width = 10;
+			var ring_radius = node.radius + ring_width;
+			if (node.isClicked) {
+				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_SELECTED_NODE, "", ring_width);
+
+			} else if (node.isBelowMouse) {
+				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_HOVER_NODE,	"", ring_width);
+			}
+
+
 			if (node.type == "person") {
 				//console.log("it's  a person");
 			} else if (node.type == "case") {
@@ -423,15 +433,19 @@ var LinkAnalysis = (function () {
 						image_url= node.data.photo;
 					} 
 				}
+				var icon_element = icon_by_node_type[node.data.type];
+				var icon_url = icon_element ? icon_element.url : null;
 
-				console.log(node.data.type + " = " + image_url);
 
 
-				//var icon_element = icon_by_node_type[node.data.type];
-				//console.log(node.data.type + " = " + icon_element);
+				//console.log(node.data.type + " = " + image_url);
+				console.log(node.data.type + " = " + icon_url);
 
-				//console.log();
-				
+				//mcanvas.drawImage
+				//var icon_x = this.x - icon_width / 2; // to fit into circle
+				//var icon_y = this.y - icon_heigth / 2; // to fit into circle
+				//context.drawImage(image, icon_x, icon_y, icon_width, icon_heigth);
+
 			}
 
 
@@ -445,12 +459,7 @@ var LinkAnalysis = (function () {
 			var y = node.y + padding_node_title;
 			mcanvas.drawText(node.x, y, node.data.id, font, text_color, maxLineWidth, ",");
 
-			if (node.isClicked) {
-				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_SELECTED_NODE, "", 5);
 
-			} else if (node.isBelowMouse) {
-				mcanvas.drawRing(node.x, node.y, node.radius + 5, COLOR_HOVER_NODE,	"", 5);
-			}
 		}
 
 		var drawBorder = function () {

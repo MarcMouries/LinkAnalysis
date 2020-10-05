@@ -204,10 +204,16 @@
 		var settings = {
 			node_id_to_center_on: "Joe Smith",
 			icon_by_node_type: {
+				"address": { "url": icon_home_base64 },
+				"arrest": { "url": icon_arrest_base64 },
 				"case": { "url": icon_case_base64 },
-				"arrest": { "url": icon_arrest_base64 }
+				"court_case": { "url": icon_court_base64 },
+				"location": { "url": icon_location_base64 },
+				"vehicle": { "url": icon_vehicle_base64 },
 			}
 		};
+
+
 		var linkAnalysis = new LinkAnalysis(chart_container, settings);
 
 
