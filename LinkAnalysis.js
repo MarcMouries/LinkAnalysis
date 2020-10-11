@@ -414,14 +414,9 @@ var LinkAnalysis = (function () {
 			}
 
 
-			if (node.type == "person") {
-				//console.log("it's  a person");
-			} else if (node.type == "case") {
-				//console.log("it's  a person");
-			}
-
 			var image_url = null;
 			if (node.data.type) {
+				/*
 				if (node.data.type == "case")      { image_url= "icon_case_base64";        }
 				if (node.data.type == "arrest")    { image_url= "icon_arrest_base64";      }
 				if (node.data.type == "vehicle")   { image_url= "icon_vehicle_base64"      }
@@ -433,6 +428,7 @@ var LinkAnalysis = (function () {
 						image_url= node.data.photo;
 					} 
 				}
+				*/
 				var icon_element = icon_by_node_type[node.data.type];
 				var icon_url = icon_element ? icon_element.url : null;
 

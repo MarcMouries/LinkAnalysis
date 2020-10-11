@@ -1,12 +1,19 @@
 
 		/*
 		* Takes an object that contains keys that identify the images and URL 
-		* for the images, loads the images and call the callback function
+		* for the images. It loads the images and call the callback function.
+
 		* Example:
 		* var ICON_LIST = {
 		*   "case"   : { "url": icon_case_base64  },
 		*   "arrest" : { "url": icon_arrest_base64}
 	    * }
+		* 
+		*  loadAllImages(ICON_LIST, start);
+		*
+		*	function start() {
+		*		// ... render the imagages
+		*	}
 		*/
 		function loadAllImages(image_config, callback) {
 			var loadcount = 0;
