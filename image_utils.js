@@ -18,7 +18,7 @@
 		function loadAllImages(image_config, callback) {
 			var loadcount = 0;
 			var config_element_list = Object.keys(image_config);
-			var image_total = config_element_list.length;
+			var image_count = config_element_list.length;
 
 			for (var key in image_config) {
 				var config_element = image_config[key];
@@ -26,12 +26,14 @@
 				config_element.image = image;
 				image.onload = function () {
 					loadcount++;
-					if (loadcount == image_total) {
+					if (loadcount == image_count) {
 						callback();
 					}
 				};
 				image.onerror = function () { alert("image load failed"); }
 				image.crossOrigin = "anonymous";
 				image.src = config_element.url;
+				delete config_element.url;
+
 			}
 		}

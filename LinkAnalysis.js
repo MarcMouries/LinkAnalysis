@@ -435,7 +435,7 @@ var LinkAnalysis = (function () {
 
 
 				//console.log(node.data.type + " = " + image_url);
-				console.log(node.data.type + " = " + icon_url);
+				//console.log(node.data.type + " = " + icon_url);
 
 				//mcanvas.drawImage
 				//var icon_x = this.x - icon_width / 2; // to fit into circle

@@ -198,11 +198,23 @@
 	window.onload = function () {
 
 
-		//linkAnalysis.setIconByNodeType(IconByNodeType);
-
 		var chart_container = document.getElementById("chart_container");
 
+		var ICON_LIST = {
+			"address"   : { "url": icon_home_base64 },
+			"arrest"    : { "url": icon_arrest_base64 },
+			"case"      : { "url": icon_case_base64 },
+			"court_case": { "url": icon_court_base64 },
+			"location"  : { "url": icon_location_base64 },
+			"vehicle"   : { "url": icon_vehicle_base64 }
+		}
 		
+		loadAllImages(ICON_LIST, start);
+
+		function start() {
+			console.log(ICON_LIST);
+		}
+
 		var settings = {
 			node_id_to_center_on: "Joe Smith",
 			icon_by_node_type: {
@@ -215,11 +227,7 @@
 			}
 		};
 
- 		loadAllImages(ICON_LIST, start);
 
-		function start() {
-			// ... render the imagages
-		}
 
 		var linkAnalysis = new LinkAnalysis(chart_container, settings);
 
@@ -375,11 +383,6 @@
 
 		//starting_vertex 
 		linkAnalysis.render();
-
-
-		//@TODO  LOAD
-		//loadAllImages(ICON_LIST, start);
-		//
 	}
 
 
