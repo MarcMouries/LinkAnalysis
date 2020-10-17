@@ -50,7 +50,7 @@
 		}
 
 
-		function Circle(x, y, radius, fill, stroke) {
+		function Circle(x, y, radius, fill, stroke, node_type) {
 			this.startingAngle = 0;
 			this.endAngle = 2 * Math.PI;
 			this.x = x;
@@ -60,6 +60,7 @@
 			this.stroke = stroke;
 			this.isClicked = false;
 			this.isBelowMouse = false;
+			this.node_type = node_type;
 
 
 			Circle.prototype.drawRing = function (context, color) {
@@ -82,9 +83,8 @@
 				context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
 				context.fill();
 
-				var node_type = "case";
 
-				var image = ICON_LIST[node_type].image;
+				var image = ICON_LIST[this.node_type].image;
 				if (!image) {
 					console.log("=====");
 					console.log(ICON_LIST[node_type]);
@@ -107,20 +107,34 @@
 
 		var color_ring_isActivated = "#3b6978";
 		var color_ring_isBelowMouse = "#84a9ac";
+
+		var COLORS = [
+			"#003f5c",
+			"#2f4b7c",
+			"#665191",
+			"#a05195",
+			"#d45087",
+			"#f95d6a",
+			"#ff7c43",
+			"#ffa600"
+		];
+
+
 		var ICON_LIST = {
-			"case": {
-				"url": icon_case_base64
-			},
-			"arrest": {
-				"url": icon_arrest_base64
-			}
+			"address": { "url": icon_home_base64 },
+			"arrest": { "url": icon_arrest_base64 },
+			"case": { "url": icon_case_base64 },
+			"court_case": { "url": icon_court_base64 },
+			"person": { "url": icon_person_base64 },
+			"location": { "url": icon_location_base64 },
+			"vehicle": { "url": icon_vehicle_base64 }
 		}
 		var icon_width = 40;
 		var icon_heigth = 40;
 		var circle_radius = 30;
 
-
 		loadAllImages(ICON_LIST, start);
+
 
 		function start() {
 			// the imgs[] array now holds fully loaded images
@@ -129,11 +143,41 @@
 				width = canvas.width = window.innerWidth,
 				height = canvas.height = window.innerHeight;
 
+				var icon_types = Object.entries(ICON_LIST);
 
-			var c1 = new Circle(300, 300, circle_radius, "#4e79a7", "black");
-			var c2 = new Circle(400, 300, circle_radius, "#f28e2c", "black");
-			var c3 = new Circle(500, 300, circle_radius, "#e15759", "black");
-			var nodes = [c1, c2, c3];
+
+				for (const [key, value] of Object.entries(ICON_LIST)) {
+  					console.log(`${key}: ${value}`);
+				}
+				for (var index = 0; index < icon_types.length; index++) {
+					console.log(icon_types[index]);
+
+				}
+
+				var nodes = [];
+
+				console.log("ENTRIES");
+				Object.entries(ICON_LIST).forEach(([key, value], index) => {
+					  //console.log(`${index}: ${key} = ${value}`);
+					  var node_type = key;
+					  var circle = new Circle(100 + (index * 100), 300, circle_radius, COLORS[index], "black", node_type);
+					  nodes.push (circle);
+				});
+
+
+
+			for (var index = 0; index < ICON_LIST.length; index++) {
+				var element = ICON_LIST[index];
+				console.log(element);
+				var circle = new Circle(300, 300 + (index * 100), circle_radius, "#4e79a7", "black", "address");
+				nodes.push (circle);
+			}
+			//var c1 = new Circle(300, 300, circle_radius, "#4e79a7", "black", "address");
+			//var c2 = new Circle(400, 300, circle_radius, "#f28e2c", "black", "arrest");
+			//var c3 = new Circle(500, 300, circle_radius, "#e15759", "black", "person");
+			//var nodes = [c1, c2, c3];
+
+
 			var offset = {};
 			var isClicked = false;
 			var current_node;
