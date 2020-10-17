@@ -249,7 +249,7 @@ MCanvas.prototype.drawPoint = function (x, y, radius, text) {
 	//this.ctx.textAlign = "center";
 	this.ctx.textBaseline = "middle";
 	this.ctx.fillStyle = "#384047"; // darkish
-	this.ctx.fillText(text, x, y + radius + 20);
+	//this.ctx.fillText(text, x, y + radius + 20);
 };
 MCanvas.prototype.drawText = function (
 	x,
@@ -299,6 +299,9 @@ MCanvas.prototype.addEventListener = function (type, listener) {
 	this.canvas.addEventListener(type, listener);
 };
 
+MCanvas.prototype.setCursor = function (cursor) {
+	this.canvas.style.cursor=cursor;
+}
 //this.resizeCanvas();
 
 /*
