@@ -4,10 +4,6 @@
 //  author: Marc Mouries
 // =============================================================
 
-
-// cursor is not changing
-
-
 function log(msg) {
 	if (true) {
 		console.log(msg);
@@ -62,15 +58,19 @@ function Graph() {
  */
 Graph.prototype.addObject = function (object) {
 	var node = new Node(object.id, object);
-	//console.log("added node : " + node.id);
 	this.addNode(node);
 	return node;
 };
 
 Graph.prototype.addNode = function (node) {
+	console.log("adding node : " + node.id);
+
 	if (!(node.id in this.graph)) {
 		this.nodeList.push(node);
 		this.graph[node.id] = node;
+	}
+	else {
+		console.log("ALREADY EXIST node : " + node.id);
 	}
 	return node;
 };
@@ -91,17 +91,11 @@ Graph.prototype.isRoot = function (node) {
 Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 	var sourceNode = this.getNode(sourceNode_id);
 	if (sourceNode == undefined) {
-		throw new TypeError(
-			"Trying to add a link to the non-existent node with id: " +
-			sourceNode_id
-		);
+		throw new TypeError("Trying to add a link to the non-existent node with id: " +	sourceNode_id);
 	}
 	var targetNode = this.getNode(targetNode_id);
 	if (targetNode == undefined) {
-		throw new TypeError(
-			"Trying to add a link to the non-existent node with id: " +
-			targetNode_id
-		);
+		throw new TypeError("Trying to add a link to the non-existent node with id: " + targetNode_id);
 	}
 
 	var link = new Link(sourceNode, targetNode);
@@ -116,6 +110,11 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 	if (!exists) {
 		this.linkList.push(link);
 		sourceNode.addAdjacent(targetNode);
+
+	}
+	else {
+		console.log("LINK EXIST???? : " + link);
+
 	}
 
 	if (!(link.source.id in this.adjacency)) {
@@ -125,8 +124,8 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 		this.adjacency[link.source.id][link.target.id] = [];
 	}
 
-	//console.log("link source: " + link.source.id);
-	//console.log("link target: " + link.target.id);
+	console.log("link source: " + link.source.id + "target: " + link.target.id);
+
 	this.adjacency[link.source.id][link.target.id].push(link);
 };
 
@@ -235,10 +234,7 @@ function to_string_node_list(node_list) {
 function build_nodes_at_level() {
 	var nodes_by_level = [];
 
-	graph.visit_breadth_first(root_node, function (
-		level,
-		nodes_at_current_level
-	) {
+	graph.visit_breadth_first(root_node, function (level,nodes_at_current_level	) {
 		// console.log("Level " + level + ": " + to_string);
 		nodes_by_level[level] = nodes_at_current_level;
 	});
@@ -401,7 +397,7 @@ var LinkAnalysis = (function () {
 
 			var ring_width = 10;
 			var ring_radius = node.radius + ring_width;
-			console.log("ring_radius: " + ring_radius);
+			//console.log("ring_radius: " + ring_radius);
 			if (node.isClicked) {
 				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_SELECTED_NODE, "", ring_width);
 
@@ -413,36 +409,14 @@ var LinkAnalysis = (function () {
 				//	mcanvas.setCursor('auto');
 			}
 
-			var image_url = null;
-			if (node.data.type) {
-				var image;
-				/*
-				if (node.data.type == "person") {
-					if (node.data.photo) {
-						//image = new Image();
-						image = document.createElement("IMG");
-						image.onload = function () {
-							ctx.drawImage(image, node.x - 20, node.y, 33, 33);
-						};
-						image.crossOrigin = "anonymous";
-						image.src = node.data.photo;
-					}
-				} else {
-				}
-				*/
-			}
-
-			var image_elmt = icon_by_node_type[node.data.type];
-			if (image_elmt) {
-				console.log("TODO: initialize the image just once");
-				//console.log(node.data.type + " = " + image_elmt);
-				//console.log(image_elmt.image.width + " x " + image_elmt.image.height);
-
-				ctx.drawImage(image_elmt.image,
+			if (node.data._icon) {
+				ctx.drawImage(node.data._icon,
 					node.x - NODE_ICON_WIDTH / 2,
 					node.y - NODE_ICON_WIDTH / 2,
 					NODE_ICON_WIDTH, NODE_ICON_WIDTH);
 			}
+
+
 
 			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
 
@@ -451,8 +425,6 @@ var LinkAnalysis = (function () {
 			// CENTER TEXT
 			var y = node.y + 18; //padding_node_title;
 			mcanvas.drawText(node.x, node.y + 28, node.data.id, FONT, TEXT_COLOR, maxLineWidth, ",");
-
-
 		};
 
 		var drawBorder = function () {
@@ -559,10 +531,7 @@ var LinkAnalysis = (function () {
 
 			if (this.nodes_at_level.length == 0) {
 				// calculate the depth of each node from the starting vertex
-				this.graph.visit_breadth_first(starting_vertex, function (
-					level,
-					nodes_at_current_level
-				) {
+				this.graph.visit_breadth_first(starting_vertex, function (level, nodes_at_current_level) {
 					// console.log("Level " + level + ": " + to_string);
 					linkAnalysis.nodes_at_level[level] = nodes_at_current_level;
 				});
@@ -612,11 +581,39 @@ var LinkAnalysis = (function () {
 		addObject: function (object) {
 			var node = this.graph.addObject(object);
 			node.radius = NODE_RADIUS;
+
+			//initialize the image
+/*
+				if (node.data.type == "person") {
+					if (node.data.photo) {
+						//image = new Image();
+						image = document.createElement("IMG");
+						image.onload = function () {
+							ctx.drawImage(image, node.x - 20, node.y, 33, 33);
+						};
+						image.crossOrigin = "anonymous";
+						image.src = node.data.photo;
+					}
+				} else {
+				}
+				*/
+
+
+			if (node.data.type) {
+				var image;
+				var image_elmt = icon_by_node_type[node.data.type];
+				if (image_elmt) {
+					node.data._icon = image_elmt.image;
+					//console.log(node.data.type + " = " + image_elmt);
+					//console.log(image_elmt.image.width + " x " + image_elmt.image.height);
+				}
+			}
+
 			//linkAnalysis.updateGraph();
 		},
 
 		addLink: function (sourceNode_id, targetNode_id) {
-			//console.log("LinkAnalysis addLink: " + sourceNode_id + " / " + targetNode_id);
+			console.log("LinkAnalysis addLink: " + sourceNode_id + " / " + targetNode_id);
 			this.graph.addLink(sourceNode_id, targetNode_id);
 			//linkAnalysis.updateGraph();
 		},
@@ -632,8 +629,9 @@ var LinkAnalysis = (function () {
 		},
 
 		loadJSON: function (json_string) {
-			//console.error("loadJSON  NOT IMPLEMENTED");
+			console.log("LOAD JSON");
 			var json_object = JSON.parse(json_string);
+			console.log(json_object);
 
 			var nodes = json_object["nodes"];
 			for (let index = 0; index < nodes.length; index++) {
@@ -646,6 +644,8 @@ var LinkAnalysis = (function () {
 				var link = links[index];
 				this.addLink(link.source, link.target);
 			}
+
+			console.log(this.graph);
 		},
 
 		setNodeClickHandler: function (nodeClickHandler) {
@@ -659,9 +659,7 @@ var LinkAnalysis = (function () {
 
 		// Creates an object with x and y defined,
 		// set to the mouse position relative to the state's canvas
-		// If you wanna be super-correct this can be tricky,
 		// we have to worry about padding and borders
-
 		getMouse: function (e) {
 			var element = mcanvas.canvas,
 				offsetX = 0,

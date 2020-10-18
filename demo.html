@@ -265,8 +265,17 @@
 
 			linkAnalysis.loadJSON(json_string);
 
-			linkAnalysis.render();
+			var json_string_2 = `{
+				"nodes": [
+					{ "id": "Brian Smith",  "type": "person", "name": "Brian Smith", "photo": "http://i.imgur.com/gwlPu.jpg" }
+				],
+				"links": [
+				{ "source" : "Brian Smith",       "target": "vehicle" }
+				]
+			}`;
+			linkAnalysis.loadJSON(json_string_2);
 
+			linkAnalysis.render();
 		}
 
 
@@ -378,9 +387,6 @@
 						linkAnalysis.addLink(node_place_C, node_known_addresses);
 		*/
 	}
-
-
-
 </script>
 
 </html>
