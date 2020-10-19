@@ -107,14 +107,13 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 		}
 	});
 
+
 	if (!exists) {
 		this.linkList.push(link);
 		sourceNode.addAdjacent(targetNode);
-
 	}
 	else {
-		console.log("LINK EXIST???? : " + link);
-
+		console.log("LINK EXIST: " + " source: " + link.source.id + " => " + link.target.id);
 	}
 
 	if (!(link.source.id in this.adjacency)) {
@@ -123,9 +122,6 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 	if (!(link.target.id in this.adjacency[link.source.id])) {
 		this.adjacency[link.source.id][link.target.id] = [];
 	}
-
-	console.log("link source: " + link.source.id + "target: " + link.target.id);
-
 	this.adjacency[link.source.id][link.target.id].push(link);
 };
 
@@ -518,7 +514,7 @@ var LinkAnalysis = (function () {
 		});
 
 		LinkAnalysis.prototype.render = function () {
-			console.log("LinkAnalysis.center_on_node_id = " + center_on_node_id);
+			//console.log("LinkAnalysis.center_on_node_id = " + center_on_node_id);
 
 			if (center_on_node_id) {
 				var starting_vertex = this.graph.getNode(center_on_node_id);
@@ -615,6 +611,7 @@ var LinkAnalysis = (function () {
 		addLink: function (sourceNode_id, targetNode_id) {
 			console.log("LinkAnalysis addLink: " + sourceNode_id + " / " + targetNode_id);
 			this.graph.addLink(sourceNode_id, targetNode_id);
+			console.log(this.graph);
 			//linkAnalysis.updateGraph();
 		},
 

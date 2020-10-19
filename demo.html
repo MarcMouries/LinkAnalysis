@@ -209,6 +209,10 @@
 			"location":   { "url": icon_location_base64 },
 			"vehicle":    { "url": icon_vehicle_base64 }
 		}
+
+
+
+
 		// Make sure the image is loaded before you draw it on the canvas.
 		loadAllImages(ICON_LIST, start);
 
@@ -249,7 +253,6 @@
 					{ "source" : "Joe Smith",       "target": "family" },
 					{ "source" : "Joe Smith",       "target": "vehicle" },
 					{ "source" : "Joe Smith",       "target": "FU-0001089" },
-					{ "source" : "Joe Smith",       "target": "AR-784723" },
 					{ "source" : "family",          "target": "Lisa Smith" },
 					{ "source" : "family",          "target": "Edward Smith" },
 					{ "source" : "family",          "target": "Cindy Smith" },
@@ -259,23 +262,30 @@
 				]
 			}`;
 
-			linkAnalysis.setNodeClickHandler(function (node) {
-				console.log("NODE CLICKED: " + node.id);
-			});
-
 			linkAnalysis.loadJSON(json_string);
 
 			var json_string_2 = `{
 				"nodes": [
-					{ "id": "Brian Smith",  "type": "person", "name": "Brian Smith", "photo": "http://i.imgur.com/gwlPu.jpg" }
+					{ "id": "Brian Smith",  "type": "person", "name": "Brian Smith", "photo": "http://i.imgur.com/gwlPu.jpg"}
 				],
-				"links": [
-				{ "source" : "Brian Smith",       "target": "vehicle" }
+				"links": [ 
+					{ "source" : "vehicle",       "target": "Brian Smith" }
 				]
 			}`;
 			linkAnalysis.loadJSON(json_string_2);
 
 			linkAnalysis.render();
+
+
+			linkAnalysis.setNodeClickHandler(function (node) {
+				console.log("NODE CLICKED: " + node.id);
+
+				var now = new Date().getTime().toString();
+				var new_object = {id: now,	name: now, 	type: "person"	};
+				linkAnalysis.addObject(new_object);
+				linkAnalysis.addLink(node.id, now);
+				
+			});
 		}
 
 
