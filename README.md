@@ -1,3 +1,3 @@
 # LinkAnalysis
 
-<img src = “./docs/LinkAnalysis.png">
+[Screenshot](docs/LinkAnalysis.png)                                    
