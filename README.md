@@ -1,3 +1,3 @@
 # LinkAnalysis
 
-## add screenshot
+<img src = “./docs/LinkAnalysis.png">
