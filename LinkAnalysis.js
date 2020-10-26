@@ -352,7 +352,7 @@ var LinkAnalysis = (function () {
 		var linkAnalysis = this;
 
 		// the imgs[] array now holds fully loaded images
-		mcanvas = new MCanvas({ container: chart_container });
+		mcanvas = new MCanvas(chart_container);
 		ctx = mcanvas.getContext();
 		//ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -509,7 +509,7 @@ var LinkAnalysis = (function () {
 		addEventListener("mouseup", handleMouseUp, false);
 		addEventListener("mousemove", handleMouseMove, false);
 		addEventListener("mousedown", function (event) {
-			console.log("nodeClickHandler=" + linkAnalysis.nodeClickHandler);
+			//console.log("nodeClickHandler=" + linkAnalysis.nodeClickHandler);
 			handleMouseDown(event, linkAnalysis.nodeClickHandler);
 		});
 

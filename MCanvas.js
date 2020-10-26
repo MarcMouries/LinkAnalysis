@@ -15,75 +15,40 @@ COLORS = [
 //                          CANVAS
 // =============================================================
 
-/*
- *  Calculate the Height of text with the specified font
- *
- *
- *   [font style] [font weight] [font size] [font face]
- *
- *   Example: f
-*/
-function getLineHeight(txt, font) {
-  var el = document.createElement("div");
-
-  el.style.cssText =
-    "position:fixed;padding:0;left:-9999px;top:-9999px;" +
-    "font: " +
-    font +
-    ";";
-  //console.log("cssText= " + el.style.cssText);
-  el.textContent = txt;
-  document.body.appendChild(el);
-  var height = parseInt(getComputedStyle(el).getPropertyValue("height"), 10);
-  document.body.removeChild(el);
-
-  return height;
-}
-
-function drawLine(x1, y1, x2, y2) {
-  thisCanvas.ctx.beginPath();
-  thisCanvas.ctx.moveTo(x1, y1);
-  thisCanvas.ctx.lineTo(x2, y2);
-  thisCanvas.ctx.stroke();
-}
-
-function addZoom(container) {
-	var div_zoom = document.createElement("DIV");
-	div_zoom.setAttribute("id", "zoom_buttons");
-	container.appendChild(div_zoom);
-  
-	var zoom_plus = document.createElement("INPUT");
-	zoom_plus.setAttribute("type", "button");
-	zoom_plus.setAttribute("value", "+");
-	zoom_plus.setAttribute("id", "zoom_plus");
-	div_zoom.appendChild(zoom_plus); 
-	
-	var zoom_minus = document.createElement("INPUT");
-	zoom_minus.setAttribute("type", "button");
-	zoom_minus.setAttribute("value", "-");
-	zoom_minus.setAttribute("id", "zoom_minus");
-	div_zoom.appendChild(zoom_minus);
-}
 
 
-function MCanvas({ container }) {
-  var thisCanvas = (this.canvas = document.createElement("canvas"));
+//var MCanvas = function (container, options) {
+function MCanvas( container, options) {
+
+	options || (options = {});
+
+  //var thisCanvas = (this.canvas = document.createElement("canvas"));
+  this.canvas = document.createElement("canvas");
+  var self = this;
+
+
   this.canvas.style.width = "100%";
   this.canvas.style.height = "100%";
   container.appendChild(this.canvas);
   this.ctx = this.canvas.getContext("2d");
   this.dpr = window.devicePixelRatio || 1;
   //  this.dpr = 1;
-  var bc_rect = thisCanvas.getBoundingClientRect();
-  thisCanvas.width = bc_rect.width * this.dpr;
-  thisCanvas.height = bc_rect.height * this.dpr;
+  var bc_rect = this.canvas.getBoundingClientRect();
+  this.canvas.width = bc_rect.width * this.dpr;
+  this.canvas.height = bc_rect.height * this.dpr;
   this.ctx.scale(this.dpr, this.dpr);
   this.canvas.style.width = bc_rect.width + "px";
   this.canvas.style.height = bc_rect.height + "px";
+
+  /**
+   *  Show zoom
+   */
+  show_zoom = options.show_zoom || true;
+
   //
   console.log("MCanvas");
   console.log(container);
-  console.log("MCanvas = " + thisCanvas.width + "x" + thisCanvas.height);
+  console.log("MCanvas = " + this.canvas.width + "x" + this.canvas.height);
 
   this.margin = {
     top: 00,
@@ -93,6 +58,100 @@ function MCanvas({ container }) {
   };
   this.width = this.canvas.width - this.margin.left - this.margin.right;
   this.height = this.canvas.height - this.margin.top - this.margin.bottom;
+
+
+
+  this.zoomIn = function () {
+    console.log("zoomIn: ");
+    this.scale /= this.scaleMultiplier;
+    this.draw();
+  };
+  this.zoomOut = function () {
+    console.log("zoomOut: ");
+    this.scale *= this.scaleMultiplier;
+    this.draw();
+  };
+
+  this.resetZoom = function () {
+    this.scale = this.original_scale;
+    this.translatePos = { x: 0, y: 0 };
+    console.log("resetZoom: " + this.scale );
+    this.draw();
+  };
+
+  var addZoom = function (container, top, left) {
+		var div_zoom = document.createElement("DIV");
+		div_zoom.setAttribute("id", "zoom_buttons");
+		container.appendChild(div_zoom);
+	
+		var css = `
+		#zoom_buttons {
+			position: absolute;
+			width: 30px;
+			top: ${top}px;
+			left: ${left}px; 
+		  }		
+		.zoomButton { 
+			padding: 0px;
+			width: 35px;
+			height: 35px;
+			margin: 0px 0px 2px 0px;
+			font-size: 28px;
+			font-weight: 500;
+		}`;
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		style.appendChild(document.createTextNode(css));
+		document.head.appendChild(style);
+
+	  
+		var zoom_plus = document.createElement("INPUT");
+		zoom_plus.setAttribute("type", "button");
+		zoom_plus.setAttribute("value", "+");
+		zoom_plus.setAttribute("id", "zoom_plus");
+		zoom_plus.setAttribute("class", "zoomButton");
+		div_zoom.appendChild(zoom_plus); 
+		
+		var zoom_minus = document.createElement("INPUT");
+		zoom_minus.setAttribute("type", "button");
+		zoom_minus.setAttribute("value", "-");
+		zoom_minus.setAttribute("id", "zoom_minus");
+		zoom_minus.setAttribute("class", "zoomButton");
+		div_zoom.appendChild(zoom_minus);
+	
+		var zoom_reset = document.createElement("INPUT");
+		zoom_reset.setAttribute("type", "button");
+		zoom_reset.setAttribute("value", "↺");
+		zoom_reset.setAttribute("id", "zoom_reset");
+		zoom_reset.setAttribute("class", "zoomButton");
+		div_zoom.appendChild(zoom_reset);
+
+		var bPlus = document.getElementById("zoom_plus");
+
+		bPlus.addEventListener( "click", function () {self.zoomIn();}, false);
+		zoom_minus.addEventListener("click", function () {self.zoomOut();}, false);
+		zoom_reset.addEventListener("click", function () {self.resetZoom();}, false);
+	}
+
+
+	if (show_zoom) {
+		console.log("==================adding zoom");
+				//offsetTop: 63
+
+		//var computedStyle = getComputedStyle(this.canvas);
+		//console.log("canvas offsetLeft: " + this.canvas.offsetLeft);
+
+
+		var top = 72;
+		var button_width = 40;
+		var left = this.canvas.width + this.canvas.offsetLeft - button_width; 
+
+		addZoom (container, top, left);
+		console.log("==================adding zoom");
+
+	}
+
+
 }
 
 MCanvas.prototype.resize = function () {
@@ -216,10 +275,8 @@ function apply_styles(ctx, color_stroke, color_fill, line_width) {
   }
 }
 MCanvas.prototype.drawArc = function (
-  center,
-  radius,
-  start_angle,
-  end_angle,
+  center,  radius,
+  start_angle,  end_angle,
   color_stroke,
   color_fill,
   line_width
@@ -314,3 +371,36 @@ window.addEventListener("load",  function () {
   },
   false
 );
+
+
+/*
+ *  Calculate the Height of text with the specified font
+ *
+ *
+ *   [font style] [font weight] [font size] [font face]
+ *
+ *   Example: f
+*/
+function getLineHeight(txt, font) {
+	var el = document.createElement("div");
+  
+	el.style.cssText =
+	  "position:fixed;padding:0;left:-9999px;top:-9999px;" +
+	  "font: " +
+	  font +
+	  ";";
+	//console.log("cssText= " + el.style.cssText);
+	el.textContent = txt;
+	document.body.appendChild(el);
+	var height = parseInt(getComputedStyle(el).getPropertyValue("height"), 10);
+	document.body.removeChild(el);
+  
+	return height;
+  }
+  
+  function drawLine(x1, y1, x2, y2) {
+	thisCanvas.ctx.beginPath();
+	thisCanvas.ctx.moveTo(x1, y1);
+	thisCanvas.ctx.lineTo(x2, y2);
+	thisCanvas.ctx.stroke();
+  }
