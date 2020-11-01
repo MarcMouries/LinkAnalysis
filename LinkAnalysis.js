@@ -91,7 +91,7 @@ Graph.prototype.isRoot = function (node) {
 Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 	var sourceNode = this.getNode(sourceNode_id);
 	if (sourceNode == undefined) {
-		throw new TypeError("Trying to add a link to the non-existent node with id: " +	sourceNode_id);
+		throw new TypeError("Trying to add a link to the non-existent node with id: " + sourceNode_id);
 	}
 	var targetNode = this.getNode(targetNode_id);
 	if (targetNode == undefined) {
@@ -230,7 +230,7 @@ function to_string_node_list(node_list) {
 function build_nodes_at_level() {
 	var nodes_by_level = [];
 
-	graph.visit_breadth_first(root_node, function (level,nodes_at_current_level	) {
+	graph.visit_breadth_first(root_node, function (level, nodes_at_current_level) {
 		// console.log("Level " + level + ": " + to_string);
 		nodes_by_level[level] = nodes_at_current_level;
 	});
@@ -336,13 +336,27 @@ var LinkAnalysis = (function () {
 		FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
 
+		this.scaleMultiplier = 0.9;
+		this.original_scale = 1;
+		/**
+		 *  Show zoom
+			*/
+		show_zoom = options.show_zoom || true;
 
+		/**
+		 *  ID of the node the graph will be centered on
+			*/
 		center_on_node_id = options.center_on_node_id;
+
+		/**
+		 *  Contains list of icons by type
+			*/
 		icon_by_node_type = options.icon_by_node_type || [];
 
 		console.log("LinkAnalysis");
 		console.log("center_on_node_id = " + center_on_node_id);
 		console.log("icon_by_node_type = " + icon_by_node_type);
+		console.log("show_zoom         = " + show_zoom);
 		console.log(icon_by_node_type);
 
 
@@ -350,6 +364,8 @@ var LinkAnalysis = (function () {
 		this.nodes_at_level = [];
 
 		var linkAnalysis = this;
+		var self = this;
+
 
 		// the imgs[] array now holds fully loaded images
 		mcanvas = new MCanvas(chart_container);
@@ -380,8 +396,84 @@ var LinkAnalysis = (function () {
 		this.htmlLeft = html.offsetLeft;
 		console.log(" this.htmlTop: " + this.htmlTop);
 		console.log(" this.htmlTop: " + this.htmlTop);
-		//////////////
 
+
+		
+
+
+		this.zoomIn = function () {
+			this.scale /= this.scaleMultiplier;
+			console.log("zoomIn: " + this.scale);
+			this.render();
+
+		};
+		this.zoomOut = function () {
+			this.scale *= this.scaleMultiplier;
+			console.log("zoomOut: " + this.scale);
+			this.render();
+		};
+
+		this.resetZoom = function () {
+			this.scale = this.original_scale;
+			this.translatePos = { x: 0, y: 0 };
+			console.log("resetZoom: " + this.scale);
+			this.render();
+		};
+
+		var addZoom = function (container, top, left) {
+			var div_zoom = document.createElement("DIV");
+			div_zoom.setAttribute("id", "zoom_buttons");
+			container.appendChild(div_zoom);
+
+			var css = `
+		    	#zoom_buttons {
+			    	position: absolute;
+			    	width: 30px;
+			    	top: ${top}px;
+			    	left: ${left}px;
+		     	}
+				.zoomButton {
+					padding: 0px;
+					width: 35px;
+					height: 35px;
+					margin: 0px 0px 2px 0px;
+					font-size: 28px;
+					font-weight: 500;
+				}`;
+			var style = document.createElement('style');
+			style.appendChild(document.createTextNode(css));
+			document.head.appendChild(style);
+
+			var zoom_plus = document.createElement("INPUT");
+			zoom_plus.setAttribute("type", "button");
+			zoom_plus.setAttribute("value", "+");
+			zoom_plus.setAttribute("id", "zoom_plus");
+			zoom_plus.setAttribute("class", "zoomButton");
+			div_zoom.appendChild(zoom_plus);
+
+			var zoom_minus = document.createElement("INPUT");
+			zoom_minus.setAttribute("type", "button");
+			zoom_minus.setAttribute("value", "-");
+			zoom_minus.setAttribute("id", "zoom_minus");
+			zoom_minus.setAttribute("class", "zoomButton");
+			div_zoom.appendChild(zoom_minus);
+
+			var zoom_reset = document.createElement("INPUT");
+			zoom_reset.setAttribute("type", "button");
+			zoom_reset.setAttribute("value", "↺");
+			zoom_reset.setAttribute("id", "zoom_reset");
+			zoom_reset.setAttribute("class", "zoomButton");
+			div_zoom.appendChild(zoom_reset);
+
+			var bPlus = document.getElementById("zoom_plus");
+
+			bPlus.addEventListener("click", function () { self.zoomIn(); }, false);
+			zoom_minus.addEventListener("click", function () { self.zoomOut(); }, false);
+			zoom_reset.addEventListener("click", function () { self.resetZoom(); }, false);
+		}
+		/**
+		 * 
+		 */
 		var renderLink = function (link) {
 			mcanvas.drawLine(link.source.x, link.source.y, link.target.x, link.target.y, LINK_COLOR, LINK_WIDTH);
 		};
@@ -506,6 +598,26 @@ var LinkAnalysis = (function () {
 			linkAnalysis.render();
 		};
 
+		if (show_zoom) {
+			console.log("==================adding zoom");
+			//offsetTop: 63
+
+			//var computedStyle = getComputedStyle(this.canvas);
+			//console.log("canvas offsetLeft: " + this.canvas.offsetLeft);
+
+
+			var top = 72;
+			var button_width = 40;
+			//var left = this.canvas.width + this.canvas.offsetLeft - button_width; 
+			var left = mcanvas.getWidth() + mcanvas.getOffsetLeft() - button_width;
+
+			addZoom(chart_container, top, left);
+			console.log("==================adding zoom");
+
+		}
+
+
+
 		addEventListener("mouseup", handleMouseUp, false);
 		addEventListener("mousemove", handleMouseMove, false);
 		addEventListener("mousedown", function (event) {
@@ -579,20 +691,20 @@ var LinkAnalysis = (function () {
 			node.radius = NODE_RADIUS;
 
 			//initialize the image
-/*
-				if (node.data.type == "person") {
-					if (node.data.photo) {
-						//image = new Image();
-						image = document.createElement("IMG");
-						image.onload = function () {
-							ctx.drawImage(image, node.x - 20, node.y, 33, 33);
-						};
-						image.crossOrigin = "anonymous";
-						image.src = node.data.photo;
-					}
-				} else {
-				}
-				*/
+			/*
+							if (node.data.type == "person") {
+								if (node.data.photo) {
+									//image = new Image();
+									image = document.createElement("IMG");
+									image.onload = function () {
+										ctx.drawImage(image, node.x - 20, node.y, 33, 33);
+									};
+									image.crossOrigin = "anonymous";
+									image.src = node.data.photo;
+								}
+							} else {
+							}
+							*/
 
 
 			if (node.data.type) {
