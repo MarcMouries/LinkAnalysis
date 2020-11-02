@@ -10,6 +10,9 @@ function log(msg) {
 	}
 }
 
+
+
+
 // =============================================================
 //                          Node
 // -------------------------------------------------------------
@@ -318,7 +321,16 @@ MRadialLayout.Calculate_Positions = function (graph, starting_vertex, center) {
 // =============================================================
 
 var LinkAnalysis = (function () {
-	var mcanvas = null;
+
+/*
+var scaleRatio = fabric.devicePixelRatio;
+__initRetinaScaling: function(scaleRatio, canvas, context) {
+	canvas.setAttribute('width', this.width * scaleRatio);
+	canvas.setAttribute('height', this.height * scaleRatio);
+	context.scale(scaleRatio, scaleRatio);
+  },
+*/
+
 
 	function LinkAnalysis(chart_container, options) {
 		options || (options = {});
@@ -336,11 +348,18 @@ var LinkAnalysis = (function () {
 		FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
 
-		this.scaleMultiplier = 0.9;
-		this.original_scale = 1;
+		this.dpr = window.devicePixelRatio || 1;
+		console.log("dpr scale: " + this.dpr);
+
+		this.original_scale = this.dpr;
+		this.scale = this.original_scale;
+		this.scaleMultiplier =  0.9;
+		this.startDragOffset = { x: 0,	y: 0};
+		this.pan = { x: 0,	y: 0};
+
 		/**
 		 *  Show zoom
-			*/
+		*/
 		show_zoom = options.show_zoom || true;
 
 		/**
@@ -369,12 +388,14 @@ var LinkAnalysis = (function () {
 
 		// the imgs[] array now holds fully loaded images
 		mcanvas = new MCanvas(chart_container);
+		console.log("mcanvas (" + mcanvas.getWidth()  + "x" + mcanvas.getHeight());
 		ctx = mcanvas.getContext();
-		//ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+		this.translatePos = {x:0,y:0};//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
+		console.log("translatePos: " + this.translatePos);
 
 		//log(mcanvas);
-		//log("MChartView.getWidth = " + this.getWidth());
-		//log("MChartView.getHeight = " + this.getHeight());
+
 
 		//			this.addEventListeners();
 		/////////////
@@ -398,26 +419,23 @@ var LinkAnalysis = (function () {
 		console.log(" this.htmlTop: " + this.htmlTop);
 
 
-		
-
-
 		this.zoomIn = function () {
 			this.scale /= this.scaleMultiplier;
 			console.log("zoomIn: " + this.scale);
-			this.render();
+			this.render("zoom");
 
 		};
 		this.zoomOut = function () {
 			this.scale *= this.scaleMultiplier;
 			console.log("zoomOut: " + this.scale);
-			this.render();
+			this.render("zoom");
 		};
 
 		this.resetZoom = function () {
 			this.scale = this.original_scale;
-			this.translatePos = { x: 0, y: 0 };
+			//this.translatePos = { x: 0, y: 0 };
 			console.log("resetZoom: " + this.scale);
-			this.render();
+			this.render("zoom");
 		};
 
 		var addZoom = function (container, top, left) {
@@ -520,24 +538,36 @@ var LinkAnalysis = (function () {
 			//mcanvas.drawBorder(this.background_color);
 		};
 
+
+		/**
+		 * MOUSE DOWN
+		 * @param {*} event 
+		 * @param {*} callback 
+		 */
 		var handleMouseDown = function (event, callback) {
+			linkAnalysis.mouseDown = true;
+
 			// tell the browser we're handling this event
 			event.preventDefault();
 			event.stopPropagation();
 
 			var mouse = linkAnalysis.getMouse(event);
-			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
+			self.startDragOffset.x = event.clientX - self.translatePos.x;
+			self.startDragOffset.y = event.clientY - self.translatePos.y;
 
+
+			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
+/*
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
 				if (pointInCircle(mouse.x, mouse.y, node)) {
 					node.isClicked = true;
-					linkAnalysis.selection = node;
-					linkAnalysis.dragoffx = mouse.x - node.x;
-					linkAnalysis.dragoffy = mouse.y - node.y;
-					linkAnalysis.dragging = true;
-					linkAnalysis.valid = false;
+					self.selection = node;
+					self.dragoffx = mouse.x - node.x;
+					self.dragoffy = mouse.y - node.y;
+					self.dragging = true;
+					self.valid = false;
 					// Callback to listerer(node);
 					callback(node);
 					return;
@@ -545,24 +575,55 @@ var LinkAnalysis = (function () {
 					node.isClicked = false;
 				}
 			}
+*/
 			linkAnalysis.render();
 		};
+
+		/**
+		 * MOUSE Move
+		 * @param {*} event 
+		 */
 		var handleMouseMove = function (event) {
+			var mouse = linkAnalysis.getMouse(event);
+
+			if (linkAnalysis.mouseDown) {
+				self.translatePos.x = event.clientX  - self.startDragOffset.x;
+				self.translatePos.y = event.clientY - self.startDragOffset.y;
+
+				self.pan.x = self.translatePos.x;
+				self.pan.y = self.translatePos.y;
+			}
 			// tell the browser we're handling this event
 			event.preventDefault();
 			event.stopPropagation();
-			var mouse = linkAnalysis.getMouse(event);
+
+
+			//console.log("this.scale = " + self.scale);
+			//console.log("mouse.x = " + mouse.x);
+			//console.log("self.pan.x = " + self.pan.x);
+			//console.log("parse = " + parseInt((mouse.x - self.pan.x)));
+
+
+			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
+			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
+
+
+			var coord_norm = document.getElementById("coord_screen");
+			var coord_trans = document.getElementById("coord_transf");
+			coord_norm.innerHTML = "Screen Coordinates: " + mouse.x + "/" + mouse.y;
+			coord_trans.innerHTML = "Transf. Coordinates: " + mouseXT + "/" + mouseYT;
+
 
 			// Highlight Node when mouse over
 			var newCursor;
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				if (pointInCircle(mouse.x, mouse.y, node)) {
+				if (pointInCircle(mouseXT, mouseYT, node)) {
 					//					newCursor=s.cursor;
 					newCursor = 'grab';
 					//if (pointInCircle(event.clientX, event.clientY, node)) {
-					console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
+					//console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
 					node.isBelowMouse = true;
 					break;
 
@@ -577,19 +638,22 @@ var LinkAnalysis = (function () {
 				mcanvas.setCursor(newCursor);
 			}
 
-			if (linkAnalysis.dragging) {
+			if (self.dragging) {
 				// We don't want to drag the object by its top-left corner,
 				// we want to drag from where we clicked.
 				// Thats why we saved the offset and use it here
-				linkAnalysis.selection.x = mouse.x - linkAnalysis.dragoffx;
-				linkAnalysis.selection.y = mouse.y - linkAnalysis.dragoffy;
-				linkAnalysis.valid = false; // Something's dragging so we must redraw
+				self.selection.x = mouse.x - self.dragoffx;
+				self.selection.y = mouse.y - self.dragoffy;
+				self.valid = false; // Something's dragging so we must redraw
 			}
-			linkAnalysis.render();
+			self.render();
 		};
+
+
 		var handleMouseUp = function (event) {
-			//console.log(" handleMouse UP");
+			linkAnalysis.mouseDown = false;
 			linkAnalysis.dragging = false;
+
 
 			if (linkAnalysis.current_node) {
 				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id + " isClicked");
@@ -613,7 +677,6 @@ var LinkAnalysis = (function () {
 
 			addZoom(chart_container, top, left);
 			console.log("==================adding zoom");
-
 		}
 
 
@@ -625,8 +688,27 @@ var LinkAnalysis = (function () {
 			handleMouseDown(event, linkAnalysis.nodeClickHandler);
 		});
 
-		LinkAnalysis.prototype.render = function () {
-			//console.log("LinkAnalysis.center_on_node_id = " + center_on_node_id);
+		LinkAnalysis.prototype.render = function (/* optional */ renderTrigger) {
+			mcanvas.clear();
+
+			ctx.save();
+			ctx.translate(this.pan.x, this.pan.y);
+			ctx.scale(this.scale, this.scale);
+			// identity matrix (no transformation)
+			//ctx.setTransform(this.scale, 0, 0, this.scale, this.pan.x, this.pan.y);
+			mcanvas.drawBorder();
+
+
+			if (renderTrigger) {
+				console.log("LinkAnalysis.event trigger = " + renderTrigger);
+				if (renderTrigger == "zoom") {
+					console.log("LinkAnalysis.render = " + this.scale);
+					//ctx.translate(this.translatePos.x, this.translatePos.y);
+					//ctx.scale(this.scale, this.scale);
+				}
+				console.log("mcanvas: " + mcanvas.getWidth().toFixed(2)  + "x" + mcanvas.getHeight().toFixed(2));
+			}
+
 
 			if (center_on_node_id) {
 				var starting_vertex = this.graph.getNode(center_on_node_id);
@@ -650,8 +732,6 @@ var LinkAnalysis = (function () {
 				MRadialLayout.Calculate_Positions(this.graph, starting_vertex, this.center);
 			}
 
-			mcanvas.clear();
-			//mcanvas.drawBorder();
 
 			// LINKS
 			var links = this.graph.getLinks();
@@ -667,6 +747,9 @@ var LinkAnalysis = (function () {
 				//log("LinkAnalysis render node: " + node.id);
 				renderNode(node);
 			}
+
+			ctx.restore();
+
 		};
 	}
 
@@ -759,7 +842,6 @@ var LinkAnalysis = (function () {
 
 		setNodeClickHandler: function (nodeClickHandler) {
 			this.nodeClickHandler = nodeClickHandler;
-			console.log("nodeClickHandler=" + this.nodeClickHandler);
 		},
 
 		show: function () {
@@ -786,22 +868,13 @@ var LinkAnalysis = (function () {
 
 			// Add padding and border style widths to offset
 			// Also add the offsets in case there's a position:fixed bar
-			offsetX +=
-				this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
-			offsetY +=
-				this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
+			offsetX +=	this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
+			offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
 
 			mx = e.pageX - offsetX;
 			my = e.pageY - offsetY;
 
-			//mx = e.pageX ;
-			//my = e.pageY ;
-
-			// We return a simple javascript object (a hash) with x and y defined
-			return {
-				x: mx,
-				y: my,
-			};
+			return {x: mx, y: my};
 		},
 
 		updateGraph: function () {

@@ -16,7 +16,6 @@ COLORS = [
 // =============================================================
 
 
-
 //var MCanvas = function (container, options) {
 function MCanvas( container, options) {
 
@@ -42,7 +41,7 @@ function MCanvas( container, options) {
 
 
 
-  console.log("MCanvas = " + this.canvas.width + "x" + this.canvas.height);
+  console.log("MCanvas = " + this.getWidth() + " x " + this.getHeight());
 
   this.margin = {
     top: 00,
@@ -77,14 +76,14 @@ MCanvas.prototype.resize = function () {
 	mcanvas.ctx.font = "50px Calibri";
 	mcanvas.ctx.fillStyle = "#DDDDDD"; //black
 	//this.ctx.fillRect(0, 0, width, height); //fill the canvas
-  
+
 	var resizeText =
-	  "Canvas (px): " + mcanvas.canvas.width + " x " + mcanvas.canvas.height;
+	  "Canvas (px): " + mcanvas.getWidth() + " x " + mcanvas.getHeight();
 	console.log(resizeText);
 	mcanvas.ctx.textAlign = "center";
 	mcanvas.ctx.fillStyle = "white"; //white
 	mcanvas.ctx.fillText(resizeText, width / 2, height / 2);
-  
+
 	drawLine(0, 0, width, height);
 	drawLine(0, height, width, 0);
 
@@ -96,12 +95,11 @@ MCanvas.prototype.getContext = function () {
 };
 
 
-
 MCanvas.prototype.getHeight = function () {
   return this.canvas.height / this.dpr;
 };
 
-MCanvas.prototype.getOffsetLeft = function () {
+MCanvas.prototype.getOffsetLeft__ = function () {
   return this.canvas.offsetLeft;
 };
 
@@ -165,8 +163,10 @@ MCanvas.prototype.drawTextBG = function (txt, x,  y,  font,  padding,  backgroun
 };
 
 MCanvas.prototype.drawBorder = function (background_color) {
-  this.ctx.rect(this.margin.left, this.margin.top, this.width, this.height);
   this.ctx.fillStyle = "#F5F5F5";
+//  this.ctx.rect(this.margin.left, this.margin.top, this.width, this.height);
+  this.ctx.fillRect(0, 0, this.getWidth(), this.getHeight());
+
   //this.ctx.shadowColor = "black";
   //this.ctx.shadowBlur = 2;
   //this.ctx.shadowOffsetX = 0;
