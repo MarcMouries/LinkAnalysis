@@ -348,7 +348,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
 
-		this.dpr = window.devicePixelRatio || 1;
+		this.dpr = 1;//window.devicePixelRatio || 1;
 		console.log("dpr scale: " + this.dpr);
 
 		this.original_scale = this.dpr;
@@ -394,7 +394,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		this.translatePos = {x:0,y:0};//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
 		console.log("translatePos: " + this.translatePos);
 
-		//log(mcanvas);
 
 
 		//			this.addEventListeners();
@@ -509,10 +508,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 			} else if (node.isBelowMouse) {
 				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_HOVER_NODE, "", ring_width);
-
-			}
-			else {
-				//	mcanvas.setCursor('auto');
 			}
 
 			if (node.data._icon) {
@@ -521,8 +516,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 					node.y - NODE_ICON_WIDTH / 2,
 					NODE_ICON_WIDTH, NODE_ICON_WIDTH);
 			}
-
-
 
 			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
 
@@ -546,22 +539,23 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		 */
 		var handleMouseDown = function (event, callback) {
 			linkAnalysis.mouseDown = true;
+			var mouse = linkAnalysis.getMouse(event);
 
 			// tell the browser we're handling this event
 			event.preventDefault();
 			event.stopPropagation();
 
-			var mouse = linkAnalysis.getMouse(event);
 			self.startDragOffset.x = event.clientX - self.translatePos.x;
 			self.startDragOffset.y = event.clientY - self.translatePos.y;
 
-
 			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
-/*
+			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
+			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
+
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				if (pointInCircle(mouse.x, mouse.y, node)) {
+				if (pointInCircle(mouseXT, mouseYT, node)) {
 					node.isClicked = true;
 					self.selection = node;
 					self.dragoffx = mouse.x - node.x;
@@ -575,7 +569,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 					node.isClicked = false;
 				}
 			}
-*/
 			linkAnalysis.render();
 		};
 
@@ -585,24 +578,27 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		 */
 		var handleMouseMove = function (event) {
 			var mouse = linkAnalysis.getMouse(event);
+			// tell the browser we're handling this event
+			event.preventDefault();
+			event.stopPropagation();
 
-			if (linkAnalysis.mouseDown) {
+
+
+			// if mouse not over a node we move the canvas
+			if (self.mouseDown && !self.mouse_over_node) {
+				console.log("mouse_over_node: " + self.mouse_over_node);
 				self.translatePos.x = event.clientX  - self.startDragOffset.x;
 				self.translatePos.y = event.clientY - self.startDragOffset.y;
 
 				self.pan.x = self.translatePos.x;
 				self.pan.y = self.translatePos.y;
 			}
-			// tell the browser we're handling this event
-			event.preventDefault();
-			event.stopPropagation();
 
 
 			//console.log("this.scale = " + self.scale);
 			//console.log("mouse.x = " + mouse.x);
 			//console.log("self.pan.x = " + self.pan.x);
 			//console.log("parse = " + parseInt((mouse.x - self.pan.x)));
-
 
 			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
 			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
@@ -619,16 +615,20 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
+				//if (pointInCircle(event.clientX, event.clientY, node)) {
+				//if (pointInCircle(mouse.Y, mouse.Y, node)) {
 				if (pointInCircle(mouseXT, mouseYT, node)) {
-					//					newCursor=s.cursor;
+					//newCursor=s.cursor;
 					newCursor = 'grab';
-					//if (pointInCircle(event.clientX, event.clientY, node)) {
-					//console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
+					console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
 					node.isBelowMouse = true;
+					self.mouse_over_node = true;
+					//console.log(" in loop IF mouse_over_node: " + self.mouse_over_node);
 					break;
-
 				} else {
 					node.isBelowMouse = false;
+					self.mouse_over_node = false;
+					//console.log(" in loop ELSE mouse_over_node: " + self.mouse_over_node);
 				}
 			}
 			if (!newCursor) {
@@ -663,23 +663,14 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		};
 
 		if (show_zoom) {
-			console.log("==================adding zoom");
-			//offsetTop: 63
-
 			//var computedStyle = getComputedStyle(this.canvas);
 			//console.log("canvas offsetLeft: " + this.canvas.offsetLeft);
-
-
 			var top = 72;
 			var button_width = 40;
 			//var left = this.canvas.width + this.canvas.offsetLeft - button_width; 
 			var left = mcanvas.getWidth() + mcanvas.getOffsetLeft() - button_width;
-
 			addZoom(chart_container, top, left);
-			console.log("==================adding zoom");
 		}
-
-
 
 		addEventListener("mouseup", handleMouseUp, false);
 		addEventListener("mousemove", handleMouseMove, false);
