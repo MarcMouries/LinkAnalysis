@@ -567,6 +567,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 					return;
 				} else {
 					node.isClicked = false;
+					self.dragging = false;
 				}
 			}
 			linkAnalysis.render();
@@ -582,11 +583,8 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			event.preventDefault();
 			event.stopPropagation();
 
-
-
-			// if mouse not over a node we move the canvas
-			if (self.mouseDown && !self.mouse_over_node) {
-				console.log("mouse_over_node: " + self.mouse_over_node);
+			if (self.mouseDown && !self.selection) {
+			//if (!self.selection){
 				self.translatePos.x = event.clientX  - self.startDragOffset.x;
 				self.translatePos.y = event.clientY - self.startDragOffset.y;
 
@@ -618,17 +616,14 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				//if (pointInCircle(event.clientX, event.clientY, node)) {
 				//if (pointInCircle(mouse.Y, mouse.Y, node)) {
 				if (pointInCircle(mouseXT, mouseYT, node)) {
-					//newCursor=s.cursor;
 					newCursor = 'grab';
-					console.log("handleMouse_Move node '" + node.data.id + "' isBelowMouse");
+					if (!self.dragging && !node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
 					node.isBelowMouse = true;
 					self.mouse_over_node = true;
-					//console.log(" in loop IF mouse_over_node: " + self.mouse_over_node);
 					break;
 				} else {
 					node.isBelowMouse = false;
 					self.mouse_over_node = false;
-					//console.log(" in loop ELSE mouse_over_node: " + self.mouse_over_node);
 				}
 			}
 			if (!newCursor) {
@@ -653,7 +648,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		var handleMouseUp = function (event) {
 			linkAnalysis.mouseDown = false;
 			linkAnalysis.dragging = false;
-
 
 			if (linkAnalysis.current_node) {
 				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id + " isClicked");
