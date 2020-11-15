@@ -562,12 +562,12 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 					self.dragoffy = mouse.y - node.y;
 					self.dragging = true;
 					self.valid = false;
-					// Callback to listerer(node);
-					callback(node);
+					callback(node); // Callback to listerer(node);
 					return;
 				} else {
 					node.isClicked = false;
 					self.dragging = false;
+					self.selection = null;
 				}
 			}
 			linkAnalysis.render();
@@ -584,19 +584,12 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			event.stopPropagation();
 
 			if (self.mouseDown && !self.selection) {
-			//if (!self.selection){
 				self.translatePos.x = event.clientX  - self.startDragOffset.x;
 				self.translatePos.y = event.clientY - self.startDragOffset.y;
 
 				self.pan.x = self.translatePos.x;
 				self.pan.y = self.translatePos.y;
 			}
-
-
-			//console.log("this.scale = " + self.scale);
-			//console.log("mouse.x = " + mouse.x);
-			//console.log("self.pan.x = " + self.pan.x);
-			//console.log("parse = " + parseInt((mouse.x - self.pan.x)));
 
 			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
 			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
@@ -644,7 +637,10 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			self.render();
 		};
 
-
+		/**
+		 * MOUSE Up
+		 * @param {*} event 
+		 */
 		var handleMouseUp = function (event) {
 			linkAnalysis.mouseDown = false;
 			linkAnalysis.dragging = false;
