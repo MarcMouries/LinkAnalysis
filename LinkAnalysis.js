@@ -432,7 +432,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 		this.resetZoom = function () {
 			this.scale = this.original_scale;
-			//this.translatePos = { x: 0, y: 0 };
+			this.translatePos = { x: 0, y: 0 };
 			console.log("resetZoom: " + this.scale);
 			this.render("zoom");
 		};
@@ -504,7 +504,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			var ring_radius = node.radius + ring_width;
 			//console.log("ring_radius: " + ring_radius);
 			if (node.isClicked) {
-				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_SELECTED_NODE, "", ring_width);
+				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_SELECTED_NODE, "XXX", ring_width);
 
 			} else if (node.isBelowMouse) {
 				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_HOVER_NODE, "", ring_width);
@@ -531,6 +531,14 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			//mcanvas.drawBorder(this.background_color);
 		};
 
+		var deselectNodes = function (nodes) {
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+				if(self.selection != node || self.selection == null) {
+					node.isClicked = false;
+				}
+			}
+		}
 
 		/**
 		 * MOUSE DOWN
@@ -562,14 +570,17 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 					self.dragoffy = mouse.y - node.y;
 					self.dragging = true;
 					self.valid = false;
+					deselectNodes(nodes);
+					linkAnalysis.render();
 					callback(node); // Callback to listerer(node);
 					return;
-				} else {
-					node.isClicked = false;
-					self.dragging = false;
-					self.selection = null;
 				}
 			}
+			// did not return so no node was selected. User clicked on the canvas
+			node.isClicked = false;
+			self.dragging = false;
+			self.selection = null;
+			deselectNodes(nodes);
 			linkAnalysis.render();
 		};
 
@@ -634,7 +645,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				self.selection.y = mouse.y - self.dragoffy;
 				self.valid = false; // Something's dragging so we must redraw
 			}
-			self.render();
+			linkAnalysis.render();
 		};
 
 		/**
@@ -649,7 +660,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id + " isClicked");
 				linkAnalysis.nodeClickHandler(controller.current_node);
 			}
-			linkAnalysis.render();
 		};
 
 		if (show_zoom) {
@@ -665,7 +675,6 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		addEventListener("mouseup", handleMouseUp, false);
 		addEventListener("mousemove", handleMouseMove, false);
 		addEventListener("mousedown", function (event) {
-			//console.log("nodeClickHandler=" + linkAnalysis.nodeClickHandler);
 			handleMouseDown(event, linkAnalysis.nodeClickHandler);
 		});
 
@@ -684,8 +693,8 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);
 				if (renderTrigger == "zoom") {
 					console.log("LinkAnalysis.render = " + this.scale);
-					//ctx.translate(this.translatePos.x, this.translatePos.y);
-					//ctx.scale(this.scale, this.scale);
+					ctx.translate(this.translatePos.x, this.translatePos.y);
+					ctx.scale(this.scale, this.scale);
 				}
 				console.log("mcanvas: " + mcanvas.getWidth().toFixed(2)  + "x" + mcanvas.getHeight().toFixed(2));
 			}
@@ -728,9 +737,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				//log("LinkAnalysis render node: " + node.id);
 				renderNode(node);
 			}
-
 			ctx.restore();
-
 		};
 	}
 
