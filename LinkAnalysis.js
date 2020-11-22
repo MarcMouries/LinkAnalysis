@@ -322,16 +322,6 @@ MRadialLayout.Calculate_Positions = function (graph, starting_vertex, center) {
 
 var LinkAnalysis = (function () {
 
-	/*
-	var scaleRatio = fabric.devicePixelRatio;
-	__initRetinaScaling: function(scaleRatio, canvas, context) {
-		canvas.setAttribute('width', this.width * scaleRatio);
-		canvas.setAttribute('height', this.height * scaleRatio);
-		context.scale(scaleRatio, scaleRatio);
-	  },
-	*/
-
-
 	function LinkAnalysis(chart_container, options) {
 		options || (options = {});
 
@@ -349,13 +339,10 @@ var LinkAnalysis = (function () {
 		TEXT_COLOR = options.font || "#080808";
 
 		this.dpr = 1;//window.devicePixelRatio || 1;
-		console.log("dpr scale: " + this.dpr);
-
 		this.original_scale = this.dpr;
 		this.scale = this.original_scale;
 		this.scaleMultiplier = 0.9;
 		this.startDragOffset = { x: 0, y: 0 };
-		this.pan = { x: 0, y: 0 };
 
 		/**
 		 *  Show zoom
@@ -371,6 +358,12 @@ var LinkAnalysis = (function () {
 		 *  Contains list of icons by type
 		*/
 		icon_by_node_type = options.icon_by_node_type || [];
+
+		/**
+		 *  Stores the panning offset between the initial location and the canvas location after is has been panned
+		*/
+		this.translatePos = { x: 0, y: 0 };
+
 
 		console.log("LinkAnalysis");
 		console.log("center_on_node_id = " + center_on_node_id);
@@ -391,15 +384,6 @@ var LinkAnalysis = (function () {
 		console.log("mcanvas (" + mcanvas.getWidth() + "x" + mcanvas.getHeight());
 		ctx = mcanvas.getContext();
 
-		this.translatePos = { x: 0, y: 0 };//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
-
-		console.log("translatePos: " + this.translatePos);
-		console.log("mcanvas.getOffset: ");
-		console.log(mcanvas.getOffset());
-
-
-
-
 		//			this.addEventListeners();
 		/////////////
 		console.log("getComputedStyle");
@@ -418,9 +402,10 @@ var LinkAnalysis = (function () {
 		var html = document.body.parentNode;
 		this.htmlTop = html.offsetTop;
 		this.htmlLeft = html.offsetLeft;
-		console.log(" this.htmlTop: " + this.htmlTop);
-		console.log(" this.htmlTop: " + this.htmlTop);
-
+		console.log("htmlLeft: " + this.htmlLeft);
+		console.log("htmlTop: " + this.htmlTop);
+		console.log("mcanvas.getOffset: ");
+		console.log(mcanvas.getOffset());
 
 		this.zoomIn = function () {
 			this.scale /= this.scaleMultiplier;
@@ -438,7 +423,6 @@ var LinkAnalysis = (function () {
 			this.scale = this.original_scale;
 			this.translatePos = { x: 0, y: 0 };
 			this.startDragOffset = { x: 0, y: 0 };
-
 			console.log("resetZoom: " + this.scale);
 			this.render("zoom");
 		};
@@ -560,8 +544,14 @@ var LinkAnalysis = (function () {
 			var mouse = linkAnalysis.getMouse(event);
 			// initial mouse click signaling the start of the dragging motion: we save the location of the user's mouse.
 			// dragging offest = current mouse - panning
-			self.startDragOffset.x = event.clientX - self.translatePos.x;
-			self.startDragOffset.y = event.clientY - self.translatePos.y;
+
+
+			//	self.translatePos.x = event.clientX - self.startDragOffset.x;
+			//	self.translatePos.y = event.clientY - self.startDragOffset.y;
+
+			//self.translatePos.x = mouse.x - self.startDragOffset.x;
+			//self.translatePos.y = mouse.y - self.startDragOffset.y;
+
 			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
 			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
 
@@ -574,7 +564,7 @@ var LinkAnalysis = (function () {
 					self.selection = node;
 					self.dragoffx = mouseXT - node.x;
 					self.dragoffy = mouseYT - node.y;
-					self.dragging = true;
+					self.dragging_node = true;
 					self.valid = false;
 					deselectNodes(nodes);
 					linkAnalysis.render();
@@ -583,8 +573,7 @@ var LinkAnalysis = (function () {
 				}
 			}
 			// did not return so no node was selected. User clicked on the canvas
-			node.isClicked = false;
-			self.dragging = false;
+			self.dragging_node = false;
 			self.selection = null;
 			deselectNodes(nodes);
 			linkAnalysis.render();
@@ -601,8 +590,11 @@ var LinkAnalysis = (function () {
 			event.stopPropagation();
 
 			if (self.mouseDown && !self.selection) {
-				self.translatePos.x = event.clientX - self.startDragOffset.x;
-				self.translatePos.y = event.clientY - self.startDragOffset.y;
+			//	self.translatePos.x = event.clientX - self.startDragOffset.x;
+			//	self.translatePos.y = event.clientY - self.startDragOffset.y;
+
+				//self.translatePos.x = mouse.x - self.startDragOffset.x;
+				//self.translatePos.y = mouse.y - self.startDragOffset.y;
 			}
 
 			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
@@ -618,7 +610,7 @@ var LinkAnalysis = (function () {
 
 
 			// Highlight Node when mouse over
-			if (!self.dragging) {
+			if (!self.dragging_node) {
 				var newCursor;
 				var nodes = linkAnalysis.graph.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
@@ -627,7 +619,7 @@ var LinkAnalysis = (function () {
 					//if (pointInCircle(mouse.Y, mouse.Y, node)) {
 					if (pointInCircle(mouseXT, mouseYT, node)) {
 						newCursor = 'grab';
-						if (!self.dragging && !node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
+						if (!node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
 						node.isBelowMouse = true;
 						self.mouse_over_node = true;
 						break;
@@ -643,8 +635,8 @@ var LinkAnalysis = (function () {
 					mcanvas.setCursor(newCursor);
 				}
 			}
-			if (self.dragging) {
-				info_mouse_action.innerHTML = "Mouse Action: " + "dragging";
+			if (self.dragging_node) {
+				info_mouse_action.innerHTML = "Mouse Action: " + "dragging node";
 				// We don't want to drag the object by its top-left corner,
 				// we want to drag from where we clicked.
 				// Thats why we saved the offset and use it here
@@ -662,7 +654,7 @@ var LinkAnalysis = (function () {
 		 */
 		var handleMouseUp = function (event) {
 			linkAnalysis.mouseDown = false;
-			linkAnalysis.dragging = false;
+			linkAnalysis.dragging_node = false;
 
 			if (linkAnalysis.current_node) {
 				console.log("linkAnalysis.current_node " + linkAnalysis.current_node.data.id + " isClicked");
