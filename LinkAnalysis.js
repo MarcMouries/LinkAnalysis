@@ -364,12 +364,12 @@ var LinkAnalysis = (function () {
 
 		/**
 		 *  ID of the node the graph will be centered on
-			*/
+		*/
 		center_on_node_id = options.center_on_node_id;
 
 		/**
 		 *  Contains list of icons by type
-			*/
+		*/
 		icon_by_node_type = options.icon_by_node_type || [];
 
 		console.log("LinkAnalysis");
@@ -437,6 +437,8 @@ var LinkAnalysis = (function () {
 		this.resetZoom = function () {
 			this.scale = this.original_scale;
 			this.translatePos = { x: 0, y: 0 };
+			this.startDragOffset = { x: 0, y: 0 };
+
 			console.log("resetZoom: " + this.scale);
 			this.render("zoom");
 		};
@@ -556,12 +558,12 @@ var LinkAnalysis = (function () {
 
 			linkAnalysis.mouseDown = true;
 			var mouse = linkAnalysis.getMouse(event);
+			// initial mouse click signaling the start of the dragging motion: we save the location of the user's mouse.
+			// dragging offest = current mouse - panning
 			self.startDragOffset.x = event.clientX - self.translatePos.x;
 			self.startDragOffset.y = event.clientY - self.translatePos.y;
-
-			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
-			var mouseXT = parseInt((mouse.x - self.startDragOffset.x) / self.scale);
-			var mouseYT = parseInt((mouse.y - self.startDragOffset.y) / self.scale);
+			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
+			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
 
 			// Node Selection
 			var nodes = linkAnalysis.graph.getNodes();
@@ -570,8 +572,8 @@ var LinkAnalysis = (function () {
 				if (pointInCircle(mouseXT, mouseYT, node)) {
 					node.isClicked = true;
 					self.selection = node;
-					self.dragoffx = mouse.x - node.x;
-					self.dragoffy = mouse.y - node.y;
+					self.dragoffx = mouseXT - node.x;
+					self.dragoffy = mouseYT - node.y;
 					self.dragging = true;
 					self.valid = false;
 					deselectNodes(nodes);
@@ -601,21 +603,14 @@ var LinkAnalysis = (function () {
 			if (self.mouseDown && !self.selection) {
 				self.translatePos.x = event.clientX - self.startDragOffset.x;
 				self.translatePos.y = event.clientY - self.startDragOffset.y;
-				// self.pan.x = self.translatePos.x;
-				// self.pan.y = self.translatePos.y;
-
-				//self.pan.x = event.clientX  - self.startDragOffset.x;
-				//self.pan.y = event.clientY - self.startDragOffset.y;
 			}
 
-			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
-			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
+			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
+			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
 
 
 			var coord_norm = document.getElementById("coord_screen");
 			var coord_trans = document.getElementById("coord_transf");
-
-
 			coord_norm.innerHTML = "Screen Coordinates: " + mouse.x + "/" + mouse.y;
 			coord_trans.innerHTML = "Transf. Coordinates: " + mouseXT + "/" + mouseYT;
 			var info_mouse_action = document.getElementById("mouse_action");
@@ -650,12 +645,12 @@ var LinkAnalysis = (function () {
 			}
 			if (self.dragging) {
 				info_mouse_action.innerHTML = "Mouse Action: " + "dragging";
-
 				// We don't want to drag the object by its top-left corner,
 				// we want to drag from where we clicked.
 				// Thats why we saved the offset and use it here
-				self.selection.x = mouse.x - self.dragoffx;
-				self.selection.y = mouse.y - self.dragoffy;
+				self.selection.x = mouseXT - self.dragoffx;
+				self.selection.y = mouseYT - self.dragoffy;
+
 				self.valid = false; // Something's dragging so we must redraw
 			}
 			linkAnalysis.render();
