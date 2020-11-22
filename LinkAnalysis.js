@@ -322,14 +322,14 @@ MRadialLayout.Calculate_Positions = function (graph, starting_vertex, center) {
 
 var LinkAnalysis = (function () {
 
-/*
-var scaleRatio = fabric.devicePixelRatio;
-__initRetinaScaling: function(scaleRatio, canvas, context) {
-	canvas.setAttribute('width', this.width * scaleRatio);
-	canvas.setAttribute('height', this.height * scaleRatio);
-	context.scale(scaleRatio, scaleRatio);
-  },
-*/
+	/*
+	var scaleRatio = fabric.devicePixelRatio;
+	__initRetinaScaling: function(scaleRatio, canvas, context) {
+		canvas.setAttribute('width', this.width * scaleRatio);
+		canvas.setAttribute('height', this.height * scaleRatio);
+		context.scale(scaleRatio, scaleRatio);
+	  },
+	*/
 
 
 	function LinkAnalysis(chart_container, options) {
@@ -353,9 +353,9 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 		this.original_scale = this.dpr;
 		this.scale = this.original_scale;
-		this.scaleMultiplier =  0.9;
-		this.startDragOffset = { x: 0,	y: 0};
-		this.pan = { x: 0,	y: 0};
+		this.scaleMultiplier = 0.9;
+		this.startDragOffset = { x: 0, y: 0 };
+		this.pan = { x: 0, y: 0 };
 
 		/**
 		 *  Show zoom
@@ -388,10 +388,10 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 		// the imgs[] array now holds fully loaded images
 		mcanvas = new MCanvas(chart_container);
-		console.log("mcanvas (" + mcanvas.getWidth()  + "x" + mcanvas.getHeight());
+		console.log("mcanvas (" + mcanvas.getWidth() + "x" + mcanvas.getHeight());
 		ctx = mcanvas.getContext();
 
-		this.translatePos = {x:0,y:0};//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
+		this.translatePos = { x: 0, y: 0 };//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
 		console.log("translatePos: " + this.translatePos);
 
 
@@ -534,7 +534,7 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 		var deselectNodes = function (nodes) {
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				if(self.selection != node || self.selection == null) {
+				if (self.selection != node || self.selection == null) {
 					node.isClicked = false;
 				}
 			}
@@ -595,11 +595,13 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 			event.stopPropagation();
 
 			if (self.mouseDown && !self.selection) {
-				self.translatePos.x = event.clientX  - self.startDragOffset.x;
+				self.translatePos.x = event.clientX - self.startDragOffset.x;
 				self.translatePos.y = event.clientY - self.startDragOffset.y;
+				// self.pan.x = self.translatePos.x;
+				// self.pan.y = self.translatePos.y;
 
-				self.pan.x = self.translatePos.x;
-				self.pan.y = self.translatePos.y;
+				//self.pan.x = event.clientX  - self.startDragOffset.x;
+				//self.pan.y = event.clientY - self.startDragOffset.y;
 			}
 
 			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
@@ -608,36 +610,43 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 			var coord_norm = document.getElementById("coord_screen");
 			var coord_trans = document.getElementById("coord_transf");
+
+
 			coord_norm.innerHTML = "Screen Coordinates: " + mouse.x + "/" + mouse.y;
 			coord_trans.innerHTML = "Transf. Coordinates: " + mouseXT + "/" + mouseYT;
+			var info_mouse_action = document.getElementById("mouse_action");
+			info_mouse_action.innerHTML = "Mouse Action: " + "Moving";
 
 
 			// Highlight Node when mouse over
-			var newCursor;
-			var nodes = linkAnalysis.graph.getNodes();
-			for (var i = 0; i < nodes.length; i++) {
-				var node = nodes[i];
-				//if (pointInCircle(event.clientX, event.clientY, node)) {
-				//if (pointInCircle(mouse.Y, mouse.Y, node)) {
-				if (pointInCircle(mouseXT, mouseYT, node)) {
-					newCursor = 'grab';
-					if (!self.dragging && !node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
-					node.isBelowMouse = true;
-					self.mouse_over_node = true;
-					break;
-				} else {
-					node.isBelowMouse = false;
-					self.mouse_over_node = false;
+			if (!self.dragging) {
+				var newCursor;
+				var nodes = linkAnalysis.graph.getNodes();
+				for (var i = 0; i < nodes.length; i++) {
+					var node = nodes[i];
+					//if (pointInCircle(event.clientX, event.clientY, node)) {
+					//if (pointInCircle(mouse.Y, mouse.Y, node)) {
+					if (pointInCircle(mouseXT, mouseYT, node)) {
+						newCursor = 'grab';
+						if (!self.dragging && !node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
+						node.isBelowMouse = true;
+						self.mouse_over_node = true;
+						break;
+					} else {
+						node.isBelowMouse = false;
+						self.mouse_over_node = false;
+					}
+				}
+				if (!newCursor) {
+					mcanvas.setCursor('move');
+				}
+				else {
+					mcanvas.setCursor(newCursor);
 				}
 			}
-			if (!newCursor) {
-				mcanvas.setCursor('move');
-			}
-			else {
-				mcanvas.setCursor(newCursor);
-			}
-
 			if (self.dragging) {
+				info_mouse_action.innerHTML = "Mouse Action: " + "dragging";
+
 				// We don't want to drag the object by its top-left corner,
 				// we want to drag from where we clicked.
 				// Thats why we saved the offset and use it here
@@ -693,10 +702,10 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);
 				if (renderTrigger == "zoom") {
 					console.log("LinkAnalysis.render = " + this.scale);
-					ctx.translate(this.translatePos.x, this.translatePos.y);
-					ctx.scale(this.scale, this.scale);
+					//ctx.translate(this.translatePos.x, this.translatePos.y);
+					//ctx.scale(this.scale, this.scale);
 				}
-				console.log("mcanvas: " + mcanvas.getWidth().toFixed(2)  + "x" + mcanvas.getHeight().toFixed(2));
+				console.log("mcanvas: " + mcanvas.getWidth().toFixed(2) + "x" + mcanvas.getHeight().toFixed(2));
 			}
 
 
@@ -856,13 +865,13 @@ __initRetinaScaling: function(scaleRatio, canvas, context) {
 
 			// Add padding and border style widths to offset
 			// Also add the offsets in case there's a position:fixed bar
-			offsetX +=	this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
+			offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
 			offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
 
 			mx = e.pageX - offsetX;
 			my = e.pageY - offsetY;
 
-			return {x: mx, y: my};
+			return { x: mx, y: my };
 		},
 
 		updateGraph: function () {
