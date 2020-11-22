@@ -152,10 +152,10 @@ var MCanvas = (function () {
     this.ctx.fillText(txt, x - width / 2, y + text_height);
   };
 
-  MCanvas.prototype.drawBorder = function (background_color) {
+  MCanvas.prototype.drawBackground = function (x, y, width, height, background_color) {
     this.ctx.fillStyle = "#F5F5F5";
     //  this.ctx.rect(this.margin.left, this.margin.top, this.width, this.height);
-    this.ctx.fillRect(0, 0, this.getWidth(), this.getHeight());
+    this.ctx.fillRect(x, y, width, height);
 
     //this.ctx.shadowColor = "black";
     //this.ctx.shadowBlur = 2;

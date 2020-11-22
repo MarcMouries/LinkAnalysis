@@ -389,10 +389,7 @@ var LinkAnalysis = (function () {
 		console.log("getComputedStyle");
 		console.log("----------------");
 
-		const style = document.defaultView.getComputedStyle(
-			mcanvas.canvas,
-			null
-		);
+		const style = document.defaultView.getComputedStyle(mcanvas.canvas, null);
 		this.stylePaddingLeft = parseInt(style["paddingLeft"], 10);
 		this.stylePaddingTop = parseInt(style["paddingTop"], 10);
 		this.styleBorderLeft = parseInt(style["borderLeftWidth"], 10);
@@ -490,11 +487,10 @@ var LinkAnalysis = (function () {
 
 			mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
 
+			// NODE RING
 			var ring_width = 10;
 			var ring_radius = node.radius + ring_width;
 			var ring_color = "";
-
-
 			if (node.isClicked) {
 				ring_color = COLOR_SELECTED_NODE;
 			} else if (node.isBelowMouse) {
@@ -502,6 +498,7 @@ var LinkAnalysis = (function () {
 			}
 			mcanvas.drawRing(node.x, node.y, ring_radius, ring_color, "", ring_width);
 
+			// NODE IMAGE
 			if (node.data._icon) {
 				ctx.drawImage(node.data._icon,
 					node.x - NODE_ICON_WIDTH / 2,
@@ -514,7 +511,6 @@ var LinkAnalysis = (function () {
 			var y = node.y + 18; //padding_node_title;
 			mcanvas.drawText(node.x, node.y + 28, node.data.id, FONT, TEXT_COLOR, maxLineWidth, ",");
 			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
-
 		};
 
 		var drawBorder = function () {
@@ -545,13 +541,17 @@ var LinkAnalysis = (function () {
 			var mouse = linkAnalysis.getMouse(event);
 			// initial mouse click signaling the start of the dragging motion: we save the location of the user's mouse.
 			// dragging offest = current mouse - panning
-
+			self.startDragOffset.x = event.clientX - self.translatePos.x;
+			self.startDragOffset.y = event.clientY - self.translatePos.y;
 
 			//	self.translatePos.x = event.clientX - self.startDragOffset.x;
 			//	self.translatePos.y = event.clientY - self.startDragOffset.y;
 
 			//self.translatePos.x = mouse.x - self.startDragOffset.x;
 			//self.translatePos.y = mouse.y - self.startDragOffset.y;
+
+			var info_mouse_action = document.getElementById("mouse_action");
+			info_mouse_action.innerHTML = "Mouse Action: " + "Down";
 
 			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
 			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
@@ -591,11 +591,8 @@ var LinkAnalysis = (function () {
 			event.stopPropagation();
 
 			if (self.mouseDown && !self.selection) {
-				//	self.translatePos.x = event.clientX - self.startDragOffset.x;
-				//	self.translatePos.y = event.clientY - self.startDragOffset.y;
-
-				//self.translatePos.x = mouse.x - self.startDragOffset.x;
-				//self.translatePos.y = mouse.y - self.startDragOffset.y;
+				self.translatePos.x = event.clientX - self.startDragOffset.x;
+				self.translatePos.y = event.clientY - self.startDragOffset.y;
 			}
 
 			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
@@ -622,11 +619,9 @@ var LinkAnalysis = (function () {
 						newCursor = 'grab';
 						if (!node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
 						node.isBelowMouse = true;
-						self.mouse_over_node = true;
 						break;
 					} else {
 						node.isBelowMouse = false;
-						self.mouse_over_node = false;
 					}
 				}
 				if (!newCursor) {
@@ -686,10 +681,9 @@ var LinkAnalysis = (function () {
 			//ctx.translate(this.pan.x, this.pan.y);
 			ctx.translate(this.translatePos.x, this.translatePos.y);
 			ctx.scale(this.scale, this.scale);
-			// identity matrix (no transformation)
-			//ctx.setTransform(this.scale, 0, 0, this.scale, this.pan.x, this.pan.y);
-			mcanvas.drawBorder();
 
+			// BACKGROUND
+			mcanvas.drawBackground(-this.translatePos.x, -this.translatePos.y, this.getWidth(), this.getHeight());
 
 			if (renderTrigger) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);
