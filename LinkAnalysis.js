@@ -492,13 +492,15 @@ var LinkAnalysis = (function () {
 
 			var ring_width = 10;
 			var ring_radius = node.radius + ring_width;
-			//console.log("ring_radius: " + ring_radius);
-			if (node.isClicked) {
-				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_SELECTED_NODE, "XXX", ring_width);
+			var ring_color = "";
 
+
+			if (node.isClicked) {
+				ring_color = COLOR_SELECTED_NODE;
 			} else if (node.isBelowMouse) {
-				mcanvas.drawRing(node.x, node.y, ring_radius, COLOR_HOVER_NODE, "", ring_width);
+				ring_color = COLOR_HOVER_NODE;
 			}
+			mcanvas.drawRing(node.x, node.y, ring_radius, ring_color, "", ring_width);
 
 			if (node.data._icon) {
 				ctx.drawImage(node.data._icon,
@@ -506,14 +508,13 @@ var LinkAnalysis = (function () {
 					node.y - NODE_ICON_WIDTH / 2,
 					NODE_ICON_WIDTH, NODE_ICON_WIDTH);
 			}
-
-			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
-
 			var padding_node_title = 0;
 			var maxLineWidth = 1.5 * (2 * node.radius);
 			// CENTER TEXT
 			var y = node.y + 18; //padding_node_title;
 			mcanvas.drawText(node.x, node.y + 28, node.data.id, FONT, TEXT_COLOR, maxLineWidth, ",");
+			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
+
 		};
 
 		var drawBorder = function () {
@@ -590,8 +591,8 @@ var LinkAnalysis = (function () {
 			event.stopPropagation();
 
 			if (self.mouseDown && !self.selection) {
-			//	self.translatePos.x = event.clientX - self.startDragOffset.x;
-			//	self.translatePos.y = event.clientY - self.startDragOffset.y;
+				//	self.translatePos.x = event.clientX - self.startDragOffset.x;
+				//	self.translatePos.y = event.clientY - self.startDragOffset.y;
 
 				//self.translatePos.x = mouse.x - self.startDragOffset.x;
 				//self.translatePos.y = mouse.y - self.startDragOffset.y;
