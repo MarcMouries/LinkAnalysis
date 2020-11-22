@@ -392,7 +392,11 @@ var LinkAnalysis = (function () {
 		ctx = mcanvas.getContext();
 
 		this.translatePos = { x: 0, y: 0 };//x: mcanvas.getWidth() / 2, y: mcanvas.getHeight() / 2};
+
 		console.log("translatePos: " + this.translatePos);
+		console.log("mcanvas.getOffset: ");
+		console.log(mcanvas.getOffset());
+
 
 
 
@@ -546,20 +550,20 @@ var LinkAnalysis = (function () {
 		 * @param {*} callback 
 		 */
 		var handleMouseDown = function (event, callback) {
-			linkAnalysis.mouseDown = true;
-			var mouse = linkAnalysis.getMouse(event);
-
 			// tell the browser we're handling this event
 			event.preventDefault();
 			event.stopPropagation();
 
+			linkAnalysis.mouseDown = true;
+			var mouse = linkAnalysis.getMouse(event);
 			self.startDragOffset.x = event.clientX - self.translatePos.x;
 			self.startDragOffset.y = event.clientY - self.translatePos.y;
 
 			//console.log("handleMouse_Down mouse @ " + mouse.x + "," + mouse.y);
-			var mouseXT = parseInt((mouse.x - self.pan.x) / self.scale);
-			var mouseYT = parseInt((mouse.y - self.pan.y) / self.scale);
+			var mouseXT = parseInt((mouse.x - self.startDragOffset.x) / self.scale);
+			var mouseYT = parseInt((mouse.y - self.startDragOffset.y) / self.scale);
 
+			// Node Selection
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
@@ -677,7 +681,7 @@ var LinkAnalysis = (function () {
 			var top = 72;
 			var button_width = 40;
 			//var left = this.canvas.width + this.canvas.offsetLeft - button_width; 
-			var left = mcanvas.getWidth() + mcanvas.getOffsetLeft() - button_width;
+			var left = mcanvas.getWidth() + mcanvas.getOffset().x - button_width;
 			addZoom(chart_container, top, left);
 		}
 
@@ -691,7 +695,8 @@ var LinkAnalysis = (function () {
 			mcanvas.clear();
 
 			ctx.save();
-			ctx.translate(this.pan.x, this.pan.y);
+			//ctx.translate(this.pan.x, this.pan.y);
+			ctx.translate(this.translatePos.x, this.translatePos.y);
 			ctx.scale(this.scale, this.scale);
 			// identity matrix (no transformation)
 			//ctx.setTransform(this.scale, 0, 0, this.scale, this.pan.x, this.pan.y);
@@ -707,7 +712,6 @@ var LinkAnalysis = (function () {
 				}
 				console.log("mcanvas: " + mcanvas.getWidth().toFixed(2) + "x" + mcanvas.getHeight().toFixed(2));
 			}
-
 
 			if (center_on_node_id) {
 				var starting_vertex = this.graph.getNode(center_on_node_id);
@@ -730,15 +734,12 @@ var LinkAnalysis = (function () {
 				this.center = mcanvas.getCenter();
 				MRadialLayout.Calculate_Positions(this.graph, starting_vertex, this.center);
 			}
-
-
 			// LINKS
 			var links = this.graph.getLinks();
 			for (var i = 0; i < links.length; i++) {
 				var link = links[i];
 				renderLink(link);
 			}
-
 			// NODES
 			var nodes = this.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
