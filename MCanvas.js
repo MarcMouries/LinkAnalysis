@@ -213,14 +213,14 @@ var MCanvas = (function () {
     this.ctx.lineWidth = 3;
     this.ctx.strokeStyle = null; //"red";
     this.ctx.stroke();
-    this.ctx.fillStyle = "darkgrey";
+   // this.ctx.fillStyle = "darkgrey";
     this.ctx.fill();
     // text
     this.ctx.font = "12px sans-serif";
-    //this.ctx.textAlign = "center";
+    this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillStyle = "#384047"; // darkish
-    //this.ctx.fillText(text, x, y + radius + 20);
+    this.ctx.fillText(text, x, y );
   };
 
   MCanvas.prototype.drawText = function (x, y, text, font, color, maxWidth, separator) {

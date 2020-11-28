@@ -364,6 +364,15 @@ var LinkAnalysis = (function () {
 		*/
 		this.translatePos = { x: 0, y: 0 };
 
+		/**
+		 *  the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+		 */
+		this.netPanningX = 0, this.netPanningY = 0;
+
+		/**
+		 *  coordinates of the last move
+		 */
+		this.lastMoveX = 0, this.lastMoveY = 0;
 
 		console.log("LinkAnalysis");
 		console.log("center_on_node_id = " + center_on_node_id);
@@ -420,6 +429,7 @@ var LinkAnalysis = (function () {
 			this.scale = this.original_scale;
 			this.translatePos = { x: 0, y: 0 };
 			this.startDragOffset = { x: 0, y: 0 };
+			this.netPanningX = 0, this.netPanningY = 0;
 			console.log("resetZoom: " + this.scale);
 			this.render("zoom");
 		};
@@ -541,14 +551,12 @@ var LinkAnalysis = (function () {
 			var mouse = linkAnalysis.getMouse(event);
 			// initial mouse click signaling the start of the dragging motion: we save the location of the user's mouse.
 			// dragging offest = current mouse - panning
-			self.startDragOffset.x = event.clientX - self.translatePos.x;
-			self.startDragOffset.y = event.clientY - self.translatePos.y;
+			self.startDragOffset.x = mouse.x - self.translatePos.x;
+			self.startDragOffset.y = mouse.y - self.translatePos.y;
 
-			//	self.translatePos.x = event.clientX - self.startDragOffset.x;
-			//	self.translatePos.y = event.clientY - self.startDragOffset.y;
-
-			//self.translatePos.x = mouse.x - self.startDragOffset.x;
-			//self.translatePos.y = mouse.y - self.startDragOffset.y;
+			// last move is used to calculate the delta between mouse move so we don't need to substract the translation
+			self.lastMoveX = mouse.x ;
+			self.lastMoveY = mouse.y ;
 
 			var info_mouse_action = document.getElementById("mouse_action");
 			info_mouse_action.innerHTML = "Mouse Action: " + "Down";
@@ -586,23 +594,44 @@ var LinkAnalysis = (function () {
 		 */
 		var handleMouseMove = function (event) {
 			var mouse = linkAnalysis.getMouse(event);
+
 			// tell the browser we're handling this event
 			event.preventDefault();
 			event.stopPropagation();
 
+			// DRAG CANVAS
 			if (self.mouseDown && !self.selection) {
-				self.translatePos.x = event.clientX - self.startDragOffset.x;
-				self.translatePos.y = event.clientY - self.startDragOffset.y;
+				self.translatePos.x = mouse.x - self.startDragOffset.x;
+				self.translatePos.y = mouse.y - self.startDragOffset.y;
+
+				// dx & dy are the distance the mouse has moved since the last mousemove event
+				var dx= mouse.x - self.lastMoveX;
+				var dy= mouse.y - self.lastMoveY;
+
+				// reset the vars for next mousemove
+				self.lastMoveX = mouse.x;
+				self.lastMoveY = mouse.y;
+
+				// accumulate the amount of panning
+				self.netPanningX += dx;
+				self.netPanningY += dy;
+
+				//console.log("move: dx: " + dx + ", dy " + dy);
+				//console.log("move: start drag.: " + self.startDragOffset.x + ", dy " + self.startDragOffset.y);
+				console.log("move: netPanningX: " + self.netPanningX + ", netPanningY " + self.netPanningY);
 			}
 
 			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
 			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
 
 
+
 			var coord_norm = document.getElementById("coord_screen");
 			var coord_trans = document.getElementById("coord_transf");
 			coord_norm.innerHTML = "Screen Coordinates: " + mouse.x + "/" + mouse.y;
-			coord_trans.innerHTML = "Transf. Coordinates: " + mouseXT + "/" + mouseYT;
+			//coord_trans.innerHTML = "Transf. Coordinates: " + mouseXT + "/" + mouseYT;
+			coord_trans.innerHTML = "netPanning: " + self.netPanningX + "/" + self.netPanningY;
+
 			var info_mouse_action = document.getElementById("mouse_action");
 			info_mouse_action.innerHTML = "Mouse Action: " + "Moving";
 
@@ -678,12 +707,25 @@ var LinkAnalysis = (function () {
 			mcanvas.clear();
 
 			ctx.save();
-			//ctx.translate(this.pan.x, this.pan.y);
 			ctx.translate(this.translatePos.x, this.translatePos.y);
 			ctx.scale(this.scale, this.scale);
+			//ctx.translate(-this.translatePos.x, -this.translatePos.y);
 
 			// BACKGROUND
-			mcanvas.drawBackground(-this.translatePos.x, -this.translatePos.y, this.getWidth(), this.getHeight());
+			mcanvas.drawBackground(
+				0, //- this.netPanningX,
+				0, //- this.netPanningY,
+				this.getWidth(), 
+				this.getHeight());
+
+
+			// DRAW GRID
+			var pointX = 100 - this.netPanningX;
+			var pointY = 100 - this.netPanningY;
+
+			mcanvas.drawPoint(
+				pointX,	pointY,
+				30, "" + pointX + ", " + pointY, "v");
 
 			if (renderTrigger) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);

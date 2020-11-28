@@ -1,3 +1,6 @@
 {
-    "editor.wordWrapColumn": 180
+    "editor.wordWrapColumn": 180,
+    "editor.renderWhitespace": "none",
+    "editor.trimAutoWhitespace": false,
+    "trailing-spaces.liveMatching": false
 }
