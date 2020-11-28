@@ -712,12 +712,13 @@ var LinkAnalysis = (function () {
 			//ctx.translate(-this.translatePos.x, -this.translatePos.y);
 
 			// BACKGROUND
+			/*
 			mcanvas.drawBackground(
 				0, //- this.netPanningX,
 				0, //- this.netPanningY,
 				this.getWidth(), 
 				this.getHeight());
-
+*/
 
 			// DRAW GRID
 			var pointX = 100 - this.netPanningX;
@@ -726,6 +727,13 @@ var LinkAnalysis = (function () {
 			mcanvas.drawPoint(
 				pointX,	pointY,
 				30, "" + pointX + ", " + pointY, "v");
+				
+			mcanvas.drawGrid(
+					0 - this.netPanningX,
+					0 - this.netPanningY,
+					this.getWidth() - this.netPanningX, 
+					this.getHeight()- this.netPanningY);
+
 
 			if (renderTrigger) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);

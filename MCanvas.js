@@ -110,6 +110,44 @@ var MCanvas = (function () {
     };
   };
 
+  
+  /**
+ * oX : Origin X
+ * oY : Origin Y
+ */
+
+  
+  MCanvas.prototype.drawGrid = function (oX, oY, width, height, opt_increment, line_color, font) {
+    ctx.save();
+    ctx.font = font || "12px Arial";
+    ctx.fillStyle = line_color || "DarkGrey";
+    ctx.lineWidth = 1;
+    
+    increment = opt_increment || 100;
+    /* vertical lines */
+    for (var x = oX; x < width; x += increment) {
+      ctx.moveTo(x, oY);
+      ctx.lineTo(x, height);
+      
+      if ((x  % increment)==0) { ctx.fillStyle = "black";  }
+      else {  ctx.fillStyle = "DarkGrey";}
+      ctx.fillText(x, x, oY+10);
+      
+    }
+  
+    /* horizontal lines */
+    for (var y = oY; y < height; y += increment) {
+      ctx.moveTo(oX, y);
+      ctx.lineTo(width, y);
+      ctx.fillText(y, oX+10, y);
+    }
+  
+    /* draw it! */
+    ctx.stroke();
+    ctx.restore();
+  }
+  
+  
   MCanvas.prototype.drawLine = function (
     startX,
     startY,
