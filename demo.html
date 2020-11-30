@@ -213,9 +213,6 @@
 			"vehicle":    { "url": icon_vehicle_base64 }
 		}
 
-
-
-
 		// Make sure the image is loaded before you draw it on the canvas.
 		loadAllImages(ICON_LIST, start);
 
@@ -283,12 +280,19 @@
 
 			linkAnalysis.setNodeClickHandler(function (node) {
 				console.log("NODE CLICKED: " + node.id);
+				console.log("NODE getAdjacents: ");
+				//"NODE CLICKED: " + 
+				console.log(node.getAdjacents());
 
+				
 				var now = new Date().getTime().toString();
 				var new_object = {id: now,	name: now, 	type: "person"	};
 				linkAnalysis.addObject(new_object);
 				linkAnalysis.addLink(node.id, now);
 				
+				console.log("AFTER NODE getAdjacents: ");
+				//"NODE CLICKED: " + 
+				console.log(node.getAdjacents());
 			});
 		}
 

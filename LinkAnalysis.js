@@ -54,6 +54,7 @@ function Graph() {
 	this.nodeList = [];
 	this.linkList = [];
 	this.adjacency = {};
+	this.changed = false;
 }
 
 /**
@@ -62,6 +63,7 @@ function Graph() {
 Graph.prototype.addObject = function (object) {
 	var node = new Node(object.id, object);
 	this.addNode(node);
+	this.changed = true;
 	return node;
 };
 
@@ -151,8 +153,7 @@ function printNode(node) {
 		adjacentsRepresentation = "∅";
 	} else {
 		adjacentsRepresentation = node
-			.getAdjacents()
-			.map(function (item) {
+			.getAdjacents().map(function (item) {
 				return item.id;
 			})
 			.join(", ");
@@ -495,7 +496,7 @@ var LinkAnalysis = (function () {
 		var renderNode = function (node) {
 			//log(`MChartView.renderNode: ${node.data.id}: ${node.x},${node.y} `);
 
-			mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
+		//	mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
 
 			// NODE RING
 			var ring_width = 10;
@@ -723,17 +724,15 @@ var LinkAnalysis = (function () {
 			// DRAW GRID
 			var pointX = 100 - this.netPanningX;
 			var pointY = 100 - this.netPanningY;
-
-			mcanvas.drawPoint(
-				pointX,	pointY,
-				30, "" + pointX + ", " + pointY, "v");
-				
+			mcanvas.drawPoint(pointX, pointY, 50, "" + pointX + ", " + pointY, "v");
+			
+			
 			mcanvas.drawGrid(
 					0 - this.netPanningX,
 					0 - this.netPanningY,
 					this.getWidth() - this.netPanningX, 
 					this.getHeight()- this.netPanningY);
-
+			
 
 			if (renderTrigger) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);
@@ -754,7 +753,7 @@ var LinkAnalysis = (function () {
 				}
 			}
 
-			if (this.nodes_at_level.length == 0) {
+			if (this.graph.changed) {
 				// calculate the depth of each node from the starting vertex
 				this.graph.visit_breadth_first(starting_vertex, function (level, nodes_at_current_level) {
 					// console.log("Level " + level + ": " + to_string);
@@ -765,6 +764,7 @@ var LinkAnalysis = (function () {
 
 				this.center = mcanvas.getCenter();
 				MRadialLayout.Calculate_Positions(this.graph, starting_vertex, this.center);
+				this.graph.changed = false;
 			}
 			// LINKS
 			var links = this.graph.getLinks();
@@ -777,6 +777,7 @@ var LinkAnalysis = (function () {
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
 				//log("LinkAnalysis render node: " + node.id);
+				//console.log("nodes.length = " + nodes.length);
 				renderNode(node);
 			}
 			ctx.restore();

@@ -112,38 +112,45 @@ var MCanvas = (function () {
 
   
   /**
- * oX : Origin X
- * oY : Origin Y
- */
-
-  
+   * oX : Origin X
+   * oY : Origin Y
+   */
   MCanvas.prototype.drawGrid = function (oX, oY, width, height, opt_increment, line_color, font) {
     ctx.save();
-    ctx.font = font || "12px Arial";
+    ctx.font = font || '14px Monospace';
     ctx.fillStyle = line_color || "DarkGrey";
     ctx.lineWidth = 1;
-    
+    ctx.lineWidth = 0.35
     increment = opt_increment || 100;
+    
     /* vertical lines */
-    for (var x = oX; x < width; x += increment) {
+    for (var x = 0; x < 500; x += increment) {
+      var diffX = x - oX;
+      
+      ctx.beginPath()
       ctx.moveTo(x, oY);
       ctx.lineTo(x, height);
+      ctx.stroke();
+
+      //if ((x  % increment)==0) { ctx.fillStyle = "black";  }
+      //else {  ctx.fillStyle = "DarkGrey";}
       
-      if ((x  % increment)==0) { ctx.fillStyle = "black";  }
-      else {  ctx.fillStyle = "DarkGrey";}
-      ctx.fillText(x, x, oY+10);
+      ctx.fillText(x, x, 22);
       
+      //this.drawPoint(x, oY+20, 50, "" + x + ", " + oY, "v");
+
     }
   
     /* horizontal lines */
     for (var y = oY; y < height; y += increment) {
+      ctx.beginPath()
       ctx.moveTo(oX, y);
       ctx.lineTo(width, y);
-      ctx.fillText(y, oX+10, y);
+      ctx.stroke();
+
+      ctx.fillText(y - oY, oX+10, y);
     }
   
-    /* draw it! */
-    ctx.stroke();
     ctx.restore();
   }
   
@@ -240,8 +247,9 @@ var MCanvas = (function () {
   };
 
 
-
-  // draw point with text and circle around it.
+  /**
+   *   draw point with text and circle around it.
+   */ 
   MCanvas.prototype.drawPoint = function (x, y, radius, text) {
     this.ctx.beginPath();
     this.ctx.strokeStyle = "grey";
@@ -251,7 +259,7 @@ var MCanvas = (function () {
     this.ctx.lineWidth = 3;
     this.ctx.strokeStyle = null; //"red";
     this.ctx.stroke();
-   // this.ctx.fillStyle = "darkgrey";
+    this.ctx.fillStyle = "darkgrey";
     this.ctx.fill();
     // text
     this.ctx.font = "12px sans-serif";
