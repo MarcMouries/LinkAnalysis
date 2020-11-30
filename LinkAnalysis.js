@@ -338,6 +338,8 @@ var LinkAnalysis = (function () {
 		NODE_RADIUS = options.node_radius || 20;
 		FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
+		
+		
 
 		this.dpr = 1;//window.devicePixelRatio || 1;
 		this.original_scale = this.dpr;
@@ -345,6 +347,11 @@ var LinkAnalysis = (function () {
 		this.scaleMultiplier = 0.9;
 		this.startDragOffset = { x: 0, y: 0 };
 
+		/**
+		 *  Show grid
+		*/
+		this.show_grid = options.show_grid || false;
+		
 		/**
 		 *  Show zoom
 		*/
@@ -379,6 +386,7 @@ var LinkAnalysis = (function () {
 		console.log("center_on_node_id = " + center_on_node_id);
 		console.log("icon_by_node_type = " + icon_by_node_type);
 		console.log("show_zoom         = " + show_zoom);
+		console.log("show_grid         = " + this.show_grid);
 		console.log(icon_by_node_type);
 
 
@@ -726,13 +734,13 @@ var LinkAnalysis = (function () {
 			var pointY = 100 - this.netPanningY;
 			mcanvas.drawPoint(pointX, pointY, 50, "" + pointX + ", " + pointY, "v");
 			
-			
-			mcanvas.drawGrid(
-					0 - this.netPanningX,
-					0 - this.netPanningY,
-					this.getWidth() - this.netPanningX, 
-					this.getHeight()- this.netPanningY);
-			
+			if (this.show_grid) {
+				mcanvas.drawGrid(
+						0 - this.netPanningX,
+						0 - this.netPanningY,
+						this.getWidth() - this.netPanningX, 
+						this.getHeight()- this.netPanningY);
+			}
 
 			if (renderTrigger) {
 				console.log("LinkAnalysis.event trigger = " + renderTrigger);
