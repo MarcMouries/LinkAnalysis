@@ -3,7 +3,15 @@
 //                          TRIGO FUNCTIONS
 // =============================================================
 
-//var trigo = {
+/**
+ * Concernt mouse (x, y) relative to the center of the circle
+ */
+function ConvertMousePositionToCoordinateGraph(mousePos, center) {
+  return {
+    x: mousePos.x - center.x,
+    y: -1 * (mousePos.y - center.y)
+  }
+}
 
 function to_radians(degrees) {
   return degrees * (Math.PI / 180);
