@@ -116,15 +116,16 @@ var MCanvas = (function () {
    * oY : Origin Y
    */
   MCanvas.prototype.drawGrid = function (oX, oY, width, height, opt_increment, line_color, font) {
-    ctx.save();
-    ctx.font = font || '14px Monospace';
-    ctx.fillStyle = line_color || "DarkGrey";
-    ctx.lineWidth = 1;
-    ctx.lineWidth = 0.35
+    this.ctx.save();
+    this.ctx.font = font || '12px Monospace';
+    this.ctx.fillStyle = line_color || "DarkGrey";
+    this.ctx.lineWidth = 0.35;
     increment = opt_increment || 100;
+    scale_margin_top = 6;
+    scale_margin_left = 10;
     
     /* vertical lines */
-    for (var x = 0; x < 500; x += increment) {
+    for (var x = -100; x < width; x += increment) {
       var diffX = x - oX;
       
       ctx.beginPath()
@@ -134,21 +135,17 @@ var MCanvas = (function () {
 
       //if ((x  % increment)==0) { ctx.fillStyle = "black";  }
       //else {  ctx.fillStyle = "DarkGrey";}
-      
-      ctx.fillText(x, x, 22);
-      
-      //this.drawPoint(x, oY+20, 50, "" + x + ", " + oY, "v");
-
+      ctx.fillText(x, x+scale_margin_left, oY + scale_margin_top);
     }
   
     /* horizontal lines */
-    for (var y = oY; y < height; y += increment) {
+    for (var y = -100; y < height; y += increment) {
       ctx.beginPath()
       ctx.moveTo(oX, y);
       ctx.lineTo(width, y);
       ctx.stroke();
 
-      ctx.fillText(y - oY, oX+10, y);
+      ctx.fillText(y, oX+scale_margin_left, y+scale_margin_top);
     }
   
     ctx.restore();
@@ -210,6 +207,8 @@ var MCanvas = (function () {
   };
 
   function apply_styles(ctx, color_stroke, color_fill, line_width) {
+    ctx.save();
+
     if (line_width != "") {
       ctx.lineWidth = line_width;
     }
@@ -221,6 +220,8 @@ var MCanvas = (function () {
       ctx.fillStyle = color_fill;
       ctx.fill();
     }
+    ctx.restore();
+
   }
   MCanvas.prototype.drawArc = function (
     center, radius,
