@@ -1,4 +1,20 @@
-var PieMenu = function (options) {
+var PI = Math.PI;
+var TWO_PI = PI * 2;
+var RADIAN = 180 / PI;
+
+  /**
+   * Shorthands for radians
+   *  0   =   0 = East
+   *  π/2 =  90 = North
+   *  π   = 180 = West
+   * 3π/2 = 270 = South
+   */
+var NORTH_IN_RAD = PI/2;
+var WEST_IN_RAD = PI;
+var SOUTH_IN_RAD = (3 * PI) / 2;
+
+
+function PieMenu(options) {
     this.options = options;
     this.canvas = options.canvas;
     this.ctx = this.canvas.getContext("2d");
@@ -11,7 +27,12 @@ var PieMenu = function (options) {
     pieMenu = this;
     
     
-    this.createSectors = function () {
+    createSectors = function () {
 
-    }
+	}
+	
+	this.draw = function () {
+
+	}
+	
 }

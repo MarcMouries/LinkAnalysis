@@ -1,0 +1,44 @@
+<html>
+<head>
+	<script src="../PieMenu.js"></script>
+
+</head>
+<body>
+  <form name="myForm">
+  Orientation:
+<div>
+  <input type="radio" id="North" name="orientation" value="North"  checked>
+  <label for="North">North</label>
+</div>
+<div>
+  <input type="radio" id="east" name="orientation" value="east">
+  <label for="east">East</label>
+</div>
+    </form>
+  <canvas id="Canvas" width="500" height="500"></canvas>
+  <mcanvas id="mcanvas" width="500" height="500"></mcanvas>
+</body>
+<script>
+	var canvas = document.getElementById("Canvas");
+
+var menu = {
+	angle_start: 0,
+	items: [
+	  { name: "Item1", value: "Item1", color: "#CFD3CA" },
+	  { name: "Item2", value: "Item2", color: "#A9C0C1" },
+	  { name: "Item3", value: "Item3", color: "#63858F" },
+	 // { name: "Item4", value: "Item4", color: "#344B52" }
+	]
+  };
+  var myPieMenu = new PieMenu({
+	canvas: canvas,
+	//center: { x: canvas.width / 2, y: canvas.height / 2 },
+	center: { x: 300, y: 300 },
+	radius: 80,
+	menu: menu
+	//colors: ["#fde23e", "#f16e23", "#57d9ff", "#937e88"]
+  });
+  myPieMenu.draw();
+	
+</script>
+</html>
