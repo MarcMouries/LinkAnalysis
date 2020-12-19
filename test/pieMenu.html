@@ -1,7 +1,11 @@
 <html>
 <head>
 	<script src="../PieMenu.js"></script>
-
+<style>
+	canvas {
+		border: solid 1px black;
+	  }
+</style>
 </head>
 <body>
   <form name="myForm">
@@ -16,7 +20,6 @@
 </div>
     </form>
   <canvas id="Canvas" width="500" height="500"></canvas>
-  <mcanvas id="mcanvas" width="500" height="500"></mcanvas>
 </body>
 <script>
 	var canvas = document.getElementById("Canvas");
@@ -40,5 +43,6 @@ var menu = {
   });
   myPieMenu.draw();
 	
+  
 </script>
 </html>
