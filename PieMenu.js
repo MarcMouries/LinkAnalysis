@@ -32,7 +32,15 @@ function drawTextAtPoint(ctx, text, x, y, textAlign) {
   ctx.textAlign = textAlign;
   ctx.fillText(text, x, y);
 }
-
+function getMousePosition(evt) {
+	// Get the canvas size and position relative to the web page
+	var canvasDimensions = canvas.getBoundingClientRect();
+	// Get canvas x & y position
+	var x = Math.floor(evt.clientX - canvasDimensions.left);
+	var y = Math.floor(evt.clientY - canvasDimensions.top);
+  
+	return { x: x, y: y };
+  }
 
 /**
  * Concernt mouse (x, y) relative to the center of the circle
@@ -99,7 +107,26 @@ function radiansToDegrees(rad) {
       console.log("in redrawCanvas");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
+	  var mouseScreenPos = getMousePosition(e);
+	  drawTextAtPoint(ctx, "X : " + mouseScreenPos.x, 10, 20);
+	  drawTextAtPoint(ctx, "Y : " + mouseScreenPos.y, 10, 40);
+	  var mouseGraphPos = screenToGraphPos(mouseScreenPos, pieMenu.center);
+	  drawTextAtPoint(ctx, "X : " + mouseGraphPos.x, DEBUG_TEXT_RIGHT_X, 20);
+	  drawTextAtPoint(ctx, "Y : " + mouseGraphPos.y, DEBUG_TEXT_RIGHT_X, 40);
+	  
+	  var angleRAD = getAngleUsingXAndY(mouseGraphPos.x, mouseGraphPos.y);
+	  var angleDEG = radiansToDegrees(angleRAD);
+	  drawTextAtPoint(ctx, "Angle : " + angleDEG + "°", 10, 60);
+	  
+	  var dist = distance(mouseScreenPos, pieMenu.center);
+	  
+	  var insidePieMenu = dist < pieMenu.radius;
+	  var insidePieSectors =
+		dist > pieMenu.radius - half_sectorArcWidth &&
+		dist < pieMenu.radius + half_sectorArcWidth;
+	  
+	  drawTextAtPoint(ctx, "Inside : " + insidePieMenu, 10, 80);
+	  drawTextAtPoint(ctx, "insidePieSectors : " + insidePieSectors, 10, 100);
 
       /*
        * Simplification of:
