@@ -91,19 +91,21 @@ function drawArc(ctx, cX, cY, radius, startAngle, endAngle, color, lineWidth) {
  * @param {*} color
  * @param {*} lineWidth
  */
-var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
+var CircleSector = function (name, radius, startAngle, endAngle, color, lineWidth) {
   this.name = name;
+  this.radius = radius;
   this.startAngle = startAngle;
   this.endAngle = endAngle;
   this.color = color;
   this.lineWidth = lineWidth;
 
   CircleSector.prototype.draw = function (ctx, center) {
+	  console.log("in draw sector " + this.color);
     drawArc(
       ctx,
       center.x,
       center.y,
-      pieMenu.radius,
+      this.radius,
       this.startAngle,
       this.endAngle,
       this.color,
@@ -128,11 +130,12 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
   var WEST_IN_RAD = PI;
   var SOUTH_IN_RAD = (3 * PI) / 2;
 
+  var ctx ;
   PieMenu = function (options) {
     var name = options.name || "default";
     this.options = options;
     this.canvas = options.canvas;
-    var ctx = this.canvas.getContext("2d");
+     ctx = this.canvas.getContext("2d");
     this.menu_items = this.options.menu.items;
     this.center = options.center;
     this.radius = options.radius;
@@ -159,7 +162,6 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
     pieMenu = this;
 
     var redrawCanvas = function (e) {
-      console.log("in redrawCanvas");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       var mouseScreenPos = getMousePosition(e);
@@ -179,7 +181,6 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
       var insidePieSectors =
         dist > pieMenu.radius - half_sectorArcWidth &&
         dist < pieMenu.radius + half_sectorArcWidth;
-
       drawTextAtPoint(ctx, "Inside : " + insidePieMenu, 10, 80);
       drawTextAtPoint(ctx, "insidePieSectors : " + insidePieSectors, 10, 100);
 
@@ -233,7 +234,7 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
     this.canvas.addEventListener("mousemove", redrawCanvas);
 
     function createSectors() {
-      sectors = [];
+      var sectors = [];
       for (var i = 0; i < pieMenu.sector_count; i++) {
         var startAngle = pieMenu.slice_angle * i - starting_angle;
         var endAngle = pieMenu.slice_angle * (i + 1) - starting_angle;
@@ -241,7 +242,8 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
         var name = pieMenu.menu_items[i].name;
 
         sector = new CircleSector(
-          name,
+		  name,
+		  pieMenu.radius,
           startAngle,
           endAngle,
           color,
@@ -256,13 +258,22 @@ var CircleSector = function (name, startAngle, endAngle, color, lineWidth) {
       return sectors;
     }
 
-    this.draw = function () {
-      console.log("in draw");
-    };
+	PieMenu.prototype.draw = function () {
+		for (var i = 0; i < this.sector_count; i++) {
+		  //var startAngle = (this.slice_angle * i) + (starting_angle);
+		  //var endAngle = (this.slice_angle * (i + 1))+ (starting_angle);
+		  //var color = this.menu_items[i].color;
+		  //drawArc(ctx,  centerX,  centerY, radius, startAngle, endAngle, color, lineWidth);
+	
+		  // Using Sector
+		  sector = this.sectors[i];
+		  //drawArc(ctx,  centerX,  centerY, radius, sector.startAngle, sector.endAngle, sector.color, lineWidth);
+	
+		  sector.draw(ctx, this.center);
+		}
+		drawCircle(ctx, pieMenu.center.x, pieMenu.center.y, pieMenu.radius, "black", 1);
+	  };
 
-    var getNamePrivate = function () {
-      return name;
-    };
 
     /**
      * PieMenu.addGraphListener(this)
