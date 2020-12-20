@@ -195,7 +195,7 @@ var CircleSector = function (
        */
       sectorID = ~~sectorID;
 	  var sector = pieMenu.sectors[sectorID];
-	  if (insidePieMenu) {
+	  if (insidePieSectors) {
 		this.selected = sector;
 	  }
 	  else {
@@ -239,14 +239,16 @@ var CircleSector = function (
 	 */
     function handleMouseDown(e) {
 	  //var mousePos = getMousePosition(e);
-	  console.log("mouse click: ");
-	  console.log(this.selected);
+	  //console.log(this.selected);
 	  	  
-/*
+	  //console.log("mouse click: "  + );
+
+	  
 	  if (this.selected != null) {
-		console.log(this.selected);	  
+		//console.log(this.selected);	  
+		alert ("click on : " + this.selected.name);
 	  }
-	  */
+	  
     }
 
     function createSectors() {
