@@ -1,49 +1,67 @@
 <html>
+
 <head>
 	<script src="../PieMenu.js"></script>
-<style>
-	canvas {
-		border: solid 1px black;
-	  }
-</style>
+	<style>
+		canvas {
+			border: solid 1px black;
+		}
+	</style>
 </head>
+
 <body>
-  <form name="myForm">
-  Orientation:
-<div>
-  <input type="radio" id="North" name="orientation" value="North"  checked>
-  <label for="North">North</label>
-</div>
-<div>
-  <input type="radio" id="east" name="orientation" value="east">
-  <label for="east">East</label>
-</div>
-    </form>
-  <canvas id="Canvas" width="500" height="500"></canvas>
+	<form name="myForm">
+		Orientation:
+		<div>
+			<input type="radio" id="North" name="orientation" value="North" checked>
+			<label for="North">North</label>
+		</div>
+		<div>
+			<input type="radio" id="east" name="orientation" value="east">
+			<label for="east">East</label>
+		</div>
+	</form>
+	<canvas id="Canvas" width="500" height="500"></canvas>
 </body>
 <script>
-	var canvas = document.getElementById("Canvas");
+	function resizeCanvas(canvas, widthInCSSPixels, heightInCSSPixels) {
+		var ctx = canvas.getContext('2d');
+		// set the display size of the canvas.
+		canvas.style.width = widthInCSSPixels + "px";
+		canvas.style.height = heightInCSSPixels + "px";
+		// set the size of the drawingBuffer
+		var scale = window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+		canvas.width = Math.floor(widthInCSSPixels * scale);
+		canvas.height = Math.floor(heightInCSSPixels * scale);
+		// Normalize coordinate system to use css pixels.
+		ctx.scale(scale, scale);
+	}
 
-var menu = {
-	angle_start: 0,
-	items: [
-	  { name: "Item1", value: "Item1", color: "#CFD3CA" },
-	  { name: "Item2", value: "Item2", color: "#A9C0C1" },
-	  { name: "Item3", value: "Item3", color: "#63858F" },
-	  { name: "Item4", value: "Item4", color: "#344B52" }
-	]
-  };
-  var myPieMenu = new PieMenu({
-	canvas: canvas,
-	center: { x: 300, y: 300 }, 	//center: { x: canvas.width / 2, y: canvas.height / 2 },
-	radius: 80,
-	menu: menu
-  });
-  myPieMenu.draw();
-	
-  myPieMenu.addClickListener(function (sector) {
-	alrt ( "Sector clicked: " + sector);
-});
-  
+
+	var canvas = document.getElementById("Canvas");
+	resizeCanvas(canvas, 500, 500);
+
+	var menu = {
+		angle_start: 0,
+		items: [
+			{ name: "Item1", value: "Item1", color: "#CFD3CA" },
+			{ name: "Item2", value: "Item2", color: "#A9C0C1" },
+			{ name: "Item3", value: "Item3", color: "#63858F" },
+			{ name: "Item4", value: "Item4", color: "#344B52" }
+		]
+	};
+	var myPieMenu = new PieMenu({
+		canvas: canvas,
+		center: { x: 300, y: 300 }, 	//center: { x: canvas.width / 2, y: canvas.height / 2 },
+		radius: 80,
+		menu: menu
+	});
+	myPieMenu.draw();
+
+	myPieMenu.addClickListener(function (sector) {
+		alert("Sector clicked: " + sector);
+	});
+
 </script>
+
 </html>
