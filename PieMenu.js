@@ -151,12 +151,12 @@ var CircleSector = function (
         this.sector_count = this.menu_items.length;
         this.slice_angle = (2 * Math.PI) / this.sector_count;
         this.selected = null;
-        
-        this.shadowColor = options.shadowColor || 'rgba(0,0,0,0.5)';
-		this.shadowBlur = !isNaN(options.shadowBlur) ? shadowBlur : 10;
-		this.shadowOffsetX = !isNaN(options.shadowOffsetX) ? shadowOffsetX : 3;
-		this.shadowOffsetY = !isNaN(options.shadowOffsetY) ? shadowOffsetY : 3;
-        
+
+        this.shadowColor = options.shadowColor || 'red';//'rgba(0,0,0,0.5)';
+        this.shadowBlur = !isNaN(options.shadowBlur) ? shadowBlur : 10;
+        this.shadowOffsetX = !isNaN(options.shadowOffsetX) ? shadowOffsetX : 13;
+        this.shadowOffsetY = !isNaN(options.shadowOffsetY) ? shadowOffsetY : 13;
+
 
         this.canvas = options.canvas;
         var ctx = this.canvas.getContext("2d");
@@ -180,22 +180,18 @@ var CircleSector = function (
         pieMenu = this;
 
         var redrawCanvas = function (e) {
-            
+
             ctx.imageSmoothingEnabled = true;
-		
             ctx.imageSmoothingQuality = "high";
-        
+
             //ctx.clearRect(0, 0, this.w, this.h);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.shadowColor = this.shadowColor;
-            
             ctx.shadowBlur = this.shadowBlur;
-            
             ctx.shadowOffsetX = this.shadowOffsetX;
-            
-            ctx.shadowOffsetY = this.shadowOffsetY;   
-            
+            ctx.shadowOffsetY = this.shadowOffsetY;
+
 
             var mouseScreenPos = getMousePosition(e);
             var mouseGraphPos = screenToGraphPos(mouseScreenPos, pieMenu.center);
@@ -208,23 +204,24 @@ var CircleSector = function (
                 dist > pieMenu.radius - half_sectorArcWidth &&
                 dist < pieMenu.radius + half_sectorArcWidth;
 
-            /*
-             * Simplification of:
-             * var sectorID = (angleDEG / 360) / (1 / pieMenu.sector_count );
-             */
-            var sectorID = (angleDEG / 360) * pieMenu.sector_count;
+            var sector = { id: "n/a", name: "n/a", startAngle: "n/a", endAngle: "n/a" };
 
-            /*
-             * Truncate the decimal part
-             */
-            sectorID = ~~sectorID;
-            var sector = pieMenu.sectors[sectorID];
             if (insidePieSectors) {
+                /*
+                * Simplification of:
+                * var sectorID = (angleDEG / 360) / (1 / pieMenu.sector_count );
+                */
+                var sectorID = (angleDEG / 360) * pieMenu.sector_count;
+
+                /*
+                 * Truncate the decimal part
+                 */
+                sectorID = ~~sectorID;
+                sector = pieMenu.sectors[sectorID];
                 this.selected = sector;
             }
             else {
                 this.selected = null;
-
             }
 
             drawTextAtPoint(ctx, "X : " + mouseGraphPos.x, DEBUG_TEXT_RIGHT_X, 20);
@@ -262,18 +259,12 @@ var CircleSector = function (
          * @param {*} e 
          */
         function handleMouseDown(e) {
-            //var mousePos = getMousePosition(e);
-            //console.log(this.selected);
-
-            //console.log("mouse click: "  + );
-
 
             if (this.selected != null) {
                 //console.log(this.selected);	
-                  this.eventListeners[0].
+                // this.eventListeners[0].
                 alert("clicked on : " + this.selected.name);
             }
-
         }
 
         function createSectors() {
