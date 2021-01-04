@@ -110,6 +110,12 @@ var CircleSector = function (
     this.lineWidth = lineWidth;
 
     CircleSector.prototype.draw = function (ctx, center) {
+
+        ctx.save();
+        // Shadow
+        ctx.shadowColor = 'black';
+        ctx.shadowBlur = 15;
+
         drawArc(
             ctx,
             center.x,
@@ -120,6 +126,8 @@ var CircleSector = function (
             this.color,
             this.lineWidth
         );
+        ctx.restore();
+
     };
 };
 
