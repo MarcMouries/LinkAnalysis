@@ -75,7 +75,7 @@ Graph.prototype.addNode = function (node) {
 		this.graph[node.id] = node;
 	}
 	else {
-		console.log("ALREADY EXIST node : " + node.id);
+		console.log("Node already exists: " + node.id);
 	}
 	return node;
 };
