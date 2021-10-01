@@ -12,6 +12,7 @@
 	<style type="text/css">
 		canvas {
 			display: block;
+			border: solid 1px black;
 		}
 	</style>
 </head>
@@ -21,7 +22,9 @@
 	<ul class="breadcrumb">
 		<li><a href="../index.html">Home</a></li>
 		<li>Icons</li>
-	</ul>	<canvas id="canvas"></canvas>
+	</ul>
+	<canvas id="canvas"></canvas>
+
 </body>
 
 <script>
@@ -99,8 +102,7 @@
 				if (this.isClicked) {
 					//this.drawRing(context, color_ring_isActivated);
 					this.drawRing(context, "blue");
-				}
-				else if (this.isBelowMouse) {
+				} else if (this.isBelowMouse) {
 					//this.drawRing(context, color_ring_isBelowMouse);
 					this.drawRing(context, "green");
 				}
@@ -123,13 +125,27 @@
 
 
 		var ICON_LIST = {
-			"address": { "url": icon_home_base64 },
-			"arrest": { "url": icon_arrest_base64 },
-			"case": { "url": icon_case_base64 },
-			"court_case": { "url": icon_court_base64 },
-			"person": { "url": icon_person_base64 },
-			"location": { "url": icon_location_base64 },
-			"vehicle": { "url": icon_vehicle_base64 }
+			"address": {
+				"url": icon_home_base64
+			},
+			"arrest": {
+				"url": icon_arrest_base64
+			},
+			"case": {
+				"url": icon_case_base64
+			},
+			"court_case": {
+				"url": icon_court_base64
+			},
+			"person": {
+				"url": icon_person_base64
+			},
+			"location": {
+				"url": icon_location_base64
+			},
+			"vehicle": {
+				"url": icon_vehicle_base64
+			}
 		}
 		var icon_width = 40;
 		var icon_heigth = 40;
@@ -139,32 +155,35 @@
 
 
 		function start() {
+			var currentInputDevice = 'mouse'; // ('mouse' | 'touch')
+
 			// the imgs[] array now holds fully loaded images
 			var canvas = document.getElementById("canvas"),
 				context = canvas.getContext("2d"),
 				width = canvas.width = window.innerWidth,
 				height = canvas.height = window.innerHeight;
 
-				var icon_types = Object.entries(ICON_LIST);
+			var icon_types = Object.entries(ICON_LIST);
 
 
-				for (const [key, value] of Object.entries(ICON_LIST)) {
-  					console.log(`${key}: ${value}`);
-				}
-				for (var index = 0; index < icon_types.length; index++) {
-					console.log(icon_types[index]);
+			for (const [key, value] of Object.entries(ICON_LIST)) {
+				console.log(`${key}: ${value}`);
+			}
+			for (var index = 0; index < icon_types.length; index++) {
+				console.log(icon_types[index]);
 
-				}
+			}
 
-				var nodes = [];
+			var nodes = [];
 
-				console.log("ENTRIES");
-				Object.entries(ICON_LIST).forEach(([key, value], index) => {
-					  //console.log(`${index}: ${key} = ${value}`);
-					  var node_type = key;
-					  var circle = new Circle(100 + (index * 100), 300, circle_radius, COLORS[index], "black", node_type);
-					  nodes.push (circle);
-				});
+			console.log("ENTRIES");
+			Object.entries(ICON_LIST).forEach(([key, value], index) => {
+				//console.log(`${index}: ${key} = ${value}`);
+				var node_type = key;
+				var circle = new Circle(100 + (index * 100), 300, circle_radius, COLORS[index], "black",
+					node_type);
+				nodes.push(circle);
+			});
 
 
 
@@ -172,7 +191,7 @@
 				var element = ICON_LIST[index];
 				console.log(element);
 				var circle = new Circle(300, 300 + (index * 100), circle_radius, "#4e79a7", "black", "address");
-				nodes.push (circle);
+				nodes.push(circle);
 			}
 			//var c1 = new Circle(300, 300, circle_radius, "#4e79a7", "black", "address");
 			//var c2 = new Circle(400, 300, circle_radius, "#f28e2c", "black", "arrest");
@@ -198,39 +217,55 @@
 			document.body.addEventListener("mousedown", onMouseDown);
 			document.body.addEventListener("mouseup", onMouseUp);
 
+			var inputDevice = 'mouse';
+
+			const mouseEventToCoord = (canvas, inputDevice, e) => {
+				const clientX = inputDevice === 'mouse' ? e.clientX : e.targetTouches[0].clientX;
+				const clientY = inputDevice === 'mouse' ? e.clientY : e.targetTouches[0].clientY;
+				const canvasBound = canvas.getBoundingClientRect();
+
+				const lx = clientX - canvasBound.left;
+				const ly = clientY - canvasBound.top;
+				return [lx, ly];
+			}
+
 			function onMouseDown(event) {
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
-					if (pointInCircle(event.clientX, event.clientY, node)) {
+					const [lx, ly] = mouseEventToCoord(canvas, inputDevice, event);
+
+					if (pointInCircle(lx, ly, node)) {
 						node.isClicked = true;
 						current_node = node;
-						offset.x = event.clientX - node.x;
-						offset.y = event.clientY - node.y;
-					}
-					else {
+						offset.x = lx;
+						offset.y = ly;
+					} else {
 						node.isClicked = false;
 					}
 				}
 				draw();
 			}
 
+
 			function onMouseMove(event) {
+				const [lx, ly] = mouseEventToCoord(canvas, inputDevice, event);
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
-					if (pointInCircle(event.clientX, event.clientY, node)) {
+
+					if (pointInCircle(lx, ly, node)) {
+					//if (pointInCircle(event.clientX, event.clientY, node)) {
 						node.isBelowMouse = true;
-					}
-					else {
+					} else {
 						node.isBelowMouse = false;
 					}
-
 				}
 				if (current_node) {
-					current_node.x = event.clientX - offset.x;
-					current_node.y = event.clientY - offset.y;
+					//current_node.x = event.clientX - offset.x;
+					current_node.x = lx;
+					//current_node.y = event.clientY - offset.y;
+					current_node.y = ly;
 				}
 				draw();
-
 			}
 
 			function onMouseUp(event) {
