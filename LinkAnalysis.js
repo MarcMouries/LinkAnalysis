@@ -728,12 +728,12 @@ var LinkAnalysis = (function () {
 				this.getWidth(), 
 				this.getHeight());
 */
+			// Draw point do debug panning
+			//var pointX = 100 - this.netPanningX;
+			//var pointY = 100 - this.netPanningY;
+			//mcanvas.drawPoint(pointX, pointY, 50, "" + pointX + ", " + pointY, "red");
 
 			// DRAW GRID
-			var pointX = 100 - this.netPanningX;
-			var pointY = 100 - this.netPanningY;
-			mcanvas.drawPoint(pointX, pointY, 50, "" + pointX + ", " + pointY, "v");
-			
 			if (this.show_grid) {
 				mcanvas.drawGrid(
 						0 - this.netPanningX,
