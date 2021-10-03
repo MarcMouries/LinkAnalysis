@@ -226,7 +226,7 @@
 				center_on_node_id: "Joe Smith",
 				icon_by_node_type: ICON_LIST,
 				show_zoom : true,
-				show_grid : true
+				show_grid : false
 			};
 
 			var linkAnalysis = new LinkAnalysis(chart_container, settings);
@@ -252,6 +252,7 @@
 				console.log(node.getAdjacents());
 
 				
+				/*
 				var now = new Date().getTime().toString();
 				var new_object = {id: now,	name: now, 	type: "person"	};
 				linkAnalysis.addObject(new_object);
@@ -260,6 +261,7 @@
 				console.log("AFTER NODE getAdjacents: ");
 				//"NODE CLICKED: " + 
 				console.log(node.getAdjacents());
+				*/
 			});
 		}
 
