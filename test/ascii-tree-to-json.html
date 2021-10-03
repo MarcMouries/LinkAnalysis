@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>ASCII Tree to JSON</title>
+  <link rel="stylesheet" href="./style.css">
+
+<style>
+pre {
+    margin: 0px;
+}
+
+.card {
+    border: 2px solid rgb(96, 139, 168);
+    border-radius: 5px;
+}
+
+.card .content {
+    padding: 10px;
+}
+
+.card .title {
+    background-color: rgba(96, 139, 168, .2);
+    padding: 10px;
+}
+
+.container {
+   display: inline-flex;
+	 justify-content: space-between;
+	 _outline: 1px dotted DodgerBlue;
+	  width: 80%;
+    height: 80%;
+}
+
+.container > div {
+  margin: 10px;
+  width: 100%;
+  _background: #46B980;
+  padding: 5px;
+  _color: #fff;
+}
+</style>
+</head>
+
+<body onload="display_tree()">
+	<h1>LinkAnalysis</h1>
+	<ul class="breadcrumb">
+		<li><a href="../index.html">Home</a></li>
+		<li>ASCII Tree to JSON</li>
+	</ul>
+    <div>
+        <p>Takes a Tree defined with ASCII characters and transforms it into a JSON object</p>
+    </div>
+	<div class="container">
+    <div class="card">
+        <div class="title">ASCII TREE</div>
+        <div class="content">
+     		  <pre id="ascii_tree"></pre>
+        </div>
+    </div>
+    <div class="card">
+        <div class="title">JSON TREE</div>
+        <div class="content">
+      		  <pre id="json_tree"></pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+      <script>
+const ascii_tree_FAMILY = `
+Family
+   |__ Father
+	 |   * first_name = Jim
+   |   * age = 33
+   |-- Mother
+	 |   * first_name = Jane
+	 |   * age = 30`;
+
+const ascii_tree_COMPANY =
+`COMPANY
+   |__ Site: New York
+       * Buildings
+       |__ Building A
+           * Floors
+             |__ Ground
+                 |__ Room 1
+                 |__ Room 2
+             |__ First 
+   |__ Site: London
+`;
+
+
+const ascii_tree_BUILDING =
+`Company
+ - name = ACME, Inc
+ - id = ACME
+ |__ Building 1
+ |    | - name = Building 1
+ |    | - id = B1
+ |    |__ Level 1
+ |    |    | - id = L1
+ |    |    |__ Room 1
+ |    |    |   - name = Room 1
+ |    |    |   - id = B1.L1.R1
+ |    |    |__ Room 1.2
+ |    |	   |    - name = Room 1.2
+ |    |	   |    - id = 1.2
+ |    |    |    |__ closet 1
+ |    |	   |    |    - name =  closet 1
+ |    |	   |    |    - id = C1_R1.2_L1
+ |    |__ Level 2
+ |    |    |__ Room 2.1
+ |    |	   |	  - name = Room 2.1. 
+ |    |	   |	  - id = 2.1
+ |    |    |    |__ closet 1
+ |    |    |    |    - name =  closet 1
+ |    |    |    |    - id = C1_R2.1_L2
+ |__ Building 2
+ |    - name = Building B
+`;
+
+
+const FIELD_CHAR = '-';
+const CHILD_STR = '|__';
+const LEVEL_CHAR = '|';
+
+var json_tree_element;
+
+function display_tree() {
+  document.getElementById("ascii_tree").innerHTML = ascii_tree_BUILDING;
+  json_tree_element = document.getElementById("json_tree");
+  var json_tree = ascii_tree_to_json(ascii_tree_BUILDING);
+  // TO DEBUG uncomment the next line
+  json_tree_element.innerHTML = JSON.stringify(json_tree, null, "   ");
+}
+
+function test_getNodeInfo() {
+  var lines = ascii_tree_BUILDING.split("\n");
+  for (i = 0; i < lines.length; i++) {
+    var current_line = lines[i];
+    json_tree_element = document.getElementById("json_tree");
+    json_tree_element.innerHTML += "<br>current_line = '" + current_line + "'<br>";
+    var nodeInfo = getNodeInfo(current_line, LEVEL_CHAR, CHILD_STR, FIELD_CHAR);
+    json_tree_element.innerHTML += "=>NodeInfo = '" + JSON.stringify(nodeInfo) + "'<br>";
+  }
+}
+/**
+*
+*
+*/
+function getNodeInfo(line, level_char, child_string, field_char) {
+  var nodeInfo = { type: "", level: 0 };
+  var i = 0;
+  while (i < line.length) {
+    var c = line[i];
+    if (c == level_char) {
+      nodeInfo.level++;
+    }
+    // CHILD 
+    if (c == child_string[0]) {
+      var j = 0;
+      var contains_child_string = true;
+      while (j < child_string.length && contains_child_string) {
+        c = line[i++];
+        var csc = child_string[j++];
+        contains_child_string = c == csc;
+        //console.log("testing " + j + ": " + c + " and " + csc + " = " + contains_child_string);
+      }
+      if (contains_child_string) {
+        nodeInfo.type = "CHILD";
+        nodeInfo.string = line.substring(i).trim();
+      }
+    }
+    // FIELD
+    else if (c == field_char) {
+        var remaining_chars = line.substring(i + 1);
+        var elements = remaining_chars.split("=");
+        if (elements.length == 0) {
+          console.log("missing = for line " + line);
+        }
+        var field_name = elements[0];
+        var field_value = elements[1];
+        nodeInfo.type = "FIELD";
+        nodeInfo.field_name = field_name.trim();
+        nodeInfo.field_value = field_value.trim();
+      }
+    i++;
+  }
+  // ROOT
+  if (nodeInfo.level == 0 && !nodeInfo.type) {
+    nodeInfo.type = "ROOT";
+    nodeInfo.name = line.trim();
+  }
+  return nodeInfo;
+}
+
+
+/**
+ * ASCII TREE TO JSON
+ *
+ */
+function ascii_tree_to_json(ascii_tree) {
+  var json_tree = {};
+
+  // maintain a list of parent node per level
+  var parent_at_level = [];
+
+  console.log(ascii_tree);
+  var lines = ascii_tree.split("\n");
+  console.log(lines);
+
+  var level = 0;
+  var current_parent = null;
+  var json_tree = null;
+
+  for (i = 0; i < lines.length; i++) {
+    var current_line = lines[i];
+    current_line = current_line.trim();
+
+    json_tree_element.innerHTML += "<br>current line = '" + current_line + "'<br>";
+
+    // discard any empty line
+    if (current_line.length == 0) {
+      continue;
+    }
+
+    var nodeInfo = getNodeInfo(current_line, LEVEL_CHAR, CHILD_STR, FIELD_CHAR);
+    json_tree_element.innerHTML += "=>NodeInfo = '" + JSON.stringify(nodeInfo) + "'<br>";
+
+    /* ROOT */
+    if (nodeInfo.type == "ROOT" && json_tree == null) {
+      var element = createElement(nodeInfo.name, null);
+      current_parent = element;
+      json_tree = element;
+      parent_at_level[0] = element;
+    }
+
+    /* CHILD */else
+      if (nodeInfo.type == "CHILD") {
+        var level = nodeInfo.level;
+        current_parent = parent_at_level[nodeInfo.level - 1];
+        LOG(level, "CHILD", nodeInfo.string, current_parent.name);
+        var element = createElement(nodeInfo.string, current_parent.name);
+        parent_at_level[nodeInfo.level] = element;
+        if (!current_parent.children) {
+          current_parent.children = [];
+        }
+        current_parent.children.push(element);
+      }
+      /* FIELD */else
+        if (nodeInfo.type == "FIELD") {
+          LOG(level, "FIELD", nodeInfo.field_name, current_parent);
+          current_parent = parent_at_level[nodeInfo.level];
+          current_parent[nodeInfo.field_name] = nodeInfo.field_value;
+        }
+    json_tree_element.innerHTML += "json_tree = " + JSON.stringify(json_tree) + "<br>";
+  }
+  return json_tree;
+}
+
+
+
+function LOG(level, type, child_name, parent_name) {
+  json_tree_element.innerHTML += ">> L(" + level + ") ";
+  json_tree_element.innerHTML += type + "=" + child_name + "' parent='" +
+  JSON.stringify(parent_name) + "'<br><br>";
+}
+
+function createElement(nodeName, parent) {
+  var element = {};
+  element.name = nodeName;
+  return element;
+}
+    </script>
+</body>
+</html>
