@@ -4,7 +4,7 @@
 	<title></title>
 	<script type="text/javascript" src="../src/image_utils.js"></script>
 	<script type="text/javascript" src="../src/links_icons.js"></script>
-	<script type="text/javascript" src="../src/image_utils.js"></script>
+	<script type="text/javascript" src="../src/trigo.js"></script>
 
 	<link rel="stylesheet" href="./style.css">
 
@@ -162,6 +162,15 @@
 				width = canvas.width = window.innerWidth,
 				height = canvas.height = window.innerHeight;
 
+			// replaced    document.body.addEventListener by canvas
+			canvas.addEventListener("mousedown", onMouseDown);
+			canvas.addEventListener("mousemove", onMouseMove);
+			canvas.addEventListener("mouseup", onMouseUp);
+
+			canvas.addEventListener("touchstart", onMouseDown);
+			canvas.addEventListener("touchmove", onMouseMove, true);
+			canvas.addEventListener("touchend", onMouseUp);
+
 			var icon_types = Object.entries(ICON_LIST);
 
 
@@ -212,9 +221,8 @@
 					node.draw(context);
 				}
 			}
-			document.body.addEventListener("mousemove", onMouseMove);
-			document.body.addEventListener("mousedown", onMouseDown);
-			document.body.addEventListener("mouseup", onMouseUp);
+
+
 
 			var inputDevice = 'mouse';
 
