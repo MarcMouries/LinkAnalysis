@@ -1,9 +1,10 @@
 <html>
 
 <head>
-	<script src="../Graph.js"></script>
+	<script src="../src/Graph.js" />
+	</script>
 	<script src="data-json-criminal.js"></script>
-	
+
 	<link rel="stylesheet" href="./style.css">
 
 	<style>
@@ -12,24 +13,24 @@
 		}
 	</style>
 </head>
+
 <body>
 	<h1>LinkAnalysis</h1>
 	<ul class="breadcrumb">
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
 	</ul>
-	<div id="output"></div>
-	
+	<div id="output">
+		Graph is displayed in the console
+	</div>
+
 	<script>
-    //document.addEventListener('DOMContentLoaded', function(event) {
+		//document.addEventListener('DOMContentLoaded', function(event) {
 
 		var graph = new Graph();
 		var output = document.getElementById("output");
 		output.innerHTML = "loading graph";
-		console.log("loading graph");
 		console.log(data_json_criminal_string);
-		
-		
 	//})
 	</script>
 </body>

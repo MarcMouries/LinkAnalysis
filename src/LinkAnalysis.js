@@ -853,14 +853,21 @@ var LinkAnalysis = (function () {
 		 * accepts variable number of arguments
 		 */
 		addNodes: function () {
-			console.log("=== addNodes ===");
+			console.log("@TODO === addNodes ===");
 			for (var i = 0; i < arguments.length; i++) {
 				console.log(arguments[i]);
 			}
 		},
 
 		loadJSON: function (json_string) {
+
+//MOVE TO GRAPH
+
+
 			console.log("LOAD JSON");
+this.graph.loadJSON(json_string);
+
+
 			var json_object = JSON.parse(json_string);
 			console.log(json_object);
 
