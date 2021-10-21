@@ -48,6 +48,10 @@ Node.prototype.getChildrenCount = function () {
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
+Node.prototype.toString = function () {
+	return this.id + ", " + "depth: " + this.depth + ", " + "children #: " + this.getChildrenCount();
+}
+
 
 // =============================================================
 //                          Link

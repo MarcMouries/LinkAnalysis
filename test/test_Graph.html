@@ -9,10 +9,35 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<style>
-		canvas {
-			border: solid 1px black;
+		pre {
+			margin: 0px;
 		}
-	</style>
+		.card {
+			border: 2px solid rgb(96, 139, 168);
+			border-radius: 5px;
+		}
+		.card .content {
+			padding: 10px;
+		}
+		.card .title {
+			background-color: rgba(96, 139, 168, .2);
+			padding: 10px;
+		}
+		.container {
+		   display: inline-flex;
+			 justify-content: space-between;
+			 _outline: 1px dotted DodgerBlue;
+			  width: 80%;
+			height: 80%;
+		}
+		.container > div {
+		  margin: 10px;
+		  width: 100%;
+		  _background: #46B980;
+		  padding: 5px;
+		  _color: #fff;
+		}
+		</style>
 </head>
 
 <body>
@@ -21,29 +46,52 @@
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
 	</ul>
+	<div class="container">
+		<div class="card">
+			<div class="title">Graph as JSON</div>
+			<div class="content">
+				   <pre id="json_tree"></pre>
+			</div>
+		</div>
+		<div class="card">
+			<div class="title">Graph Information</div>
+			<div class="content">
+					<pre id="graph_info"></pre>
+			</div>
+		</div>
+	</div>
 	<div id="output">
-		
+
 	</div>
 
 	<script>
 		//document.addEventListener('DOMContentLoaded', function(event) {
 
-		var output = document.getElementById("output");
-		output.innerHTML = "Graph is displayed in the console";
+		var json_tree = document.getElementById("json_tree");
+		json_tree.innerHTML = data_json_org_chart;
+
+		var json_tree = document.getElementById("graph_info");
 
 		var graph = new Graph();
 		graph.loadJSON(data_json_org_chart);
 		console.log("data_json_org_chart");
 		console.log(data_json_org_chart);
-		console.log("GRAPH");
-		console.log(graph.toString());
-		console.log("getNode CEO");
+
+		log ( graph_info, "GRAPH = '" + graph.toString() );
+
 		var nodeCEO = graph.getNode("CEO");
+		log ( graph_info, "getNode CEO = '" + nodeCEO.toString() );
+
 		console.log(nodeCEO);
 		console.log("CEO - First child");
 		console.log(nodeCEO.getFirstChild());
 		console.log("CEO - Last child");
 		console.log(nodeCEO.getLastChild());
+
+
+		function log (element, info) {
+			element.innerHTML += info + "'<br>";
+		}
 	//})
 	</script>
 </body>
