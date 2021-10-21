@@ -860,30 +860,7 @@ var LinkAnalysis = (function () {
 		},
 
 		loadJSON: function (json_string) {
-
-//MOVE TO GRAPH
-
-
-			console.log("LOAD JSON");
-this.graph.loadJSON(json_string);
-
-
-			var json_object = JSON.parse(json_string);
-			console.log(json_object);
-
-			var nodes = json_object["nodes"];
-			for (let index = 0; index < nodes.length; index++) {
-				var node = nodes[index];
-				this.addObject(node);
-			}
-
-			var links = json_object["links"];
-			for (let index = 0; index < links.length; index++) {
-				var link = links[index];
-				this.addLink(link.source, link.target);
-			}
-
-			console.log(this.graph);
+			this.graph.loadJSON(json_string);
 		},
 
 		setNodeClickHandler: function (nodeClickHandler) {
