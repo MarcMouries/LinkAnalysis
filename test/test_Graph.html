@@ -4,6 +4,7 @@
 	<script src="../src/Graph.js" />
 	</script>
 	<script src="data-json-criminal.js"></script>
+	<script src="data-json-org-chart.js"></script>
 
 	<link rel="stylesheet" href="./style.css">
 
@@ -21,16 +22,28 @@
 		<li>Test Graph</li>
 	</ul>
 	<div id="output">
-		Graph is displayed in the console
+		
 	</div>
 
 	<script>
 		//document.addEventListener('DOMContentLoaded', function(event) {
 
-		var graph = new Graph();
 		var output = document.getElementById("output");
-		output.innerHTML = "loading graph";
-		console.log(data_json_criminal_string);
+		output.innerHTML = "Graph is displayed in the console";
+
+		var graph = new Graph();
+		graph.loadJSON(data_json_org_chart);
+		console.log("data_json_org_chart");
+		console.log(data_json_org_chart);
+		console.log("GRAPH");
+		console.log(graph.toString());
+		console.log("getNode CEO");
+		var nodeCEO = graph.getNode("CEO");
+		console.log(nodeCEO);
+		console.log("CEO - First child");
+		console.log(nodeCEO.getFirstChild());
+		console.log("CEO - Last child");
+		console.log(nodeCEO.getLastChild());
 	//})
 	</script>
 </body>

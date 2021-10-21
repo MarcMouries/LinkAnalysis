@@ -34,6 +34,21 @@ Node.prototype.isAdjacent = function (node) {
 	return this.adjacentList.indexOf(node) > -1;
 };
 
+Node.prototype.getChildAt = function (i) {
+	return this.adjacentList[i];
+}
+
+Node.prototype.getFirstChild = function () {
+	return this.getChildAt(0);
+}
+
+Node.prototype.getChildrenCount = function () {
+		return this.adjacentList.length;
+}
+Node.prototype.getLastChild = function () {
+	return this.getChildAt(this.getChildrenCount() - 1);
+}
+
 // =============================================================
 //                          Link
 // =============================================================
@@ -140,6 +155,10 @@ Graph.prototype._getAdjacents = function (nodeID) {
 Graph.prototype.getNodes = function (node) {
 	return this.nodeList;
 };
+
+
+
+
 Graph.prototype.getLinks = function () {
 	return this.linkList;
 };
@@ -147,7 +166,7 @@ Graph.prototype.getLinks = function () {
 function printNode(node) {
 	var adjacentsRepresentation = "";
 	if (node.getAdjacents() == 0) {
-		adjacentsRepresentation = "∅";
+		adjacentsRepresentation = "no children";
 	} else {
 		adjacentsRepresentation = node
 			.getAdjacents().map(function (item) {
@@ -161,8 +180,22 @@ Graph.prototype.toString = function () {
 	return this.nodeList.map(printNode);
 };
 
-Graph.prototype.loadJSON = function () {
-	console.error("Graph.prototype.loadJSON  NOT IMPLEMENTED");
+
+Graph.prototype.loadJSON = function (json_string) {
+	var json_object = JSON.parse(json_string);
+	var nodes = json_object["nodes"];
+	for (let index = 0; index < nodes.length; index++) {
+		var node = nodes[index];
+		this.addObject(node);
+	}
+
+	var links = json_object["links"];
+	for (let index = 0; index < links.length; index++) {
+		var link = links[index];
+		this.addLink(link.source, link.target);
+	}
+	console.log("Graph.loadJSON ");
+	console.log(this.graph);
 };
 
 //
