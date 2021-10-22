@@ -89,6 +89,23 @@
 		console.log(nodeCEO.getLastChild());
 
 
+		log ( graph_info, "Graph Visit ");
+		log ( graph_info, "=========== ");
+
+		graph.visit(graph, nodeCEO, 0, 
+		function (node, level) {
+			log ( graph_info, "node " + node.id + " - Level " + level);
+		}
+		);
+
+		log ( graph_info, "Graph visit_breadth_first ");
+		log ( graph_info, "=========== ");
+		graph.visit_breadth_first(nodeCEO, function (level, nodes_at_current_level) {
+		// console.log("Level " + level + ": " + to_string);
+		log ( graph_info, "Level " + level + ": ");
+	});
+
+
 		function log (element, info) {
 			element.innerHTML += info + "'<br>";
 		}

@@ -11,236 +11,6 @@ function log(msg) {
 }
 
 
-
-
-// =============================================================
-//                          Node
-// -------------------------------------------------------------
-//
-// =============================================================
-function Node(id, data) {
-	this.id = id;
-	this.data = data;
-	this.depth = -1;
-	this.adjacentList = [];
-}
-
-Node.prototype.addAdjacent = function (node) {
-	this.adjacentList.push(node);
-};
-
-Node.prototype.getAdjacents = function (node) {
-	return this.adjacentList;
-};
-
-Node.prototype.isAdjacent = function (node) {
-	return this.adjacentList.indexOf(node) > -1;
-};
-
-// =============================================================
-//                          Link
-// =============================================================
-function Link(source, target) {
-	this.id = source.id + "-" + target.id;
-	this.source = source;
-	this.target = target;
-}
-
-// =============================================================
-//                          Graph
-// =============================================================
-function Graph() {
-	this.graph = {};
-	this.nodeList = [];
-	this.linkList = [];
-	this.adjacency = {};
-	this.changed = false;
-}
-
-/**
- *
- */
-Graph.prototype.addObject = function (object) {
-	var node = new Node(object.id, object);
-	this.addNode(node);
-	this.changed = true;
-	return node;
-};
-
-Graph.prototype.addNode = function (node) {
-	console.log("adding node : " + node.id);
-
-	if (!(node.id in this.graph)) {
-		this.nodeList.push(node);
-		this.graph[node.id] = node;
-	}
-	else {
-		console.log("ALREADY EXIST node : " + node.id);
-	}
-	return node;
-};
-
-/**
- * Check if the specified node is a target in the list of links
- */
-Graph.prototype.isRoot = function (node) {
-	var exist = false;
-	this.linkList.forEach(function (link, index) {
-		if (link.target.id === node.id) {
-			exist = true;
-		}
-	});
-	return (is_root = !exist);
-};
-
-Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
-	var sourceNode = this.getNode(sourceNode_id);
-	if (sourceNode == undefined) {
-		throw new TypeError("Trying to add a link to the non-existent node with id: " + sourceNode_id);
-	}
-	var targetNode = this.getNode(targetNode_id);
-	if (targetNode == undefined) {
-		throw new TypeError("Trying to add a link to the non-existent node with id: " + targetNode_id);
-	}
-
-	var link = new Link(sourceNode, targetNode);
-	var exists = false;
-
-	this.linkList.forEach(function (item) {
-		if (link.id === item.id) {
-			exists = true;
-		}
-	});
-
-
-	if (!exists) {
-		this.linkList.push(link);
-		sourceNode.addAdjacent(targetNode);
-	}
-	else {
-		console.log("LINK EXIST: " + " source: " + link.source.id + " => " + link.target.id);
-	}
-
-	if (!(link.source.id in this.adjacency)) {
-		this.adjacency[link.source.id] = {};
-	}
-	if (!(link.target.id in this.adjacency[link.source.id])) {
-		this.adjacency[link.source.id][link.target.id] = [];
-	}
-	this.adjacency[link.source.id][link.target.id].push(link);
-};
-
-Graph.prototype.getNode = function (nodeID) {
-	var node = this.graph[nodeID];
-	return node;
-};
-
-Graph.prototype._getAdjacents = function (nodeID) {
-	var node = this.graph[nodeID];
-	return this.adjacency[node.id];
-};
-
-Graph.prototype.getNodes = function (node) {
-	return this.nodeList;
-};
-Graph.prototype.getLinks = function () {
-	return this.linkList;
-};
-
-function printNode(node) {
-	var adjacentsRepresentation = "";
-	if (node.getAdjacents() == 0) {
-		adjacentsRepresentation = "∅";
-	} else {
-		adjacentsRepresentation = node
-			.getAdjacents().map(function (item) {
-				return item.id;
-			})
-			.join(", ");
-	}
-	return node.id + " => " + adjacentsRepresentation;
-}
-Graph.prototype.toString = function () {
-	return this.nodeList.map(printNode);
-};
-
-Graph.prototype.loadJSON = function () {
-	console.error("Graph.prototype.loadJSON  NOT IMPLEMENTED");
-};
-
-//
-Graph.prototype.getNodesAtLevel = function (level) {
-	return [];
-};
-
-Graph.prototype.visit_breadth_first = function (starting_node, callback) {
-	var max = 0;
-
-	if (starting_node && starting_node.getAdjacents().length > 0) {
-		var depth = -1;
-		var fifo = [];
-		var nodes_at_level = [];
-
-		fifo.push(starting_node);
-		while (fifo.length > 0) {
-			var node = fifo.shift();
-
-			if (node.depth >= depth) {
-				if (depth > -1) {
-					callback(depth, nodes_at_level);
-				}
-				depth++;
-				max = Math.max(max, nodes_at_level.length);
-				nodes_at_level = [];
-			}
-			node.depth = depth;
-			nodes_at_level.push(node);
-			node.getAdjacents().forEach(function (item, index) {
-				item.depth = depth;
-				fifo.push(item);
-				//  console.log("item #: " + item.id + " (level: " + level);
-			});
-		}
-		callback(depth, nodes_at_level);
-		return Math.max(max, nodes_at_level.length);
-	}
-	return 0;
-};
-
-// =============================================================
-//                          Graph Utils
-// =============================================================
-
-function visit_nodes_at_level(level, nodes_at_level) {
-	maxDepth++;
-	var to_string = nodes_at_level
-		.map(function (item) {
-			return item.id + " (" + item.depth + ")";
-		})
-		.join(", ");
-	console.log("Level " + level + ": " + to_string);
-}
-
-function to_string_node_list(node_list) {
-	var to_string = node_list
-		.map(function (item) {
-			return item.id + " (" + item.depth + ")";
-		})
-		.join(", ");
-
-	return to_string;
-}
-
-function build_nodes_at_level() {
-	var nodes_by_level = [];
-
-	graph.visit_breadth_first(root_node, function (level, nodes_at_current_level) {
-		// console.log("Level " + level + ": " + to_string);
-		nodes_by_level[level] = nodes_at_current_level;
-	});
-	return nodes_by_level;
-}
-
 // =============================================================
 //                          MRadialLayout
 // =============================================================
@@ -338,8 +108,7 @@ var LinkAnalysis = (function () {
 		NODE_RADIUS = options.node_radius || 20;
 		FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
-		
-		
+
 
 		this.dpr = 1;//window.devicePixelRatio || 1;
 		this.original_scale = this.dpr;
@@ -351,7 +120,7 @@ var LinkAnalysis = (function () {
 		 *  Show grid
 		*/
 		this.show_grid = options.show_grid || false;
-		
+
 		/**
 		 *  Show zoom
 		*/
@@ -387,6 +156,7 @@ var LinkAnalysis = (function () {
 		console.log("icon_by_node_type = " + icon_by_node_type);
 		console.log("show_zoom         = " + show_zoom);
 		console.log("show_grid         = " + this.show_grid);
+		console.log("icon_by_node_type = ");
 		console.log(icon_by_node_type);
 
 
@@ -502,9 +272,9 @@ var LinkAnalysis = (function () {
 		};
 
 		var renderNode = function (node) {
-			//log(`MChartView.renderNode: ${node.data.id}: ${node.x},${node.y} `);
+			log(`renderNode: ${node.data.id}: ${node.x},${node.y} ${node.data._icon}`);
 
-		//	mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
+			//mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
 
 			// NODE RING
 			var ring_width = 10;
@@ -515,6 +285,8 @@ var LinkAnalysis = (function () {
 			} else if (node.isBelowMouse) {
 				ring_color = COLOR_HOVER_NODE;
 			}
+			//log(`drawRing: ${node.data.id}: ${node.x},${node.y}  , ring_width = ${ring_width}`);
+
 			mcanvas.drawRing(node.x, node.y, ring_radius, ring_color, "", ring_width);
 
 			// NODE IMAGE
@@ -523,6 +295,10 @@ var LinkAnalysis = (function () {
 					node.x - NODE_ICON_WIDTH / 2,
 					node.y - NODE_ICON_WIDTH / 2,
 					NODE_ICON_WIDTH, NODE_ICON_WIDTH);
+			}
+			else {
+				log(`renderNode: ${node.data.id}: ${node.x},${node.y} ${node.data._icon}`);
+
 			}
 			var padding_node_title = 0;
 			var maxLineWidth = 1.5 * (2 * node.radius);
@@ -534,7 +310,7 @@ var LinkAnalysis = (function () {
 
 		var drawBorder = function () {
 			//log("MChartView.drawBorder");
-			//mcanvas.drawBorder(this.background_color);
+			mcanvas.drawBorder(this.background_color);
 		};
 
 		var deselectNodes = function (nodes) {
@@ -564,8 +340,8 @@ var LinkAnalysis = (function () {
 			self.startDragOffset.y = mouse.y - self.translatePos.y;
 
 			// last move is used to calculate the delta between mouse move so we don't need to substract the translation
-			self.lastMoveX = mouse.x ;
-			self.lastMoveY = mouse.y ;
+			self.lastMoveX = mouse.x;
+			self.lastMoveY = mouse.y;
 
 			var info_mouse_action = document.getElementById("mouse_action");
 			info_mouse_action.innerHTML = "Mouse Action: " + "Down";
@@ -614,8 +390,8 @@ var LinkAnalysis = (function () {
 				self.translatePos.y = mouse.y - self.startDragOffset.y;
 
 				// dx & dy are the distance the mouse has moved since the last mousemove event
-				var dx= mouse.x - self.lastMoveX;
-				var dy= mouse.y - self.lastMoveY;
+				var dx = mouse.x - self.lastMoveX;
+				var dy = mouse.y - self.lastMoveY;
 
 				// reset the vars for next mousemove
 				self.lastMoveX = mouse.x;
@@ -642,7 +418,7 @@ var LinkAnalysis = (function () {
 			coord_trans.innerHTML = "netPanning: " + self.netPanningX + "/" + self.netPanningY;
 
 			var info_mouse_action = document.getElementById("mouse_action");
-			info_mouse_action.innerHTML = "Mouse Action: " + "Moving";
+			info_mouse_action.innerHTML = "Mouse Action: " + "Hovering";
 
 
 			// Highlight Node when mouse over
@@ -654,7 +430,7 @@ var LinkAnalysis = (function () {
 					//if (pointInCircle(event.clientX, event.clientY, node)) {
 					//if (pointInCircle(mouse.Y, mouse.Y, node)) {
 					if (pointInCircle(mouseXT, mouseYT, node)) {
-						newCursor = 'grab';
+						newCursor = 'pointer';  //grab
 						if (!node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
 						node.isBelowMouse = true;
 						break;
@@ -663,10 +439,10 @@ var LinkAnalysis = (function () {
 					}
 				}
 				if (!newCursor) {
-					mcanvas.setCursor('move');
+					//mcanvas.setCursor('move');
 				}
 				else {
-					mcanvas.setCursor(newCursor);
+					//mcanvas.setCursor(newCursor);
 				}
 			}
 			if (self.dragging_node) {
@@ -736,10 +512,10 @@ var LinkAnalysis = (function () {
 			// DRAW GRID
 			if (this.show_grid) {
 				mcanvas.drawGrid(
-						0 - this.netPanningX,
-						0 - this.netPanningY,
-						this.getWidth() - this.netPanningX, 
-						this.getHeight()- this.netPanningY);
+					0 - this.netPanningX,
+					0 - this.netPanningY,
+					this.getWidth() - this.netPanningX,
+					this.getHeight() - this.netPanningY);
 			}
 
 			if (renderTrigger) {
@@ -808,6 +584,13 @@ var LinkAnalysis = (function () {
 			mcanvas.addEventListener(type, listener);
 		},
 
+		/*
+		/////////
+				INITIALISE NODES
+		/////////
+		*/
+
+
 		addObject: function (object) {
 			var node = this.graph.addObject(object);
 			node.radius = NODE_RADIUS;
@@ -829,15 +612,7 @@ var LinkAnalysis = (function () {
 							*/
 
 
-			if (node.data.type) {
-				var image;
-				var image_elmt = icon_by_node_type[node.data.type];
-				if (image_elmt) {
-					node.data._icon = image_elmt.image;
-					//console.log(node.data.type + " = " + image_elmt);
-					//console.log(image_elmt.image.width + " x " + image_elmt.image.height);
-				}
-			}
+
 
 			//linkAnalysis.updateGraph();
 		},
@@ -861,7 +636,34 @@ var LinkAnalysis = (function () {
 
 		loadJSON: function (json_string) {
 			this.graph.loadJSON(json_string);
+			this.initializeNodes();
 		},
+
+
+		initializeNodes: function () {
+			console.log("@TODO === === === === === ===");
+			console.log("@TODO === initializeNodes ===");
+			console.log("@TODO === === === === === ===");
+
+			var nodes = this.graph.getNodes();
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+				node.radius = NODE_RADIUS;
+
+
+				if (node.data.type) {
+					var image;
+					var image_elmt = icon_by_node_type[node.data.type];
+					if (image_elmt) {
+						node.data._icon = image_elmt.image;
+						console.log(node.data.type + " = " + image_elmt);
+						console.log(image_elmt.image.width + " x " + image_elmt.image.height);
+					}
+				}
+			}
+
+		},
+
 
 		setNodeClickHandler: function (nodeClickHandler) {
 			this.nodeClickHandler = nodeClickHandler;

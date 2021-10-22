@@ -10,6 +10,8 @@ function log(msg) {
 	}
 }
 
+
+
 // =============================================================
 //                          Node
 // -------------------------------------------------------------
@@ -206,6 +208,11 @@ Graph.prototype.loadJSON = function (json_string) {
 Graph.prototype.getNodesAtLevel = function (level) {
 	return [];
 };
+
+Graph.prototype.visit = function (graph, node, level, callback) { 
+	callback(node, level);
+}
+
 
 Graph.prototype.visit_breadth_first = function (starting_node, callback) {
 	var max = 0;
