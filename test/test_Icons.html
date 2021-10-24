@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title></title>
 	<script type="text/javascript" src="../src/image_utils.js"></script>
@@ -29,7 +30,9 @@
 <script>
 	window.onload = function () {
 
-
+		var mouseDown = false;
+		var selection_startX;
+		var selection_startY;
 
 		drawRing = function (x, y, radius, color) {
 			this.ctx.beginPath();
@@ -37,6 +40,17 @@
 			this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
 			this.ctx.lineWidth = 5;
 			this.ctx.stroke();
+		};
+
+		drawSelectionRect = function (ctx, x, y, width, height) {
+			console.log("drawSelectionRect: (x: " + x + ", y: " + y + ", width: " + width + ", height: " + height)
+			ctx.beginPath();
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = 'rgba(0,128,255,1)';
+			ctx.fillStyle = 'rgba(0,128,255, 0.2)';
+			ctx.rect(x, y, width, height);
+			ctx.fill();
+			ctx.stroke();
 		};
 
 
@@ -49,8 +63,6 @@
 			var start_Y = this.source.y;
 			var end_X = this.target.x;
 			var end_Y = this.target.y;
-
-			// DRAW
 		}
 
 
@@ -97,7 +109,6 @@
 				this.drawImage(context, image);
 
 
-				console.log("isBelowMouse: " + this.isBelowMouse);
 				if (this.isClicked) {
 					//this.drawRing(context, color_ring_isActivated);
 					this.drawRing(context, "blue");
@@ -158,7 +169,7 @@
 
 			// the imgs[] array now holds fully loaded images
 			var canvas = document.getElementById("canvas"),
-				context = canvas.getContext("2d"),
+				ctx = canvas.getContext("2d"),
 				width = canvas.width = window.innerWidth,
 				height = canvas.height = window.innerHeight;
 
@@ -209,16 +220,22 @@
 
 			var offset = {};
 			var isClicked = false;
+			var selecting = false;
 			var current_node;
+			var lastMoveX;
+			var lastMoveY;
 
-			draw();
+			render();
 
-			function draw() {
-				context.clearRect(0, 0, width, height);
-				context.fillStyle = "gray";
+			function render() {
+				ctx.clearRect(0, 0, width, height);
+				ctx.fillStyle = "gray";
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
-					node.draw(context);
+					node.draw(ctx);
+				}
+				if (selecting) {
+					drawSelectionRect(ctx, selection_startX, selection_startY, lastMoveX - selection_startX, lastMoveY - selection_startY);
 				}
 			}
 
@@ -236,31 +253,67 @@
 				return [lx, ly];
 			}
 
+			/**
+			 *  We move the node selection to the last position so that it is drawn above the other shapes on the canvas
+			 */
+			function moveNodeInLastPosition(node) {
+				console.log("moveNodesInfirstPosition: " + node);
+				var index = -1;
+
+				nodes.forEach(function (item, i) {
+					if (item === node) {
+						index = i;
+					}
+				});
+				nodes.splice(index, 1);
+				nodes.push(node);
+			}
+
 			function onMouseDown(event) {
+				mouseDown = true;
+				const [lx, ly] = mouseEventToCoord(canvas, inputDevice, event);
+
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
-					const [lx, ly] = mouseEventToCoord(canvas, inputDevice, event);
 
 					if (pointInCircle(lx, ly, node)) {
 						node.isClicked = true;
 						current_node = node;
 						offset.x = lx;
 						offset.y = ly;
+						moveNodeInLastPosition(node);
+						break;
 					} else {
-						node.isClicked = false;
+						//node.isClicked = false;
+						//current_node = null;
 					}
 				}
-				draw();
+
+				if (!current_node) {
+					selection_startX = lx;
+					selection_startY = ly;
+					selecting = true;
+				}
+				else {
+					selecting = false;
+				}
+
+
+				render();
 			}
 
 
 			function onMouseMove(event) {
 				const [lx, ly] = mouseEventToCoord(canvas, inputDevice, event);
+				lastMoveX = lx;
+				lastMoveY = ly;
+
+				/* to highlight node below the mouse */
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
 
 					if (pointInCircle(lx, ly, node)) {
-					//if (pointInCircle(event.clientX, event.clientY, node)) {
+						//if (pointInCircle(event.clientX, event.clientY, node)) {
 						node.isBelowMouse = true;
 					} else {
 						node.isBelowMouse = false;
@@ -272,15 +325,17 @@
 					//current_node.y = event.clientY - offset.y;
 					current_node.y = ly;
 				}
-				draw();
+				render();
 			}
 
 			function onMouseUp(event) {
-				if (current_node != null) {
+				mouseDown = false;
+				selecting = false;
+				if (current_node) {
 					current_node.isClicked = false;
 					current_node = null;
 				}
-				draw();
+				render();
 			}
 		}
 	};
