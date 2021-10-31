@@ -161,6 +161,13 @@
 			return this.getRadius() * 2;
 		};
 
+		Circle.prototype.getTopLeftX  = function () {
+			return this.getX() - this.getRadius();
+		};
+		Circle.prototype.getTopLeftY = function () {
+			return this.getY() - this.getRadius();
+		};
+
 		Circle.prototype.drawRing = function (context, color) {
 			context.beginPath();
 			context.strokeStyle = color;
