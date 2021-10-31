@@ -1,10 +1,9 @@
-
-
 // =============================================================
 //                          MRadialLayout
 // =============================================================
 function MRadialLayout() {
 
+	this.DISTANCE_BETWEEN_LEVELS = 130;
 
  }
 
@@ -13,7 +12,6 @@ function MRadialLayout() {
 
 	//log(`MRadialLayout.Calculate_Positions: ${starting_vertex.data.id}`);
 
-	var DISTANCE_BETWEEN_LEVELS = 130;
 
 	if (!graph || graph.getNodes().length == 0) {
 		console.error("MRadialLayout: can't run on an empty graph.");
@@ -40,7 +38,6 @@ function MRadialLayout() {
 		//            angle=${to_degrees(starting_vertex.angle)}°- angleRange=${to_degrees(starting_vertex.angleRange)}°`);
 	}
 
-	var nodes = graph.getNodes();
 	var children_count = starting_vertex.getAdjacents().length;
 	//console.log(`*** MRadialLayout vertex id=${starting_vertex.id}: # children=${children_count}`);
 
@@ -59,11 +56,10 @@ function MRadialLayout() {
 		child.angle = starting_vertex.angle + slice_angle * i + centerAdjust;
 		child.angleRange = slice_angle;
 
-		var cx = DISTANCE_BETWEEN_LEVELS;
+		var cx = this.DISTANCE_BETWEEN_LEVELS;
 		var cy = 0;
-
+		// to  avoid collision between siblings
 		if (i % 2 === 1) {
-			console.log("even child = " + child.id);
 			cx = cx * 1.3;
 		}
 

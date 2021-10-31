@@ -43,7 +43,7 @@
 		};
 
 		drawSelectionRect = function (ctx, x, y, width, height) {
-			console.log("drawSelectionRect: (x: " + x + ", y: " + y + ", width: " + width + ", height: " + height)
+			//console.log("drawSelectionRect: (x: " + x + ", y: " + y + ", width: " + width + ", height: " + height)
 			ctx.beginPath();
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = 'rgba(0,128,255,1)';
@@ -59,65 +59,143 @@
 			this.target = target;
 		}
 		Link.prototype.draw = function (context, color) {
-			var start_X = this.source.x;
-			var start_Y = this.source.y;
-			var end_X = this.target.x;
-			var end_Y = this.target.y;
+			var start_X = this.source.getX();
+			var start_Y = this.source.getY();
+			var end_X = this.target.getX();
+			var end_Y = this.target.getY();
+		}
+
+		var Shape = function (shapeType, x, y, width, height) {
+			this.shapeType = shapeType;
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		};
+
+		Shape.prototype = {
+			getName: function () {
+				return this.name;
+			},
+			getX: function () {
+				return this.x;
+			},
+			getY: function () {
+				return this.y;
+			},
+			getWidth: function () {
+				return this.width;
+			},
+			getHeight: function () {
+				return this.height;
+			},
+			setImage: function (image) {
+				this.image = image;
+			},
+			getImage: function () {
+				return this.image;
+			},
+			setId: function (nodeId) {
+				this.nodeId = nodeId;
+			},
+			getNodeId: function () {
+				return this.nodeId;
+			},
+			toStringCoordinates: function () {
+				return this.name + " - (x: " + this.x + ", y: " + this.y + ", width: " + this.width + ", height: " + this.height;
+			}
 		}
 
 
+		Rectangle.prototype = Object.create(Shape.prototype);
+		Rectangle.prototype.constructor = Rectangle;
+		function Rectangle(x, y, width, height, fill, stroke, node_type) {
+			Shape.call(this, 'rectangle', x, y, width, height);
+
+		};
+		Rectangle.prototype.draw = function (context) {
+			context.beginPath();
+			context.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+			context.fillStyle = "#8ED6FF";
+			//context.fill();
+			context.lineWidth = 2;
+			context.strokeStyle = "black";
+			context.stroke();
+			//context.fill();
+			this.drawImage(context, this.getImage());
+
+		}
+
+
+		/**
+		 *  Circle
+		 *
+		 *
+		 *
+		 */
+		Circle.prototype = Object.create(Shape.prototype);
+		Circle.prototype.constructor = Circle;
 		function Circle(x, y, radius, fill, stroke, node_type) {
+			Shape.call(this, 'circle', x, y, radius * 2, radius * 2);
+
 			this.startingAngle = 0;
 			this.endAngle = 2 * Math.PI;
-			this.x = x;
-			this.y = y;
 			this.radius = radius;
 			this.fill = fill;
 			this.stroke = stroke;
 			this.isClicked = false;
 			this.isBelowMouse = false;
 			this.node_type = node_type;
-
-
-			Circle.prototype.drawRing = function (context, color) {
-				context.beginPath();
-				context.strokeStyle = color;
-				context.arc(this.x, this.y, this.radius + 5, 0, 2 * Math.PI, false);
-				context.lineWidth = 5;
-				context.stroke();
-			};
-
-			Circle.prototype.drawImage = function (context, image) {
-				var icon_x = this.x - icon_width / 2; // to fit into circle
-				var icon_y = this.y - icon_heigth / 2; // to fit into circle
-				context.drawImage(image, icon_x, icon_y, icon_width, icon_heigth);
-			}
-
-			Circle.prototype.draw = function (context) {
-				context.beginPath();
-				context.fillStyle = this.fill;
-				context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-				context.fill();
-
-
-				var image = ICON_LIST[this.node_type].image;
-				if (!image) {
-					console.log("=====");
-					console.log(ICON_LIST[node_type]);
-					console.log("=====");
-				}
-				this.drawImage(context, image);
-
-
-				if (this.isClicked) {
-					//this.drawRing(context, color_ring_isActivated);
-					this.drawRing(context, "blue");
-				} else if (this.isBelowMouse) {
-					//this.drawRing(context, color_ring_isBelowMouse);
-					this.drawRing(context, "green");
-				}
-			};
 		}
+
+
+		Circle.prototype.getRadius = function () {
+			return this.radius;
+		};
+
+		Circle.prototype.getWidth = function () {
+			return this.getRadius() * 2;
+		};
+
+		Circle.prototype.getHeight = function () {
+			return this.getRadius() * 2;
+		};
+
+		Circle.prototype.drawRing = function (context, color) {
+			context.beginPath();
+			context.strokeStyle = color;
+			context.arc(this.getX(), this.getY(), this.radius + 5, 0, 2 * Math.PI, false);
+			context.lineWidth = 5;
+			context.stroke();
+		};
+
+		Circle.prototype.drawImage = function (context, image) {
+			var icon_x = this.getX() - this.getRadius() / 2; // to fit into circle
+			var icon_y = this.getY() - this.getRadius() / 2; // to fit into circle
+			context.drawImage(image, icon_x, icon_y, icon_width, icon_heigth);
+		}
+
+		Circle.prototype.draw = function (context) {
+			context.beginPath();
+			context.fillStyle = this.fill;
+			context.arc(this.getX(), this.getY(), this.radius, 0, Math.PI * 2, false);
+			context.fill();
+			this.drawImage(context, this.getImage());
+
+			context.rect(this.getX() - this.getRadius(), this.getY() - this.getRadius(), this.getWidth(), this.getHeight());
+			context.stroke();
+
+
+
+			if (this.isClicked) {
+				//this.drawRing(context, color_ring_isActivated);
+				this.drawRing(context, "blue");
+			} else if (this.isBelowMouse) {
+				//this.drawRing(context, color_ring_isBelowMouse);
+				this.drawRing(context, "green");
+			}
+		}
+
 
 		var color_ring_isActivated = "#3b6978";
 		var color_ring_isBelowMouse = "#84a9ac";
@@ -135,27 +213,13 @@
 
 
 		var ICON_LIST = {
-			"address": {
-				"url": icon_home_base64
-			},
-			"arrest": {
-				"url": icon_arrest_base64
-			},
-			"case": {
-				"url": icon_case_base64
-			},
-			"court_case": {
-				"url": icon_court_base64
-			},
-			"person": {
-				"url": icon_person_base64
-			},
-			"location": {
-				"url": icon_location_base64
-			},
-			"vehicle": {
-				"url": icon_vehicle_base64
-			}
+			"address": { "url": icon_home_base64 },
+			/*	"arrest": {				"url": icon_arrest_base64			},
+				"case": {				"url": icon_case_base64			},
+				"court_case": {				"url": icon_court_base64			},
+				"person": {				"url": icon_person_base64			},
+				"location": {				"url": icon_location_base64			},
+				"vehicle": {				"url": icon_vehicle_base64			}*/
 		}
 		var icon_width = 40;
 		var icon_heigth = 40;
@@ -190,7 +254,6 @@
 			}
 			for (var index = 0; index < icon_types.length; index++) {
 				console.log(icon_types[index]);
-
 			}
 
 			var nodes = [];
@@ -199,19 +262,15 @@
 			Object.entries(ICON_LIST).forEach(([key, value], index) => {
 				//console.log(`${index}: ${key} = ${value}`);
 				var node_type = key;
-				var circle = new Circle(100 + (index * 100), 300, circle_radius, COLORS[index], "black",
-					node_type);
-				nodes.push(circle);
+				var node = new Circle(100 + (index * 100), 300, 50, COLORS[index], "black", node_type);
+				node.setId("node ID");
+				node.setImage(ICON_LIST[node_type].image);
+				console.log("adding node");
+				nodes.push(node);
 			});
 
 
 
-			for (var index = 0; index < ICON_LIST.length; index++) {
-				var element = ICON_LIST[index];
-				console.log(element);
-				var circle = new Circle(300, 300 + (index * 100), circle_radius, "#4e79a7", "black", "address");
-				nodes.push(circle);
-			}
 			//var c1 = new Circle(300, 300, circle_radius, "#4e79a7", "black", "address");
 			//var c2 = new Circle(400, 300, circle_radius, "#f28e2c", "black", "arrest");
 			//var c3 = new Circle(500, 300, circle_radius, "#e15759", "black", "person");
@@ -225,6 +284,9 @@
 			var lastMoveX;
 			var lastMoveY;
 
+
+			console.log("NODES");
+			console.log(nodes);
 			render();
 
 			function render() {
@@ -312,6 +374,9 @@
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
 
+					//
+					//node.containsPoint()
+					//
 					if (pointInCircle(lx, ly, node)) {
 						//if (pointInCircle(event.clientX, event.clientY, node)) {
 						node.isBelowMouse = true;
@@ -320,17 +385,43 @@
 					}
 				}
 				if (current_node) {
-					//current_node.x = event.clientX - offset.x;
+					//current_node.getX() = event.clientX - offset.getX();
 					current_node.x = lx;
-					//current_node.y = event.clientY - offset.y;
+					//current_node.getY() = event.clientY - offset.getY();
 					current_node.y = ly;
 				}
 				render();
 			}
 
 			function onMouseUp(event) {
+
+				if (selecting) {
+					console.log("SELECTION STOP");
+					console.log("SELECTION startX : " + selection_startX);
+					console.log("SELECTION startY : " + selection_startY);
+					console.log("SELECTION last X : " + lastMoveX);
+					console.log("SELECTION last Y : " + lastMoveY);
+					var selectionWidth = Math.abs(selection_startX - lastMoveX);
+					var selectionHeight = Math.abs(selection_startY - lastMoveY);
+					var selectionRectangle = new Rectangle(
+						Math.floor(selection_startX),
+						Math.floor(selection_startY),
+						selectionWidth, selectionHeight);
+					console.log("selectionRectangle");
+					console.log(selectionRectangle);
+
+
+					selecting = false;
+
+					for (var i = 0; i < nodes.length; i++) {
+						var node = nodes[i];
+						if (shapeContains(node, selectionRectangle)) {
+							console.log("the selection contains node: " + node.getNodeId());
+						}
+					}
+
+				}
 				mouseDown = false;
-				selecting = false;
 				if (current_node) {
 					current_node.isClicked = false;
 					current_node = null;

@@ -45,13 +45,13 @@ Node.prototype.getFirstChild = function () {
 }
 
 Node.prototype.getChildrenCount = function () {
-		return this.adjacentList.length;
+	return this.adjacentList.length;
 }
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
 Node.prototype.toString = function () {
-	return this.id + ", " + "depth: " + this.depth + ", " + "children #: " + this.getChildrenCount();
+	return this.id;// + ", " + "depth: " + this.depth + ", " + "children #: " + this.getChildrenCount();
 }
 
 
@@ -209,7 +209,7 @@ Graph.prototype.getNodesAtLevel = function (level) {
 	return [];
 };
 
-Graph.prototype.visit = function (graph, node, level, callback) { 
+Graph.prototype.visit = function (graph, node, level, callback) {
 	callback(node, level);
 }
 
@@ -247,6 +247,56 @@ Graph.prototype.visit_breadth_first = function (starting_node, callback) {
 	}
 	return 0;
 };
+
+/**
+ *  N-ary Tree Postorder Traversal
+ *  Depth First Traversal:  Preorder
+ *  Preorder (Root, Left, Right) : 1 2 4 5 3 6
+ *
+ *        1
+ *      / | \
+ *    2   3  6
+ *   / \
+ *  4   5
+ *
+ * @param {*} starting_node
+ * @param {*} callback
+ */
+Graph.prototype.visit_Preorder = function (starting_node, callback) {
+	callback(starting_node);
+	var children_count = starting_node.getAdjacents().length;
+
+	for (var i = 0; i < children_count; i++) {
+		var child = starting_node.getAdjacents()[i];
+		this.visit_Preorder(child, callback);
+	}
+}
+
+/**
+ *  Depth First Traversal:  Post order
+ *  Post order (Root, Left, Right) : 1 2 4 5 3 6
+ * 
+ *         1
+ *      / | \
+ *    2   3  6
+ *   / \
+ *  4   5
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+ Graph.prototype.visit_Postorder = function (starting_node, callback) {
+	var children_count = starting_node.getAdjacents().length;
+
+	for (var i = 0; i < children_count; i++) {
+		var child = starting_node.getAdjacents()[i];
+		this.visit_Postorder(child, callback);
+	}
+
+	callback(starting_node);
+}
 
 // =============================================================
 //                          Graph Utils

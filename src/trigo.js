@@ -82,3 +82,37 @@ function __getBearing(point) {
   log(bearingTT + " " + compass_lookup + " - " + bearing);
   return compass_points[compass_lookup];
 }
+
+
+
+/**
+ *
+ *
+ *    x,y
+ *    ┌────────────────────────┐ width
+ *    │  x,y             width │
+ *    │  ┌──────────────────┐  │
+ *    │  │                  │  │
+ *    │  │                  │  │
+ *    │  │                  │  │
+ *    │  └──────────────────┘  │
+ *    │                  heigth│
+ *    └────────────────────────┘ heigth
+
+ * @param {*} shape1 
+ * @param {*} shape2 
+ * @returns 
+ */
+function containsShape(shape1, shape2) {
+  console.log("shapeContains");
+  console.log(shape1.toStringCoordinates());
+  console.log(shape2.toStringCoordinates());
+
+
+  var result_Y =   (shape1.getY()) > (shape2.getY()) &&
+       (shape1.getY() + shape1.getHeight()) <= (shape2.getY() + shape2.getHeight());
+  var result_X = (shape1.getX()) > (shape2.getX()) &&
+       (shape1.getX() + shape1.getWidth()) < (shape2.getX() + shape2.getWidth());
+
+  return result_Y && result_X;
+}

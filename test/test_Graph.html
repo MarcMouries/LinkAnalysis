@@ -5,6 +5,7 @@
 	</script>
 	<script src="data-json-criminal.js"></script>
 	<script src="data-json-org-chart.js"></script>
+	<script src="data-json-simple-tree.js"></script>
 
 	<link rel="stylesheet" href="./style.css">
 
@@ -12,32 +13,37 @@
 		pre {
 			margin: 0px;
 		}
+
 		.card {
 			border: 2px solid rgb(96, 139, 168);
 			border-radius: 5px;
 		}
+
 		.card .content {
 			padding: 10px;
 		}
+
 		.card .title {
 			background-color: rgba(96, 139, 168, .2);
 			padding: 10px;
 		}
+
 		.container {
-		   display: inline-flex;
-			 justify-content: space-between;
-			 _outline: 1px dotted DodgerBlue;
-			  width: 80%;
+			display: inline-flex;
+			justify-content: space-between;
+			_outline: 1px dotted DodgerBlue;
+			width: 80%;
 			height: 80%;
 		}
-		.container > div {
-		  margin: 10px;
-		  width: 100%;
-		  _background: #46B980;
-		  padding: 5px;
-		  _color: #fff;
+
+		.container>div {
+			margin: 10px;
+			width: 100%;
+			_background: #46B980;
+			padding: 5px;
+			_color: #fff;
 		}
-		</style>
+	</style>
 </head>
 
 <body>
@@ -50,13 +56,13 @@
 		<div class="card">
 			<div class="title">Graph as JSON</div>
 			<div class="content">
-				   <pre id="json_tree"></pre>
+				<pre id="json_tree"></pre>
 			</div>
 		</div>
 		<div class="card">
 			<div class="title">Graph Information</div>
 			<div class="content">
-					<pre id="graph_info"></pre>
+				<pre id="graph_info"></pre>
 			</div>
 		</div>
 	</div>
@@ -73,41 +79,59 @@
 		var json_tree = document.getElementById("graph_info");
 
 		var graph = new Graph();
-		graph.loadJSON(data_json_org_chart);
-		console.log("data_json_org_chart");
+		graph.loadJSON(data_json_simple_tree);
+		console.log("JSON Loaded ");
 		console.log(data_json_org_chart);
 
-		log ( graph_info, "GRAPH = '" + graph.toString() );
+		log(graph_info, "GRAPH = '" + graph.toString());
 
-		var nodeCEO = graph.getNode("CEO");
-		log ( graph_info, "getNode CEO = '" + nodeCEO.toString() );
+		var firstNode = graph.getNode("1");
+		log(graph_info, "getNode firstNode = '" + firstNode.toString());
 
-		console.log(nodeCEO);
-		console.log("CEO - First child");
-		console.log(nodeCEO.getFirstChild());
-		console.log("CEO - Last child");
-		console.log(nodeCEO.getLastChild());
+		console.log(firstNode);
+		console.log("firstNode - First child");
+		console.log(firstNode.getFirstChild());
+		console.log("firstNode - Last child");
+		console.log(firstNode.getLastChild());
 
 
-		log ( graph_info, "Graph Visit ");
-		log ( graph_info, "=========== ");
+		log(graph_info, "");
+		log(graph_info, "Graph Visit ");
+		log(graph_info, "=========== ");
 
-		graph.visit(graph, nodeCEO, 0, 
-		function (node, level) {
-			log ( graph_info, "node " + node.id + " - Level " + level);
-		}
+		graph.visit(graph, firstNode, 0,
+			function (node, level) {
+				log(graph_info, "node " + node.id + " - Level " + level);
+			}
 		);
 
-		log ( graph_info, "Graph visit_breadth_first ");
-		log ( graph_info, "=========== ");
-		graph.visit_breadth_first(nodeCEO, function (level, nodes_at_current_level) {
-		// console.log("Level " + level + ": " + to_string);
-		log ( graph_info, "Level " + level + ": ");
-	});
+		log(graph_info, "");
+		log(graph_info, "Graph Visit Breadth First");
+		log(graph_info, "=========== ");
+		graph.visit_breadth_first(firstNode, function (level, nodes_at_current_level) {
+			log(graph_info, "Level " + level + ": " + nodes_at_current_level);
+		});
+
+		log(graph_info, "");
+		log(graph_info, "Graph visit Preorder");
+		log(graph_info, "===========");
+		graph.visit_Preorder(firstNode, function (node) {
+			log(graph_info, "Node " + node);
+		});
+		function log(element, info) {
+			element.innerHTML += info + "<br>";
+		}
 
 
-		function log (element, info) {
-			element.innerHTML += info + "'<br>";
+		
+		log(graph_info, "");
+		log(graph_info, "Graph visit Postorder");
+		log(graph_info, "===========");
+		graph.visit_Postorder(firstNode, function (node) {
+			log(graph_info, "Node " + node);
+		});
+		function log(element, info) {
+			element.innerHTML += info + "<br>";
 		}
 	//})
 	</script>
