@@ -21,23 +21,24 @@ function Node(id, data) {
 	this.id = id;
 	this.data = data;
 	this.depth = -1;
-	this.adjacentList = [];
+	this.children = [];
+	this.parent = null;
 }
 
-Node.prototype.addAdjacent = function (node) {
-	this.adjacentList.push(node);
+Node.prototype.addChild = function (node) {
+	this.children.push(node);
 };
 
 Node.prototype.getAdjacents = function (node) {
-	return this.adjacentList;
+	return this.children;
 };
 
 Node.prototype.isAdjacent = function (node) {
-	return this.adjacentList.indexOf(node) > -1;
+	return this.children.indexOf(node) > -1;
 };
 
 Node.prototype.getChildAt = function (i) {
-	return this.adjacentList[i];
+	return this.children[i];
 }
 
 Node.prototype.getFirstChild = function () {
@@ -45,7 +46,7 @@ Node.prototype.getFirstChild = function () {
 }
 
 Node.prototype.getChildrenCount = function () {
-	return this.adjacentList.length;
+	return this.children.length;
 }
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
@@ -84,6 +85,8 @@ Graph.prototype.addObject = function (object) {
 	this.changed = true;
 	return node;
 };
+
+
 
 Graph.prototype.addNode = function (node) {
 	console.log("adding node : " + node.id);
@@ -133,7 +136,7 @@ Graph.prototype.addLink = function (sourceNode_id, targetNode_id) {
 
 	if (!exists) {
 		this.linkList.push(link);
-		sourceNode.addAdjacent(targetNode);
+		sourceNode.addChild(targetNode);
 	}
 	else {
 		console.log("LINK EXIST: " + " source: " + link.source.id + " => " + link.target.id);
