@@ -6,6 +6,8 @@
 	<script src="data-json-criminal.js"></script>
 	<script src="data-json-org-chart.js"></script>
 	<script src="data-json-simple-tree.js"></script>
+	<script src="../src/layout/TreeLayout.js"></script>
+
 
 	<link rel="stylesheet" href="./style.css">
 
@@ -122,8 +124,6 @@
 			element.innerHTML += info + "<br>";
 		}
 
-
-		
 		log(graph_info, "");
 		log(graph_info, "Graph visit Postorder");
 		log(graph_info, "===========");
@@ -133,6 +133,13 @@
 		function log(element, info) {
 			element.innerHTML += info + "<br>";
 		}
-	//})
+		
+		var layout = new TreeLayout();
+		layout.Calculate_Positions(graph, this.center);
+
+
+		var graph_walker = new Graph();
+		//graph_walker.add
+
 	</script>
 </body>

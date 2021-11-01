@@ -43,7 +43,7 @@ var LinkAnalysis = (function () {
 		 *  Graph Layout
 		*/
 		this.layout = new MRadialLayout();
-
+		//this.layout = new TreeLayout();
 		/**
 		 *  Show grid
 		*/
