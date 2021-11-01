@@ -693,8 +693,7 @@ Positioning Nodes For General Trees
 >    /\* Clean up old values in a node's flModifier         \*/
 >    pThisNode->flModifier = (float)0.0;
 > 
->    if ((IsLeaf(pThisNode)) ||
->       (nCurrentLevel == MAXIMUM\_DEPTH)) {
+>    if ((IsLeaf(pThisNode)) || (nCurrentLevel == MAXIMUM\_DEPTH)) {
 >       if (HasLeftSibling(pThisNode)) {
 > 
 >       /\*--------------------------------------------
