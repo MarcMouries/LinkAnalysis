@@ -55,6 +55,38 @@ Node.prototype.isLeaf = function () {
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
+
+/**
+ *  isLeftMost: is this node == to the first child of its parent?
+ */
+ Node.prototype.isLeftMost = function () {
+	if (this.parent === null) {
+		return true;
+	}
+	else {
+		return this.parent.children[0] === this;
+	}
+};
+
+Node.prototype.getLeftSibling = function () {
+	if (this.parent === null || this.isLeftMost()) {
+		return null;
+	}
+	else {
+		var index = this.parent.children.indexOf(this);
+		return this.parent.children[index - 1];
+	}
+};
+
+/**
+ *  Has Left Sibling
+ * @returns 
+ */
+Node.prototype.hasLeftSibling = function () {
+	return (! this.isLeftMost());
+};
+
+
 Node.prototype.toString = function () {
 	return this.id;// + ", " + "depth: " + this.depth + ", " + "children #: " + this.getChildrenCount();
 }
