@@ -134,10 +134,6 @@
 			element.innerHTML += info + "<br>";
 		}
 
-		var layout = new TreeLayout();
-		//layout.Calculate_Positions(graph, this.center);
-
-
 		var graph_walker = new Graph();
 		// Root Node
 		graph_walker.addObject({ id :  "O", parentId : null, name : "Test GP O" });
@@ -164,6 +160,8 @@
 		graph_walker.addObject({ id :  "L", parentId :"M", name :"Test Node L" });
 
 		console.log(graph_walker);
+		var layout = new TreeLayout();
+		layout.Calculate_Positions(graph_walker, {x: 100, y:100});
 
 	</script>
 </body>

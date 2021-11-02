@@ -48,6 +48,10 @@ Node.prototype.getFirstChild = function () {
 Node.prototype.getChildrenCount = function () {
 	return this.children.length;
 }
+Node.prototype.isLeaf = function () {
+	return this.children.length ==0;
+}
+
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
@@ -74,6 +78,7 @@ function Graph() {
 	this.linkList = [];
 	this.adjacency = {};
 	this.changed = false;
+	this.root;
 }
 
 /**
@@ -92,11 +97,17 @@ Graph.prototype.addObject = function (object) {
 			node.parent.children.push(node);
 		}
 	}
+	else {
+		this.root = node;
+	}
 	this.addNode(node);
 	this.changed = true;
 	return node;
 };
 
+Graph.prototype.getRootNode = function (node) {
+	return this.root;
+}
 
 
 Graph.prototype.addNode = function (node) {
