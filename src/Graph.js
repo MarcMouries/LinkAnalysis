@@ -20,7 +20,7 @@ function log(msg) {
 function Node(id, data) {
 	this.id = id;
 	this.data = data;
-	this.depth = -1;
+	this.depth = 0;
 	this.children = [];
 	this.parent = null;
 }
@@ -81,6 +81,17 @@ function Graph() {
  */
 Graph.prototype.addObject = function (object) {
 	var node = new Node(object.id, object);
+
+	if (object.parentId) {
+		node.parent = this.getNode(object.parentId);
+		if(!node.parent) {
+			console.error("Parent node not found for parentId: " + object.parentId);
+		}
+		else {
+			node.depth = node.parent.depth +1;
+			node.parent.children.push(node);
+		}
+	}
 	this.addNode(node);
 	this.changed = true;
 	return node;
@@ -89,8 +100,6 @@ Graph.prototype.addObject = function (object) {
 
 
 Graph.prototype.addNode = function (node) {
-	console.log("adding node : " + node.id);
-
 	if (!(node.id in this.graph)) {
 		this.nodeList.push(node);
 		this.graph[node.id] = node;
@@ -164,9 +173,6 @@ Graph.prototype._getAdjacents = function (nodeID) {
 Graph.prototype.getNodes = function (node) {
 	return this.nodeList;
 };
-
-
-
 
 Graph.prototype.getLinks = function () {
 	return this.linkList;

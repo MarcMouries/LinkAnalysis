@@ -5,7 +5,7 @@
 // =============================================================
 
 function log(msg) {
-	if (true) {
+	if (false) {
 		console.log(msg);
 	}
 }
