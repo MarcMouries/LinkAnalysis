@@ -20,7 +20,7 @@ function log(msg) {
 function Node(id, data) {
 	this.id = id;
 	this.data = data;
-	this.depth = 0;
+	this.level = 0;
 	this.children = [];
 	this.parent = null;
 }
@@ -125,7 +125,7 @@ Graph.prototype.addObject = function (object) {
 			console.error("Parent node not found for parentId: " + object.parentId);
 		}
 		else {
-			node.depth = node.parent.depth +1;
+			node.level = node.parent.level +1;
 			node.parent.children.push(node);
 		}
 	}
