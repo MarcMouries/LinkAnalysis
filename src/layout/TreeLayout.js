@@ -1,7 +1,6 @@
 // =============================================================
 //                          TreeLayout
 // =============================================================
-
 /*
 SiblingSeparation
 Distance in arbitrary units for the distance between siblings.
@@ -12,12 +11,14 @@ Distance in arbitrary units for the distance between neighbouring subtrees.
 LevelSeparation
 Distance in arbitrary units for the separation between adjacent levels.
 */
-
-
-
 var TreeLayout = (function () {
 	function TreeLayout(options) {
 		var treeLayout = this;
+
+		/** orientation === "NORTH"
+		 *  Orientation === "SOUTH"
+		 */
+		this.rootOrientation = "NORTH";
 
 		var defaults = {
 			maximumDepth: 50,
@@ -40,7 +41,31 @@ var TreeLayout = (function () {
 		this.firstWalk(starting_node, starting_node);
 	}
 
+	TreeLayout.prototype.getMeanNodeSize = function (leftNode, rightNode) {
 
+		var meanNodeSize = 0.0;
+		switch (this.rootOrientation) {
+			case "NORTH":
+			case "SOUTH":
+				if (leftNode) {
+					meanNodeSize = leftNode.width / 2;
+				}
+				if (rightNode) {
+					meanNodeSize = rightNode.width / 2;
+				}
+				break;
+			case "EAST":
+			case "WEST":
+				if (leftNode) {
+					meanNodeSize = leftNode.height / 2;
+				}
+				if (rightNode) {
+					meanNodeSize = rightNode.height / 2;
+				}
+				break;
+		}
+		return meanNodeSize;
+	}
 
 
 	TreeLayout.prototype.firstWalk = function (node, level) {
@@ -48,21 +73,21 @@ var TreeLayout = (function () {
 		 * Visit the current node after visiting all the nodes from left to right.
 		 */
 		node.x = -1;
+		node.y = node.level * this.levelSeparation;
 		node.prelim = 0;
 		node.mod = 0;
-		node.nodeWidth = 666;
+		node.width = 4;
+		node.heigth = 4;
 
+		/*
 		var children_count = node.getChildrenCount();
 		for (var i = 0; i < children_count; i++) {
 			var child = node.getAdjacents()[i];
 			this.firstWalk(child);
 		}
-
-		node.y = node.level * this.levelSeparation;
-
+		*/
+		var leftSibling = node.getLeftSibling();
 		if (node.isLeaf() || level == this.MAX_DEPTH) {
-
-			var leftSibling = node.getLeftSibling();
 			if (leftSibling) {
 				/*-------------------------------------------------
 				* Determine the preliminary x-coordinate based on:
@@ -70,24 +95,49 @@ var TreeLayout = (function () {
 				* - the separation between sibling nodes, and
 				* - mean width of left sibling & current node.
 				*-------------------------------------------------*/
-				console.log(node.id + " is the right sibling of node " + leftSibling);
-				// sibling separation value plus the mean size of the two nodes.
-
+				node.prelim += leftSibling.prelim + this.siblingSpacing;
+				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
+				node.prelim += meanNodeSize;
 				console.log(node);
-				node.prelim = leftSibling.prelim + this.siblingSpacing;
-				var mean = (node.prelim + leftSibling.prelim) /2;
-				node.prelim = node.prelim + mean;
-				console.log("prelim  = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " +  mean + " = " + node.prelim) ;
+				console.log(node.id + " is the right sibling of node " + leftSibling);
+				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 			}
-			else {
+			else {  /*  no sibling on the left to worry about  */
+				node.prelim = 0;
+				console.log(node);
 				console.log(node.id + " is a leaf with no left sibling");
-				node.x = 0;
+				console.log("prelim  = " + node.prelim);
 				console.log("mod     = " + node.mod);
-
 			}
 		}
 		else {
-			/* This Node is not a leaf, so call this procedure recursively for each of its offspring. */
+			/* This Node is not a leaf, so call this procedure */
+			/* recursively for each of its offspring.          */
+
+			var children_count = node.getChildrenCount();
+			for (var i = 0; i < children_count; i++) {
+				var child = node.getAdjacents()[i];
+				this.firstWalk(child, level + 1);
+			}
+			console.log(node);
+			var leftMostChild = node.getLeftMostChild();
+			var rightMostChild = node.getRightMostChild();
+			var midPoint = (leftMostChild.prelim + rightMostChild.prelim) / 2;
+			console.log(node.id + " is the parent of nodes " + leftMostChild.id + " and " + rightMostChild.id);
+
+			if (leftSibling) {
+				node.prelim += leftSibling.prelim + this.siblingSpacing
+				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
+				node.prelim += meanNodeSize;
+				node.mod = node.prelim - midPoint;
+				console.log(node);
+				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
+				console.log("mod    = " + node.prelim + " - " + node.mod);
+			} else {
+				node.prelim = midPoint;
+				console.log(node);
+				console.log("prelim  = " + node.prelim);
+			}
 		}
 
 	}
