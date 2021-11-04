@@ -49,7 +49,7 @@ Node.prototype.getChildrenCount = function () {
 	return this.children.length;
 }
 Node.prototype.isLeaf = function () {
-	return this.children.length ==0;
+	return this.children.length == 0;
 }
 
 Node.prototype.getLastChild = function () {
@@ -77,6 +77,23 @@ Node.prototype.getLeftSibling = function () {
 		return this.parent.children[index - 1];
 	}
 };
+
+
+Node.prototype.getLeftMostChild = function () {
+	if (this.getChildrenCount() == 0)
+		return null;
+
+	return this.children[0];
+}
+
+Node.prototype.getRightMostChild = function () {
+	if (this.getChildrenCount() == 0)
+		return null;
+
+	return this.children[this.getChildrenCount() -1];
+}
+
+
 
 /**
  *  Has Left Sibling
