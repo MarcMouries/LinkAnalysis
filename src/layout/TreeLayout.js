@@ -22,9 +22,9 @@ var TreeLayout = (function () {
 
 		var defaults = {
 			maximumDepth: 50,
-			levelSeparation: 50,
-			siblingSpacing: 4,
-			subtreeSeparation: 50
+			levelSeparation: 100,
+			siblingSpacing: 80,
+			subtreeSeparation: 80
 		}
 		options || (options = {});
 		for (var i in defaults) {

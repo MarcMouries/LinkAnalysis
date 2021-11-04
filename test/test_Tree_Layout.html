@@ -59,7 +59,7 @@
 	</div>
 
 	<script>
-	
+
 		var graph_walker = new Graph();
 		// Root Node
 		graph_walker.addObject({ id: "O", parentId: null, name: "Test GP O" });
@@ -90,6 +90,16 @@
 		layout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var canvas = document.getElementById('canvas');
 		var context = canvas.getContext('2d');
+		let rect = canvas.getBoundingClientRect();
+
+		// increase the actual size of our canvas
+
+		canvas.width = rect.width * devicePixelRatio;
+		canvas.height = rect.height * devicePixelRatio;
+		context.scale(devicePixelRatio, devicePixelRatio);
+		canvas.style.width = rect.width + 'px';
+		canvas.style.height = rect.height + 'px';
+
 		context.strokeStyle = 'rgb(00, 00, 00)';
 		context.fillStyle = 'rgb(00, 00, 00)';
 
@@ -100,8 +110,12 @@
 			console.log(node);
 
 			context.fillRect(node.x, node.y, node.width, node.heigth);
+
+			context.font = 'bold 24px Calibri';
+			//ctx.strokeText('Hello world', 50, 100);
+
 			context.fillText(node.id, node.x + node.width * 1.5, node.y + node.heigth);
-			context.beginPath();
+			//context.beginPath();
 			for (var i = 0; i < node.children.length; i++) {
 				context.moveTo(node.x + node.width / 2, node.y + node.heigth);
 				context.lineTo(node.children[i].x + node.width / 2, node.children[i].y);
