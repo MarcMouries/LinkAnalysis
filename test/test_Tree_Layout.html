@@ -1,0 +1,113 @@
+<html>
+
+<head>
+	<script src="../src/Graph.js" />
+	</script>
+	<script src="data-json-criminal.js"></script>
+	<script src="data-json-org-chart.js"></script>
+	<script src="data-json-simple-tree.js"></script>
+	<script src="../src/layout/TreeLayout.js"></script>
+
+
+	<link rel="stylesheet" href="./style.css">
+
+	<style>
+		pre {
+			margin: 0px;
+		}
+
+		.card {
+			border: 2px solid rgb(96, 139, 168);
+			border-radius: 5px;
+		}
+
+		.card .content {
+			padding: 10px;
+		}
+
+		.card .title {
+			background-color: rgba(96, 139, 168, .2);
+			padding: 10px;
+		}
+
+		.container {
+			display: inline-flex;
+			justify-content: space-between;
+			_outline: 1px dotted DodgerBlue;
+			width: 80%;
+			height: 80%;
+		}
+
+		.container>div {
+			margin: 10px;
+			width: 100%;
+			_background: #46B980;
+			padding: 5px;
+			_color: #fff;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Test Tree Layout</h1>
+	<ul class="breadcrumb">
+		<li><a href="../index.html">Home</a></li>
+		<li>Test Graph</li>
+	</ul>
+	<div class="container">
+		<canvas id="canvas" width="500" height="500"></canvas>
+	</div>
+
+	<script>
+	
+		var graph_walker = new Graph();
+		// Root Node
+		graph_walker.addObject({ id: "O", parentId: null, name: "Test GP O" });
+		// 1st Level
+		graph_walker.addObject({ id: "E", parentId: "O", name: "Test Node E" });
+		graph_walker.addObject({ id: "F", parentId: "O", name: "Test Node F" });
+		graph_walker.addObject({ id: "N", parentId: "O", name: "Test Node N" });
+
+		// 2nd Level
+		graph_walker.addObject({ id: "A", parentId: "E", name: "Test Node A" });
+		graph_walker.addObject({ id: "D", parentId: "E", name: "Test Node D" });
+
+		graph_walker.addObject({ id: "G", parentId: "N", name: "Test Node G" });
+		graph_walker.addObject({ id: "M", parentId: "N", name: "Test Node M" });
+
+		// 3rd Level
+		graph_walker.addObject({ id: "B", parentId: "D", name: "Test Node B" });
+		graph_walker.addObject({ id: "C", parentId: "D", name: "Test Node C" });
+
+		graph_walker.addObject({ id: "H", parentId: "M", name: "Test Node H" });
+		graph_walker.addObject({ id: "I", parentId: "M", name: "Test Node I" });
+		graph_walker.addObject({ id: "J", parentId: "M", name: "Test Node J" });
+		graph_walker.addObject({ id: "K", parentId: "M", name: "Test Node K" });
+		graph_walker.addObject({ id: "L", parentId: "M", name: "Test Node L" });
+
+		console.log(graph_walker);
+		var layout = new TreeLayout();
+		layout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
+		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext('2d');
+		context.strokeStyle = 'rgb(00, 00, 00)';
+		context.fillStyle = 'rgb(00, 00, 00)';
+
+
+		console.log("Draw each Node");
+		for (let index = 0; index < graph_walker.nodeList.length; index++) {
+			const node = graph_walker.nodeList[index];
+			console.log(node);
+
+			context.fillRect(node.x, node.y, node.width, node.heigth);
+			context.fillText(node.id, node.x + node.width * 1.5, node.y + node.heigth);
+			context.beginPath();
+			for (var i = 0; i < node.children.length; i++) {
+				context.moveTo(node.x + node.width / 2, node.y + node.heigth);
+				context.lineTo(node.children[i].x + node.width / 2, node.children[i].y);
+				context.stroke();
+			}
+		}
+		console.log(graph_walker.nodeList);
+	</script>
+</body>
