@@ -39,6 +39,7 @@ var TreeLayout = (function () {
 	TreeLayout.prototype.Calculate_Positions = function (graph, center) {
 		var starting_node = graph.getRootNode();
 		this.firstWalk(starting_node, starting_node);
+		this.secondWalk(starting_node);
 	}
 
 	TreeLayout.prototype.getMeanNodeSize = function (leftNode, rightNode) {
@@ -68,7 +69,7 @@ var TreeLayout = (function () {
 	}
 
 
-	TreeLayout.prototype.firstWalk = function (node, level) {
+	TreeLayout.prototype.firstWalk = function (node) {
 		/* Do a post-order traversal (ie: from the bottom-left to the top-right).
 		 * Visit the current node after visiting all the nodes from left to right.
 		 */
@@ -87,7 +88,7 @@ var TreeLayout = (function () {
 		}
 		*/
 		var leftSibling = node.getLeftSibling();
-		if (node.isLeaf() || level == this.MAX_DEPTH) {
+		if (node.isLeaf() || node.level == this.maximumDepth) {
 			if (leftSibling) {
 				/*-------------------------------------------------
 				* Determine the preliminary x-coordinate based on:
@@ -117,7 +118,7 @@ var TreeLayout = (function () {
 			var children_count = node.getChildrenCount();
 			for (var i = 0; i < children_count; i++) {
 				var child = node.getAdjacents()[i];
-				this.firstWalk(child, level + 1);
+				this.firstWalk(child);
 			}
 			console.log(node);
 			var leftMostChild = node.getLeftMostChild();
@@ -133,6 +134,8 @@ var TreeLayout = (function () {
 				console.log(node);
 				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 				console.log("mod    = " + node.prelim + " - " + node.mod);
+				this.apportion(node);
+
 			} else {
 				node.prelim = midPoint;
 				console.log(node);
@@ -141,6 +144,35 @@ var TreeLayout = (function () {
 		}
 
 	}
+
+	/*------------------------------------------------------
+	* Clean up the positioning of small sibling subtrees.
+	* Subtrees of a node are formed independently and placed as close together as possible.
+	* By requiring that the subtrees be rigid at the time they are put together, we avoid
+	* the undesirable effects that can accrue from positioning nodes rather than subtrees.
+	*----------------------------------------------------*/
+	TreeLayout.prototype.apportion = function (node) {
+		console.log("TO DO - TODO apportion    = " + node.id);
+
+	}
+
+	TreeLayout.prototype.secondWalk = function (node) {
+		console.log("secondWalk    = " + node);
+		console.log(node);
+		if (node.level <= this.maximumDepth) {
+
+			node.x = node.prelim + node.mod;
+			node.y = (node.level * this.levelSeparation);
+
+			var children_count = node.getChildrenCount();
+			for (var i = 0; i < children_count; i++) {
+				var child = node.children[i];
+				this.secondWalk(child);
+			}
+		}
+
+	}
+
 
 
 	TreeLayout.prototype.visit_Postorder = function (starting_node, callback) {
