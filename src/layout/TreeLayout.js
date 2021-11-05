@@ -23,8 +23,10 @@ var TreeLayout = (function () {
 		var defaults = {
 			maximumDepth: 50,
 			levelSeparation: 100,
-			siblingSpacing: 80,
-			subtreeSeparation: 80
+			siblingSpacing: 65,
+			subtreeSeparation: 50,
+			nodeWidth : 80,
+			nodeHeigth : 40
 		}
 		options || (options = {});
 		for (var i in defaults) {
@@ -49,19 +51,19 @@ var TreeLayout = (function () {
 			case "NORTH":
 			case "SOUTH":
 				if (leftNode) {
-					meanNodeSize = leftNode.width / 2;
+					meanNodeSize = this.nodeWidth; // leftNode.width / 2; 
 				}
 				if (rightNode) {
-					meanNodeSize = rightNode.width / 2;
+					meanNodeSize = this.nodeWidth; // rightNode.width / 2;
 				}
 				break;
 			case "EAST":
 			case "WEST":
 				if (leftNode) {
-					meanNodeSize = leftNode.height / 2;
+					meanNodeSize = this.nodeHeigth; //leftNode.height / 2;
 				}
 				if (rightNode) {
-					meanNodeSize = rightNode.height / 2;
+					meanNodeSize = this.nodeHeigth; //rightNode.height / 2;
 				}
 				break;
 		}
@@ -77,8 +79,8 @@ var TreeLayout = (function () {
 		node.y = node.level * this.levelSeparation;
 		node.prelim = 0;
 		node.mod = 0;
-		node.width = 4;
-		node.heigth = 4;
+		node.width = 80;
+		node.heigth = 40;
 
 		/*
 		var children_count = node.getChildrenCount();
@@ -96,7 +98,7 @@ var TreeLayout = (function () {
 				* - the separation between sibling nodes, and
 				* - mean width of left sibling & current node.
 				*-------------------------------------------------*/
-				node.prelim += leftSibling.prelim + this.siblingSpacing;
+				node.prelim = leftSibling.prelim + this.siblingSpacing;
 				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
 				node.prelim += meanNodeSize;
 				console.log(node);
@@ -142,7 +144,9 @@ var TreeLayout = (function () {
 				console.log("prelim  = " + node.prelim);
 			}
 		}
-
+		//console.log("_firstWalk: node");
+		//console.log(node);
+		//console.log("_firstWalk: END");
 	}
 
 	/*------------------------------------------------------
@@ -156,6 +160,13 @@ var TreeLayout = (function () {
 
 	}
 
+	/*------------------------------------------------------
+    * During a second pre-order walk, each node is given a final x-coordinate by summing its preliminary
+    * x-coordinate and the modifiers of all the node's ancestors.
+	* The y-coordinate depends on the height of the tree.
+	* (The roles of x and y are reversed for RootOrientations of EAST or WEST.)
+    * Returns: TRUE if no errors, otherwise returns FALSE.
+    *----------------------------------------- ----------*/
 	TreeLayout.prototype.secondWalk = function (node) {
 		console.log("secondWalk    = " + node);
 		console.log(node);

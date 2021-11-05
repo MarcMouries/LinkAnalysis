@@ -54,9 +54,7 @@
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
 	</ul>
-	<div class="container">
-		<canvas id="canvas" width="500" height="500"></canvas>
-	</div>
+	<canvas id="canvas" width="800" height="800"></canvas>
 
 	<script>
 
@@ -100,22 +98,32 @@
 		canvas.style.width = rect.width + 'px';
 		canvas.style.height = rect.height + 'px';
 
-		context.strokeStyle = 'rgb(00, 00, 00)';
-		context.fillStyle = 'rgb(00, 00, 00)';
+		context.strokeStyle = 'rgb(41, 62, 64)';
+		context.fillStyle = 'rgb(128, 182, 161)'; //#0181a0
+		context.fillStyle = '#0181a0';
+
+		context.shadowColor = "#999";
+		context.shadowBlur = 20;
+		context.shadowOffsetX = 10;
+		context.shadowOffsetY = 10;
 
 
-		console.log("Draw each Node");
 		for (let index = 0; index < graph_walker.nodeList.length; index++) {
 			const node = graph_walker.nodeList[index];
-			console.log(node);
-
 			context.fillRect(node.x, node.y, node.width, node.heigth);
-
-			context.font = 'bold 24px Calibri';
-			//ctx.strokeText('Hello world', 50, 100);
-
-			context.fillText(node.id, node.x + node.width * 1.5, node.y + node.heigth);
 			//context.beginPath();
+			context.font = 'bold 20px Calibri';
+			context.save();
+			context.fillStyle = 'rgb(255, 250, 255)';
+
+			context.textBaseline = "middle";
+			context.textAlign="center";
+			var textWidth =  0;
+			//var textWidth = context.measureText(node.id ).width;
+			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.heigth / 2);
+			context.restore();
+
+			context.beginPath();
 			for (var i = 0; i < node.children.length; i++) {
 				context.moveTo(node.x + node.width / 2, node.y + node.heigth);
 				context.lineTo(node.children[i].x + node.width / 2, node.children[i].y);
