@@ -150,8 +150,8 @@ var MCanvas = (function () {
   
     ctx.restore();
   }
-  
-  
+
+
   MCanvas.prototype.drawLine = function (
     startX,
     startY,
@@ -281,7 +281,7 @@ var MCanvas = (function () {
     this.ctx.textBaseline = "middle";
     this.ctx.fillStyle = color;
 
-    //      var alphabet = "M"; //"ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+    //  var alphabet = "M"; //"ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
     var lineHeight = getLineHeight(text, font);
 
     var words = text.split(word_separator);
