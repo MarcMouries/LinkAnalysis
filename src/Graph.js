@@ -49,9 +49,11 @@ Node.prototype.getChildrenCount = function () {
 	return this.children.length;
 }
 Node.prototype.isLeaf = function () {
-	return this.children.length == 0;
+	return (this.children && this.children.length == 0);
 }
-
+Node.prototype.hasChild = function () {
+	return (this.children && this.children.length > 0)
+}
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
@@ -64,7 +66,19 @@ Node.prototype.getLastChild = function () {
 		return true;
 	}
 	else {
-		return this.parent.children[0] === this;
+		return this.getFirstChild() === this;
+	}
+};
+
+/**
+ *  isRightMost: is this node == to the last child of its parent?
+ */
+ Node.prototype.isRightMost = function () {
+	if (this.parent === null) {
+		return true;
+	}
+	else {
+		return this.getLastChild()=== this;
 	}
 };
 
@@ -77,6 +91,15 @@ Node.prototype.getLeftSibling = function () {
 		return this.parent.children[index - 1];
 	}
 };
+Node.prototype.getRightSibling = function () {
+	if (this.parent === null || this.isRightMost()) {
+		return null;
+	}
+	else {
+		var index = this.parent.children.indexOf(this);
+		return this.parent.children[index + 1];
+	}
+};
 
 
 Node.prototype.getLeftMostChild = function () {
@@ -85,6 +108,8 @@ Node.prototype.getLeftMostChild = function () {
 
 	return this.children[0];
 }
+
+
 
 Node.prototype.getRightMostChild = function () {
 	if (this.getChildrenCount() == 0)

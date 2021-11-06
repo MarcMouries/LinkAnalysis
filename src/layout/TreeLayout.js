@@ -25,8 +25,8 @@ var TreeLayout = (function () {
 			levelSeparation: 100,
 			siblingSpacing: 65,
 			subtreeSeparation: 50,
-			nodeWidth : 80,
-			nodeHeigth : 40
+			nodeWidth: 80,
+			nodeHeigth: 40
 		}
 		options || (options = {});
 		for (var i in defaults) {
@@ -40,8 +40,8 @@ var TreeLayout = (function () {
 
 	TreeLayout.prototype.Calculate_Positions = function (graph, center) {
 		var starting_node = graph.getRootNode();
-		this.firstWalk(starting_node, starting_node);
-		this.secondWalk(starting_node);
+		this.firstWalk(starting_node);
+		this.secondWalk(starting_node, 0, 0);
 	}
 
 	TreeLayout.prototype.getMeanNodeSize = function (leftNode, rightNode) {
@@ -75,8 +75,6 @@ var TreeLayout = (function () {
 		/* Do a post-order traversal (ie: from the bottom-left to the top-right).
 		 * Visit the current node after visiting all the nodes from left to right.
 		 */
-		node.x = -1;
-		node.y = node.level * this.levelSeparation;
 		node.prelim = 0;
 		node.mod = 0;
 		node.width = 80;
@@ -161,40 +159,42 @@ var TreeLayout = (function () {
 	}
 
 	/*------------------------------------------------------
-    * During a second pre-order walk, each node is given a final x-coordinate by summing its preliminary
-    * x-coordinate and the modifiers of all the node's ancestors.
+	* During a second pre-order walk, each node is given a final x-coordinate by summing its preliminary
+	* x-coordinate and the modifiers of all the node's ancestors.
 	* The y-coordinate depends on the height of the tree.
 	* (The roles of x and y are reversed for RootOrientations of EAST or WEST.)
-    * Returns: TRUE if no errors, otherwise returns FALSE.
-    *----------------------------------------- ----------*/
-	TreeLayout.prototype.secondWalk = function (node) {
+	* Returns: TRUE if no errors, otherwise returns FALSE.
+	*----------------------------------------- ----------*/
+	TreeLayout.prototype.secondWalk = function (node, level, modSum) {
 		console.log("secondWalk    = " + node);
-		console.log(node);
-		if (node.level <= this.maximumDepth) {
+		if (level <= this.maximumDepth) {
 
-			node.x = node.prelim + node.mod;
-			node.y = (node.level * this.levelSeparation);
+			var xTopAdjustment = 0;
+			var yTopAdjustment = 0;
 
+			var xTemp = xTopAdjustment + node.prelim + modSum;
+			node.x = xTemp;
+			//var yTemp = yTopAdjustment + (level * this.levelSeparation);
+			var yTemp = yTopAdjustment + (node.level * this.levelSeparation);
+			node.y = yTemp;
+
+			/*
 			var children_count = node.getChildrenCount();
 			for (var i = 0; i < children_count; i++) {
 				var child = node.children[i];
-				this.secondWalk(child);
+				this.secondWalk(child, level +1, modSum + node.mod);
 			}
+			*/
+			if (node.hasChild()) {
+				this.secondWalk(node.getLeftMostChild(), level +1, modSum + node.mod);
+			}
+			var rightSibling = node.getRightSibling();
+			if (rightSibling) {
+				this.secondWalk(rightSibling, level +1, modSum + node.mod);
+			}
+
 		}
 
-	}
-
-
-
-	TreeLayout.prototype.visit_Postorder = function (starting_node, callback) {
-		var children_count = starting_node.getAdjacents().length;
-
-		for (var i = 0; i < children_count; i++) {
-			var child = starting_node.getAdjacents()[i];
-			this.visit_Postorder(child, callback);
-		}
-
-		callback(starting_node);
 	}
 
 	return TreeLayout;
