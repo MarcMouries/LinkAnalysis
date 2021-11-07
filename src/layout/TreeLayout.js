@@ -18,12 +18,12 @@ var TreeLayout = (function () {
 		/** orientation === "NORTH"
 		 *  Orientation === "SOUTH"
 		 */
-		this.rootOrientation = "NORTH";
 
 		var defaults = {
+			rootOrientation : "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
-			siblingSpacing: 65,
+			siblingSpacing: 50,
 			subtreeSeparation: 50,
 			nodeWidth: 80,
 			nodeHeigth: 40
@@ -154,7 +154,15 @@ var TreeLayout = (function () {
 	* the undesirable effects that can accrue from positioning nodes rather than subtrees.
 	*----------------------------------------------------*/
 	TreeLayout.prototype.apportion = function (node) {
-		console.log("TO DO - TODO apportion    = " + node.id);
+		console.log("apportion: node    = " + node.id);
+		
+
+		var leftmost = node.getFirstChild();
+	//	var neighbor = leftmost.getNeighbor();            /* node left of leftmost */
+		console.log("\\__apportion: leftmost : " + leftmost);
+	//	console.log("\\__apportion: neightbor: " + neighbor);
+
+		//var pNeighbor = node.getLeftNeighbor(pLeftmost);
 
 	}
 
