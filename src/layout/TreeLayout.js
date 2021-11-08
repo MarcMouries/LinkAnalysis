@@ -20,7 +20,7 @@ var TreeLayout = (function () {
 		 */
 
 		var defaults = {
-			rootOrientation : "NORTH",
+			rootOrientation: "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
 			siblingSpacing: 50,
@@ -34,6 +34,11 @@ var TreeLayout = (function () {
 				this[i] = options[i] || defaults[i];
 			}
 		}
+		/**
+		 * lastNodeAtLevel: stores the last node visited at each level to set as left most nodes' neighbor
+		 */
+		lastNodeAtLevel = [];
+
 		console.log('TreeLayout constructed.');
 		console.log(this);
 	}
@@ -70,6 +75,42 @@ var TreeLayout = (function () {
 		return meanNodeSize;
 	}
 
+	/**
+	 *  Called by the firstWalk function in post-order
+	 */
+	setNodeNeighbor = function (node) {
+		// setNodeNeighbor: node :  Node D
+		//    \__ left most child:  Node B
+		//    \__       neightbor: NONE
+		// setNodeNeighbor: node :  Node M
+		//    \__ left most child:  Node H
+		//    \__       neightbor:  Node C
+		// setNodeNeighbor: node :  Node N
+		//    \__ left most child:  Node G
+		//    \__       neightbor:  Node D
+		console.log("Calling setNodeNeighbor      = " + node);
+		var isLeftMost = node.isLeftMost();
+		var isRightMost = node.isRightMost();
+		//console.log("setNodeNeighbor NODE= " + node.id + " , level= " + node.level + ", isLeftMost(" + isLeftMost + ")" + ", isRightMost(" + isRightMost + ")");
+
+		if (isRightMost) {
+			//console.log("\\_setNodeNeighbor lastNodeAtLevel      = " + node.id);
+			//console.log("\\_setNodeNeighbor this.lastNodeAtLevel[node.level]       = " + node);
+			this.lastNodeAtLevel[node.level] = node;
+		}
+		else if (isLeftMost) {
+			node.neighbor = this.lastNodeAtLevel[node.level];
+			if (node.neighbor) {
+				console.log("\\_setNodeNeighbor of " + node.id + " to " + node.neighbor.id);
+			}
+		}
+		else {
+			// has no subtree  to move 
+			//console.log("\\_setNodeNeighbor      = " + node + "  DO nothing");
+		}
+
+	}
+
 
 	TreeLayout.prototype.firstWalk = function (node) {
 		/* Do a post-order traversal (ie: from the bottom-left to the top-right).
@@ -79,6 +120,15 @@ var TreeLayout = (function () {
 		node.mod = 0;
 		node.width = 80;
 		node.heigth = 40;
+
+		setNodeNeighbor(node, node.level);
+
+		//	var rightSibling = node.getRightSibling();
+		//	console.log("firstWalk rightSibling      = " + rightSibling);
+
+		//console.log("\\firstWalk: isRightMost ? " + isRightMost);
+		//this.nodes_at_level = [node.level];
+
 
 		/*
 		var children_count = node.getChildrenCount();
@@ -114,7 +164,6 @@ var TreeLayout = (function () {
 		else {
 			/* This Node is not a leaf, so call this procedure */
 			/* recursively for each of its offspring.          */
-
 			var children_count = node.getChildrenCount();
 			for (var i = 0; i < children_count; i++) {
 				var child = node.getAdjacents()[i];
@@ -152,18 +201,23 @@ var TreeLayout = (function () {
 	* Subtrees of a node are formed independently and placed as close together as possible.
 	* By requiring that the subtrees be rigid at the time they are put together, we avoid
 	* the undesirable effects that can accrue from positioning nodes rather than subtrees.
+	* 
+	*  Called for non-leaf nodes
 	*----------------------------------------------------*/
 	TreeLayout.prototype.apportion = function (node) {
 		console.log("apportion: node    = " + node.id);
-		
-
 		var leftmost = node.getFirstChild();
-	//	var neighbor = leftmost.getNeighbor();            /* node left of leftmost */
-		console.log("\\__apportion: leftmost : " + leftmost);
-	//	console.log("\\__apportion: neightbor: " + neighbor);
+		var neighbor = leftmost.neighbor;            /* node left of leftmost */
 
-		//var pNeighbor = node.getLeftNeighbor(pLeftmost);
+		console.log("\\__apportion:    leftmost : " + leftmost.id);
+		//console.log("\\__apportion: neightbor: " + neighbor.id);
 
+		if (neighbor) {
+			console.log("\\__apportion:   neightbor: " + neighbor.id);
+		}
+		else {
+			console.log("\\__apportion:   neightbor: NONE");
+		}
 	}
 
 	/*------------------------------------------------------
@@ -194,11 +248,11 @@ var TreeLayout = (function () {
 			}
 			*/
 			if (node.hasChild()) {
-				this.secondWalk(node.getLeftMostChild(), level +1, modSum + node.mod);
+				this.secondWalk(node.getLeftMostChild(), level + 1, modSum + node.mod);
 			}
 			var rightSibling = node.getRightSibling();
 			if (rightSibling) {
-				this.secondWalk(rightSibling, level +1, modSum + node.mod);
+				this.secondWalk(rightSibling, level + 1, modSum + node.mod);
 			}
 
 		}

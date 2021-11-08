@@ -22,7 +22,8 @@ function Node(id, data) {
 	this.data = data;
 	this.level = 0;
 	this.children = [];
-	this.parent = null;
+	this.parent;
+	this.neighbor;
 }
 
 Node.prototype.addChild = function (node) {
@@ -58,15 +59,22 @@ Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
 
+function attribute(name) {
+	console.log("message from attribute function: " + name);
+  }
+
+Node.prototype.attr =  attribute;
+
+
 /**
  *  isLeftMost: is this node == to the first child of its parent?
  */
  Node.prototype.isLeftMost = function () {
-	if (this.parent === null) {
+	if ( !this.parent || this.parent=== null) {
 		return true;
 	}
 	else {
-		return this.getFirstChild() === this;
+		return this.parent.getFirstChild() === this;
 	}
 };
 
@@ -74,11 +82,11 @@ Node.prototype.getLastChild = function () {
  *  isRightMost: is this node == to the last child of its parent?
  */
  Node.prototype.isRightMost = function () {
-	if (this.parent === null) {
+	if ( !this.parent || this.parent=== null) {
 		return true;
 	}
 	else {
-		return this.getLastChild()=== this;
+		return this.parent.getLastChild()=== this;
 	}
 };
 
