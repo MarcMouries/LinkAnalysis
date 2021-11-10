@@ -24,7 +24,7 @@ var TreeLayout = (function () {
 			maximumDepth: 50,
 			levelSeparation: 40,
 			siblingSpacing: 40,
-			subtreeSeparation: 100,
+			subtreeSeparation: 200,
 			nodeWidth: 20,
 			nodeHeigth: 10
 		}
@@ -118,7 +118,7 @@ var TreeLayout = (function () {
 		// setNodeNeighbor: node :  Node N
 		//    \__ left most child:  Node G
 		//    \__       neightbor:  Node D
-		console.log("Calling setNodeNeighbor      = " + node);
+		//console.log("Calling setNodeNeighbor      = " + node);
 		var isLeftMost = node.isLeftMost();
 		var isRightMost = node.isRightMost();
 		//console.log("setNodeNeighbor NODE= " + node.id + " , level= " + node.level + ", isLeftMost(" + isLeftMost + ")" + ", isRightMost(" + isRightMost + ")");
@@ -139,6 +139,12 @@ var TreeLayout = (function () {
 			//console.log("\\_setNodeNeighbor      = " + node + "  DO nothing");
 		}
 
+	}
+	TreeLayout.prototype.getMidPoint = function (node) {
+		var leftMostChild = node.getLeftMostChild();
+		var rightMostChild = node.getRightMostChild();
+		var midPoint = (leftMostChild.prelim + rightMostChild.prelim) / 2;
+		return midPoint;
 	}
 
 
@@ -185,7 +191,6 @@ var TreeLayout = (function () {
 			}
 			else {  /*  no sibling on the left to worry about  */
 				node.prelim = 0;
-				console.log(node);
 				console.log(node.id + " is a leaf with no left sibling");
 				console.log("prelim  = " + node.prelim);
 				console.log("modifier= " + node.modifier);
@@ -199,11 +204,12 @@ var TreeLayout = (function () {
 				var child = node.getAdjacents()[i];
 				this.firstWalk(child, level + 1);
 			}
-			console.log(node);
-			var leftMostChild = node.getLeftMostChild();
-			var rightMostChild = node.getRightMostChild();
-			var midPoint = (leftMostChild.prelim + rightMostChild.prelim) / 2;
-			console.log(node.id + " is the parent of nodes " + leftMostChild.id + " and " + rightMostChild.id);
+			//console.log(node);
+
+			var midPoint = this.getMidPoint(node); 
+			console.log("midPoint of " + node.id + "= " + midPoint);
+
+			//console.log(node.id + " is the parent of nodes " + leftMostChild.id + " and " + rightMostChild.id);
 
 			if (leftSibling) {
 				node.prelim += leftSibling.prelim + this.siblingSpacing
@@ -218,7 +224,7 @@ var TreeLayout = (function () {
 
 			} else {
 				node.prelim = midPoint;
-				console.log(node);
+				//console.log(node);
 				console.log("prelim  = " + node.prelim);
 			}
 		}
