@@ -12,7 +12,7 @@ LevelSeparation
 Distance in arbitrary units for the separation between adjacent levels.
 */
 var TreeLayout = (function () {
-	function TreeLayout(options) {
+	function TreeLayout(graph, options) {
 		var treeLayout = this;
 
 		/** orientation === "NORTH"
@@ -26,7 +26,7 @@ var TreeLayout = (function () {
 			siblingSpacing: 40,
 			subtreeSeparation: 200,
 			nodeWidth: 20,
-			nodeHeigth: 10
+			nodeHeight: 10
 		}
 		options || (options = {});
 		for (var i in defaults) {
@@ -38,12 +38,14 @@ var TreeLayout = (function () {
 		 * lastNodeAtLevel: stores the last node visited at each level to set as left most nodes' neighbor
 		 */
 		lastNodeAtLevel = [];
+		this.graph = graph;
 
 		console.log('TreeLayout constructed.');
 		console.log(this);
 	}
 
 	TreeLayout.prototype.Calculate_Positions = function (graph, center) {
+		//this.graph = graph;
 		var starting_node = graph.getRootNode();
 		this.firstWalk(starting_node, 0);
 		this.secondWalk(starting_node, 0, 0);
@@ -86,19 +88,19 @@ var TreeLayout = (function () {
 			case "NORTH":
 			case "SOUTH":
 				if (leftNode) {
-					meanNodeSize = this.nodeWidth; // leftNode.width / 2; 
+					meanNodeSize = leftNode.width / 2; 
 				}
 				if (rightNode) {
-					meanNodeSize = this.nodeWidth; // rightNode.width / 2;
+					meanNodeSize = rightNode.width / 2;
 				}
 				break;
 			case "EAST":
 			case "WEST":
 				if (leftNode) {
-					meanNodeSize = this.nodeHeigth; //leftNode.height / 2;
+					meanNodeSize = leftNode.height / 2;
 				}
 				if (rightNode) {
-					meanNodeSize = this.nodeHeigth; //rightNode.height / 2;
+					meanNodeSize = rightNode.height / 2;
 				}
 				break;
 		}
@@ -138,8 +140,28 @@ var TreeLayout = (function () {
 			// has no subtree to move 
 			//console.log("\\_setNodeNeighbor      = " + node + "  DO nothing");
 		}
-
 	}
+
+	TreeLayout.prototype.getTreeDimension = function () {
+		//	console.log("getTreeDimension: " + this.graph);
+		var node_count = this.graph.nodeList.length;
+		console.log("getTreeDimension: node #" + node_count);
+		var treeWidth = 0, treeHeight = 0;
+
+		for (var i = 0; i < node_count; i++) {
+			var node = this.graph.nodeList[i];
+			console.log("getTreeDimension: node (" + node.id + "/" + treeHeight + "/" + node.y + "/"+ node.height) ;
+			if (!node.isAncestorCollapsed()) {
+				treeWidth = Math.max(treeWidth, node.x + node.width);
+				treeHeight = Math.max(treeHeight, node.y + node.height);
+				//console.log("\\__  treeWidth==> " + treeWidth);
+				console.log("\\__  treeHeight==> " + treeHeight);
+				console.log("\\__  treeHeight==> " + treeHeight + "/" + node.y + "/"+ node.height);
+			}
+		}
+		return { "treeWidth" : treeWidth, "treeHeight": treeHeight};
+	}
+
 	TreeLayout.prototype.getMidPoint = function (node) {
 		var leftMostChild = node.getLeftMostChild();
 		var rightMostChild = node.getRightMostChild();
@@ -155,7 +177,7 @@ var TreeLayout = (function () {
 		node.prelim = 0;
 		node.modifier = 0;
 		node.width = node.width || this.nodeWidth;
-		node.heigth = node.heigth || this.nodeHeigth;
+		node.height = node.height || this.nodeHeight;
 
 		setNodeNeighbor(node, level);
 
@@ -206,7 +228,7 @@ var TreeLayout = (function () {
 			}
 			//console.log(node);
 
-			var midPoint = this.getMidPoint(node); 
+			var midPoint = this.getMidPoint(node);
 			console.log("midPoint of " + node.id + "= " + midPoint);
 
 			//console.log(node.id + " is the parent of nodes " + leftMostChild.id + " and " + rightMostChild.id);
@@ -220,7 +242,7 @@ var TreeLayout = (function () {
 				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 				console.log("modifier= " + node.prelim + " - " + node.modifier);
 				console.log("Calling this.apportion for = " + node.id + " - level = " + level);
-//				this.apportion(node, level);
+				//				this.apportion(node, level);
 
 			} else {
 				node.prelim = midPoint;

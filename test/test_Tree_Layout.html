@@ -45,6 +45,11 @@
 			padding: 5px;
 			_color: #fff;
 		}
+
+		#canvas {
+			outline: 1px dotted DodgerBlue;
+
+		}
 	</style>
 </head>
 
@@ -54,9 +59,13 @@
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
 	</ul>
-	<canvas id="canvas" width="800" height="800"></canvas>
+	<canvas id="canvas" width="1000" height="800"></canvas>
 
 	<script>
+		console.log("==========================");
+	//	var nodeZ = new Node("Z", {});
+	//	nodeZ.attr("width", 666);
+		console.log("==========================");
 
 		var graph_walker = new Graph();
 		// Root Node
@@ -83,9 +92,24 @@
 		graph_walker.addObject({ id: "K", parentId: "M", name: "Test Node K" });
 		graph_walker.addObject({ id: "L", parentId: "M", name: "Test Node L" });
 
-		console.log(graph_walker);
-		var layout = new TreeLayout();
-		layout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
+
+/*
+		console.log("==========================");
+		console.log("=Test getLeftmost");
+		console.log("==========================");
+
+		var node = graph_walker.getNode("M");
+		var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
+		console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
+*/
+var treeLayout = new TreeLayout(graph_walker);
+
+		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
+		var treeDimension = treeLayout.getTreeDimension();
+		console.log("treeDimension ==> " + treeDimension);
+		console.log(treeDimension);
+
+
 		var canvas = document.getElementById('canvas');
 		var context = canvas.getContext('2d');
 		let rect = canvas.getBoundingClientRect();
@@ -110,26 +134,27 @@
 
 		for (let index = 0; index < graph_walker.nodeList.length; index++) {
 			const node = graph_walker.nodeList[index];
-			context.fillRect(node.x, node.y, node.width, node.heigth);
+			context.fillRect(node.x, node.y, node.width, node.height);
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
 			context.save();
 			context.fillStyle = 'rgb(255, 250, 255)';
 
 			context.textBaseline = "middle";
-			context.textAlign="center";
-			var textWidth =  0;
+			context.textAlign = "center";
+			var textWidth = 0;
 			//var textWidth = context.measureText(node.id ).width;
-			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.heigth / 2);
+			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 			context.restore();
 
 			context.beginPath();
 			for (var i = 0; i < node.children.length; i++) {
-				context.moveTo(node.x + node.width / 2, node.y + node.heigth);
+				context.moveTo(node.x + node.width / 2, node.y + node.height);
 				context.lineTo(node.children[i].x + node.width / 2, node.children[i].y);
 				context.stroke();
 			}
 		}
 		console.log(graph_walker.nodeList);
+		
 	</script>
 </body>
