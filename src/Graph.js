@@ -24,6 +24,8 @@ function Node(id, data) {
 	this.children = [];
 	this.parent;
 	this.neighbor;
+	this.isCollapsed = false;
+
 }
 
 Node.prototype.addChild = function (node) {
@@ -58,19 +60,26 @@ Node.prototype.hasChild = function () {
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
+Node.prototype.isAncestorCollapsed = function () {
+	if (this.parent == null) { return false; }
+	return this.parent.isCollapsed ? true :
+		this.parent.id === -1 ? false :
+			this.parent.isAncestorCollapsed();
+}
+
 
 function attribute(name) {
 	console.log("message from attribute function: " + name);
-  }
+}
 
-Node.prototype.attr =  attribute;
+Node.prototype.attr = attribute;
 
 
 /**
  *  isLeftMost: is this node == to the first child of its parent?
  */
- Node.prototype.isLeftMost = function () {
-	if ( !this.parent || this.parent=== null) {
+Node.prototype.isLeftMost = function () {
+	if (!this.parent || this.parent === null) {
 		return true;
 	}
 	else {
@@ -81,12 +90,12 @@ Node.prototype.attr =  attribute;
 /**
  *  isRightMost: is this node == to the last child of its parent?
  */
- Node.prototype.isRightMost = function () {
-	if ( !this.parent || this.parent=== null) {
+Node.prototype.isRightMost = function () {
+	if (!this.parent || this.parent === null) {
 		return true;
 	}
 	else {
-		return this.parent.getLastChild()=== this;
+		return this.parent.getLastChild() === this;
 	}
 };
 
@@ -123,7 +132,7 @@ Node.prototype.getRightMostChild = function () {
 	if (this.getChildrenCount() == 0)
 		return null;
 
-	return this.children[this.getChildrenCount() -1];
+	return this.children[this.getChildrenCount() - 1];
 }
 
 
@@ -133,14 +142,14 @@ Node.prototype.getRightMostChild = function () {
  * @returns 
  */
 Node.prototype.hasLeftSibling = function () {
-	return (! this.isLeftMost());
+	return (!this.isLeftMost());
 };
 
-
+/*
 Node.prototype.toString = function () {
 	return this.id;// + ", " + "depth: " + this.depth + ", " + "children #: " + this.getChildrenCount();
 }
-
+*/
 
 // =============================================================
 //                          Link
@@ -171,11 +180,11 @@ Graph.prototype.addObject = function (object) {
 
 	if (object.parentId) {
 		node.parent = this.getNode(object.parentId);
-		if(!node.parent) {
+		if (!node.parent) {
 			console.error("Parent node not found for parentId: " + object.parentId);
 		}
 		else {
-			node.level = node.parent.level +1;
+			node.level = node.parent.level + 1;
 			node.parent.children.push(node);
 		}
 	}
@@ -315,7 +324,6 @@ Graph.prototype.visit = function (graph, node, level, callback) {
 	callback(node, level);
 }
 
-
 Graph.prototype.visit_breadth_first = function (starting_node, callback) {
 	var max = 0;
 
@@ -389,7 +397,7 @@ Graph.prototype.visit_Preorder = function (starting_node, callback) {
  * 
  * 
  */
- Graph.prototype.visit_Postorder = function (starting_node, callback) {
+Graph.prototype.visit_Postorder = function (starting_node, callback) {
 	var children_count = starting_node.getAdjacents().length;
 
 	for (var i = 0; i < children_count; i++) {
