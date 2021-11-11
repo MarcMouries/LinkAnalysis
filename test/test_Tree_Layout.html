@@ -63,47 +63,51 @@
 
 	<script>
 		console.log("==========================");
-	//	var nodeZ = new Node("Z", {});
-	//	nodeZ.attr("width", 666);
+		//	var nodeZ = new Node("Z", {});
+		//	nodeZ.attr("width", 666);
 		console.log("==========================");
 
 		var graph_walker = new Graph();
 		// Root Node
-		graph_walker.addObject({ id: "O", parentId: null, name: "Test GP O" });
+		graph_walker.addObject({ id: "O", parentId: null, type: "standard" });
 		// 1st Level
-		graph_walker.addObject({ id: "E", parentId: "O", name: "Test Node E" });
-		graph_walker.addObject({ id: "F", parentId: "O", name: "Test Node F" });
-		graph_walker.addObject({ id: "N", parentId: "O", name: "Test Node N" });
+		graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
+		graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
+		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
 
 		// 2nd Level
-		graph_walker.addObject({ id: "A", parentId: "E", name: "Test Node A" });
-		graph_walker.addObject({ id: "D", parentId: "E", name: "Test Node D" });
+		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
+		graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
 
-		graph_walker.addObject({ id: "G", parentId: "N", name: "Test Node G" });
-		graph_walker.addObject({ id: "M", parentId: "N", name: "Test Node M" });
+		graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
+		graph_walker.addObject({ id: "M", parentId: "N", type: "standard" });
 
 		// 3rd Level
-		graph_walker.addObject({ id: "B", parentId: "D", name: "Test Node B" });
-		graph_walker.addObject({ id: "C", parentId: "D", name: "Test Node C" });
+		graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
+		graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
+		//
+		graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
+		graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
+		graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
+		graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
+		graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
 
-		graph_walker.addObject({ id: "H", parentId: "M", name: "Test Node H" });
-		graph_walker.addObject({ id: "I", parentId: "M", name: "Test Node I" });
-		graph_walker.addObject({ id: "J", parentId: "M", name: "Test Node J" });
-		graph_walker.addObject({ id: "K", parentId: "M", name: "Test Node K" });
-		graph_walker.addObject({ id: "L", parentId: "M", name: "Test Node L" });
+
+		// New Nodes
+		graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
+		graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
 
 
-/*
-		console.log("==========================");
-		console.log("=Test getLeftmost");
-		console.log("==========================");
-
-		var node = graph_walker.getNode("M");
-		var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
-		console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
-*/
-var treeLayout = new TreeLayout(graph_walker);
-
+		/*
+				console.log("==========================");
+				console.log("=Test getLeftmost");
+				console.log("==========================");
+		
+				var node = graph_walker.getNode("M");
+				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
+				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
+		*/
+		var treeLayout = new TreeLayout(graph_walker);
 		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var treeDimension = treeLayout.getTreeDimension();
 		console.log("treeDimension ==> " + treeDimension);
@@ -115,7 +119,6 @@ var treeLayout = new TreeLayout(graph_walker);
 		let rect = canvas.getBoundingClientRect();
 
 		// increase the actual size of our canvas
-
 		canvas.width = rect.width * devicePixelRatio;
 		canvas.height = rect.height * devicePixelRatio;
 		context.scale(devicePixelRatio, devicePixelRatio);
@@ -123,17 +126,22 @@ var treeLayout = new TreeLayout(graph_walker);
 		canvas.style.height = rect.height + 'px';
 
 		context.strokeStyle = 'rgb(41, 62, 64)';
-		context.fillStyle = 'rgb(128, 182, 161)'; //#0181a0
-		context.fillStyle = '#0181a0';
 
 		context.shadowColor = "#999";
 		context.shadowBlur = 20;
 		context.shadowOffsetX = 10;
 		context.shadowOffsetY = 10;
 
-
+		var x1, y1, x2, y2, x3, y3, x4, y4;
 		for (let index = 0; index < graph_walker.nodeList.length; index++) {
 			const node = graph_walker.nodeList[index];
+
+			if (node.data.type && node.data.type == "NEW") {
+				context.fillStyle = 'rgb(128, 182, 161)';
+			}
+			else {
+				context.fillStyle = '#0181a0';
+			}
 			context.fillRect(node.x, node.y, node.width, node.height);
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
@@ -148,13 +156,25 @@ var treeLayout = new TreeLayout(graph_walker);
 			context.restore();
 
 			context.beginPath();
+			x1 = node.x + (node.width / 2);
+			y1 = node.y + node.height;
 			for (var i = 0; i < node.children.length; i++) {
-				context.moveTo(node.x + node.width / 2, node.y + node.height);
-				context.lineTo(node.children[i].x + node.width / 2, node.children[i].y);
+				x2 = x1 ;
+				y2 = node.children[i].y + (20);  // levelSeparation: 40, 
+
+				// original = 
+				//
+				//node.children[i].x + node.width / 2
+				// node.children[i].y)
+
+				context.moveTo(x1, y1);
+				context.lineTo(x2, y2);
+
+				//context.lineTo(, ;
 				context.stroke();
 			}
 		}
 		console.log(graph_walker.nodeList);
-		
+
 	</script>
 </body>
