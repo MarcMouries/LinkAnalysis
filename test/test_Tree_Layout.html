@@ -62,6 +62,25 @@
 	<canvas id="canvas" width="1000" height="800"></canvas>
 
 	<script>
+
+
+		function drawLine(ctx, begin, end, stroke = 'black', width = 1) {
+			ctx.save();
+
+			if (stroke) {
+				ctx.strokeStyle = stroke;
+			}
+
+			if (width) {
+				ctx.lineWidth = width;
+			}
+
+			ctx.beginPath();
+			ctx.moveTo(...begin);
+			ctx.lineTo(...end);
+			ctx.stroke();
+			ctx.restore();
+		}
 		console.log("==========================");
 		//	var nodeZ = new Node("Z", {});
 		//	nodeZ.attr("width", 666);
@@ -132,6 +151,7 @@
 		context.shadowOffsetX = 10;
 		context.shadowOffsetY = 10;
 
+
 		var x1, y1, x2, y2, x3, y3, x4, y4;
 		for (let index = 0; index < graph_walker.nodeList.length; index++) {
 			const node = graph_walker.nodeList[index];
@@ -142,39 +162,37 @@
 			else {
 				context.fillStyle = '#0181a0';
 			}
+			//context.fillRect(node.x, node.y, node.width, node.height);
+
+			node.width = 5;
+			node.height = 5;
+
 			context.fillRect(node.x, node.y, node.width, node.height);
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
 			context.save();
-			context.fillStyle = 'rgb(255, 250, 255)';
+			//context.fillStyle = 'rgb(255, 250, 255)';
 
 			context.textBaseline = "middle";
 			context.textAlign = "center";
 			var textWidth = 0;
 			//var textWidth = context.measureText(node.id ).width;
-			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
-			context.restore();
+			//context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
-			context.beginPath();
+
+			// Middle Of Node
 			x1 = node.x + (node.width / 2);
 			y1 = node.y + node.height;
+			var middleOfNode =  [x1, y1];
+
 			for (var i = 0; i < node.children.length; i++) {
-				x2 = x1 ;
-				y2 = node.children[i].y + (20);  // levelSeparation: 40, 
-
-				// original = 
-				//
-				//node.children[i].x + node.width / 2
-				// node.children[i].y)
-
-				context.moveTo(x1, y1);
-				context.lineTo(x2, y2);
-
-				//context.lineTo(, ;
-				context.stroke();
+				var childNode = node.children[i];
+				x2 = childNode.x + node.width / 2;
+				y2 = childNode.y;
+				var middleOfChild =  [x2, y2];
+				drawLine(context, middleOfNode, middleOfChild, 'green', 1);
 			}
 		}
 		console.log(graph_walker.nodeList);
-
 	</script>
 </body>
