@@ -89,10 +89,12 @@
 		var graph_walker = new Graph();
 		// Root Node
 		graph_walker.addObject({ id: "O", parentId: null, type: "standard" });
+
 		// 1st Level
 		graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
+		
 
 		// 2nd Level
 		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
@@ -164,20 +166,20 @@
 			}
 			//context.fillRect(node.x, node.y, node.width, node.height);
 
-			node.width = 5;
-			node.height = 5;
+		//	node.width = 5;
+		//	node.height = 5;
 
 			context.fillRect(node.x, node.y, node.width, node.height);
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
 			context.save();
-			//context.fillStyle = 'rgb(255, 250, 255)';
+			context.fillStyle = 'rgb(255, 250, 255)';
 
 			context.textBaseline = "middle";
 			context.textAlign = "center";
 			var textWidth = 0;
 			//var textWidth = context.measureText(node.id ).width;
-			//context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
+			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
 
 			// Middle Of Node
@@ -193,6 +195,6 @@
 				drawLine(context, middleOfNode, middleOfChild, 'green', 1);
 			}
 		}
-		console.log(graph_walker.nodeList);
+		//console.log(graph_walker.nodeList);
 	</script>
 </body>
