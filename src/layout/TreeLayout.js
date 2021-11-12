@@ -24,9 +24,9 @@ var TreeLayout = (function () {
 			maximumDepth: 50,
 			levelSeparation: 40,
 			siblingSpacing: 40,
-			subtreeSeparation: 200,
+			subtreeSeparation: 300,
 			nodeWidth: 20,
-			nodeHeight: 10
+			nodeHeight: 20
 		}
 		options || (options = {});
 		for (var i in defaults) {
@@ -88,10 +88,10 @@ var TreeLayout = (function () {
 			case "NORTH":
 			case "SOUTH":
 				if (leftNode) {
-					meanNodeSize = leftNode.width / 2; 
+					meanNodeSize = leftNode.width;/// 2;
 				}
 				if (rightNode) {
-					meanNodeSize = rightNode.width / 2;
+					meanNodeSize = rightNode.width;// / 2;
 				}
 				break;
 			case "EAST":
@@ -143,23 +143,17 @@ var TreeLayout = (function () {
 	}
 
 	TreeLayout.prototype.getTreeDimension = function () {
-		//	console.log("getTreeDimension: " + this.graph);
 		var node_count = this.graph.nodeList.length;
-		console.log("getTreeDimension: node #" + node_count);
 		var treeWidth = 0, treeHeight = 0;
 
 		for (var i = 0; i < node_count; i++) {
 			var node = this.graph.nodeList[i];
-			console.log("getTreeDimension: node (" + node.id + "/" + treeHeight + "/" + node.y + "/"+ node.height) ;
 			if (!node.isAncestorCollapsed()) {
 				treeWidth = Math.max(treeWidth, node.x + node.width);
 				treeHeight = Math.max(treeHeight, node.y + node.height);
-				//console.log("\\__  treeWidth==> " + treeWidth);
-				console.log("\\__  treeHeight==> " + treeHeight);
-				console.log("\\__  treeHeight==> " + treeHeight + "/" + node.y + "/"+ node.height);
 			}
 		}
-		return { "treeWidth" : treeWidth, "treeHeight": treeHeight};
+		return { "treeWidth": treeWidth, "treeHeight": treeHeight };
 	}
 
 	TreeLayout.prototype.getMidPoint = function (node) {
@@ -204,11 +198,12 @@ var TreeLayout = (function () {
 				* - the separation between sibling nodes, and
 				* - mean width of left sibling & current node.
 				*-------------------------------------------------*/
+				//	console.log("\\___ firstWalk Sibling: left=" + leftSibling.id + " right=" + node.id);
 				node.prelim = leftSibling.prelim + this.siblingSpacing;
 				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
-				node.prelim += meanNodeSize;
+				//	console.log("meanNodeSize = " + meanNodeSize);
 				console.log(node);
-				console.log(node.id + " is the right sibling of node " + leftSibling);
+				node.prelim += meanNodeSize;
 				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 			}
 			else {  /*  no sibling on the left to worry about  */
@@ -242,17 +237,13 @@ var TreeLayout = (function () {
 				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 				console.log("modifier= " + node.prelim + " - " + node.modifier);
 				console.log("Calling this.apportion for = " + node.id + " - level = " + level);
-				//				this.apportion(node, level);
+				this.apportion(node, level);
 
 			} else {
 				node.prelim = midPoint;
-				//console.log(node);
 				console.log("prelim  = " + node.prelim);
 			}
 		}
-		//console.log("_firstWalk: node");
-		//console.log(node);
-		//console.log("_firstWalk: END");
 	}
 
 	/*------------------------------------------------------
@@ -260,95 +251,65 @@ var TreeLayout = (function () {
 	* Subtrees of a node are formed independently and placed as close together as possible.
 	* By requiring that the subtrees be rigid at the time they are put together, we avoid
 	* the undesirable effects that can accrue from positioning nodes rather than subtrees.
-	* 
+	*
 	*  Called for non-leaf nodes
 	*----------------------------------------------------*/
 	TreeLayout.prototype.apportion = function (node, level) {
-		console.log("apportion: node    = " + node.id);
+		console.log("_apportion " + node.id);
 
-		/* loop control pointer (pTempPtr)  */
-		var subtree;
-		/* difference between  where neighbor thinks pLeftmost should be   */
-		/* and where pLeftmost actually is                                 */
-		var moveDistance;
-		/* proportion of distance to be added to each sibling       */
-		var portion;
-
-		var leftMost = node.getFirstChild();
-		var neighbor = leftMost.neighbor;            /* node left of leftmost */
-
-		console.log("\\__apportion: leftmost : " + leftMost.id);
-		//console.log("\\__apportion: neightbor: " + neighbor.id);
-
-		if (neighbor) {
-			console.log("\\__apportion: neightbor: " + neighbor.id);
-		}
-		else {
-			console.log("\\__apportion: neightbor: NONE");
-		}
-
+		var firstChild = node.children[0];
+		var firstChildLeftNeighbor = firstChild.neighbor;
 		var compareDepth = 1;
 		var depthToStop = this.maximumDepth - level;
 
 
-		if (leftMost && neighbor && compareDepth < depthToStop) {
-			/* Compute the location of Leftmost and where it should be with respect to Neighbor. */
-			var leftModSum = 0;
-			var rightModSum = 0;
-			var ancestorLeftMost = neighbor;//leftMost;
-			var ancestorNeighbor = leftMost; //neighbor;
+		if (firstChild && firstChildLeftNeighbor && compareDepth < depthToStop) {
 
-			for (i = 0; i < compareDepth; i++) {
-				ancestorLeftMost = ancestorLeftMost.parent;
-				ancestorNeighbor = ancestorNeighbor.parent;
-				rightModSum = rightModSum + ancestorNeighbor.modifier;
-				leftModSum = leftModSum + ancestorLeftMost.modifier;
+			var rightModSum, leftModSum, rightAncestor, leftAncestor;
+			var subtree, subtreeMoveAux;
 
-				console.log("\\__apportion:   ancestorLeftMost: " + ancestorLeftMost.id);
-				console.log("\\__apportion:   ancestorNeighbor: " + ancestorNeighbor.id);
-				console.log("\\__apportion:   rightModSum: " + rightModSum);
-				console.log("\\__apportion:   leftModSum: " + leftModSum);
+			leftModSum = 0;
+			rightModSum = 0;
+			rightAncestor = firstChild;
+			leftAncestor = firstChildLeftNeighbor;
+			for (var l = 0; l < compareDepth; l += 1) {
+				rightAncestor = rightAncestor.parent;
+				leftAncestor = leftAncestor.parent;
+				rightModSum += rightAncestor.modifier;
+				leftModSum += leftAncestor.modifier;
 			}
 			/**
 			 * Find the moveDistance, and apply it to Node's subtree.
-			 * Add appropriate portions to smaller interior subtrees.
+			 * Apply appropriate portions to smaller interior subtrees.
 			 **/
-			var meanNodeSize = this.getMeanNodeSize(leftMost, neighbor);
-			var left_size = neighbor.prelim + leftModSum;
-			//(neighbor.prelim + leftModSum 
-			var right_size = leftMost.prelim + rightModSum;
+			var meanNodeSize = 10;//firstChildLeftNeighbor._getSize(this.orientation);
 
-			moveDistance = left_size + this.subtreeSeparation + meanNodeSize - right_size;
-			//moveDistance = (left_size + meanNodeSize + this.subtreeSeparation) - (right_size);
+			var totalGap = (firstChildLeftNeighbor.prelim + leftModSum + this.subtreeSeparation + meanNodeSize)
+				- (firstChild.prelim + rightModSum);
+			console.log("\\__apportion: totalGap of " + node.id + " = " + totalGap);
 
-			console.log("Apportion: node (" + node.id + ") meanNodeSize: " + meanNodeSize);
-			console.log("Apportion: node (" + node.id + ") left_size: " + left_size);
-			console.log("Apportion: node (" + node.id + ") right_size: " + right_size);
-			console.log("Apportion: node (" + node.id + ") moveDistance: " + moveDistance);
-
-
-			if (moveDistance > 0) {
+			if (totalGap > 0) {
 				/* Count interior sibling subtrees in LeftSiblings */
-				subtree = node; //  TempPtr <- Node;
+
 				var numberOfLeftSiblings = 0;
-				while (subtree && subtree != ancestorNeighbor) {
-					numberOfLeftSiblings = numberOfLeftSiblings + 1;
-					console.log("\\__apportion:  Getting LeftSiblings of: " + subtreeAux.id);
-					subtree = subtree.getLeftSibling();
+				for (subtree = node; subtree && subtree !== leftAncestor; subtree = subtree.getLeftSibling()) {
+					numberOfLeftSiblings += 1;
+					console.log("\\__apportion: numberOfLeftSiblings: " + numberOfLeftSiblings);
+					console.log("\\__apportion: leftAncestor = " + leftAncestor.id);
 				}
 
 				if (subtree) {
-					console.log("\\__apportion: LeftSiblings #for subtree: " + subtree.id + "=" + numberOfLeftSiblings);
-
 					/* Apply portions to appropriate leftsibling subtrees. */
-					console.log("\\__apportion:   subtree not null : " + subtree.id);
-					portion = moveDistance / numberOfLeftSiblings;
-					subtree = node; //  TempPtr <- Node;
-					while (subtree != ancestorNeighbor) {
-						//	subtree.prelim = subtree.prelim + moveDistance;
-						//	subtree.modifier = subtree.modifier + moveDistance;
-						//	moveDistance = moveDistance - portion;
-						subtree = subtree.getLeftSibling();
+					var portion = totalGap / numberOfLeftSiblings;
+					subtreeMoveAux = node;
+
+					while (subtreeMoveAux !== leftAncestor) {
+						console.log("\\__apportion: subtree " + subtree.id + " & " + "subtreeMoveAux " + subtreeMoveAux.id);
+
+						subtreeMoveAux.prelim += totalGap;
+						subtreeMoveAux.modifier += totalGap;
+						totalGap -= portion;
+						subtreeMoveAux = subtreeMoveAux.getLeftSibling();
 					}
 				}
 				else {
@@ -356,22 +317,23 @@ var TreeLayout = (function () {
 					/* pAncestorNeighbor and pAncestorLeftmost are not siblings of each other.      */
 					return;
 				}
-			}
-		}   /* end of the while  */
+			}   /* end of the while  */
 
-		/* Determine the leftmost descendant of thisNode */
-		/* at the next lower level to compare its         */
-		/* positioning against that of its neighbor.     */
-		compareDepth++;
-		console.log("\\__apportion:   compareDepth: " + compareDepth);
-		if (leftMost.isLeaf()) {
-			leftMost = this.getLeftmost(node, 0, compareDepth);
-		}
-		else {
-			leftMost = leftMost.getFirstChild();
-		}
-		if (leftMost) {
-			neighbor = leftMost.neighbor;
+			/* Determine the leftmost descendant of thisNode */
+			/* at the next lower level to compare its         */
+			/* positioning against that of its neighbor.     */
+			compareDepth++;
+
+
+			if (firstChild.getChildrenCount() === 0) {
+				firstChild = this.getLeftmost(node, 0, compareDepth);
+			}
+			else {
+				firstChild = firstChild.getFirstChild();
+			}
+			if (firstChild) {
+				firstChildLeftNeighbor = firstChild.neighbor;
+			}
 		}
 
 	}
@@ -393,12 +355,10 @@ var TreeLayout = (function () {
 			var xTopAdjustment = 0;
 			var yTopAdjustment = 0;
 
-			var xTemp = xTopAdjustment + node.prelim + modSum;
-			node.x = xTemp;
-			//var yTemp = yTopAdjustment + (level * this.levelSeparation);
-			var yTemp = yTopAdjustment + (level * this.levelSeparation);
-			node.y = yTemp;
-			console.log("  \\_secondWalk: Node(" + node.id + ") = " + node.x + "," + node.y);
+			node.x = xTopAdjustment + node.prelim + modSum;
+			node.y = yTopAdjustment + (level * this.levelSeparation);
+			console.log("\\secondWalk: Node(" + node.id + " / " + xTopAdjustment + " / " + node.prelim + " / " + modSum);
+			console.log("\\secondWalk: " + node.x + "," + node.y);
 
 			/*
 			var children_count = node.getChildrenCount();
@@ -412,7 +372,7 @@ var TreeLayout = (function () {
 			}
 			var rightSibling = node.getRightSibling();
 			if (rightSibling) {
-				this.secondWalk(rightSibling, level + 0, modSum + node.modifier);
+				this.secondWalk(rightSibling, level, modSum + node.modifier);
 			}
 
 		}
