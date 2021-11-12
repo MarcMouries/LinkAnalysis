@@ -22,9 +22,9 @@ var TreeLayout = (function () {
 		var defaults = {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
-			levelSeparation: 40,
-			siblingSpacing: 40,
-			subtreeSeparation: 300,
+			levelSeparation: 50,
+			siblingSpacing: 50,
+			subtreeSeparation: 200,
 			nodeWidth: 20,
 			nodeHeight: 20
 		}
@@ -360,21 +360,12 @@ var TreeLayout = (function () {
 			console.log("\\secondWalk: Node(" + node.id + " / " + xTopAdjustment + " / " + node.prelim + " / " + modSum);
 			console.log("\\secondWalk: " + node.x + "," + node.y);
 
-			/*
+
 			var children_count = node.getChildrenCount();
 			for (var i = 0; i < children_count; i++) {
 				var child = node.children[i];
 				this.secondWalk(child, level +1, modSum + node.modifier);
 			}
-			*/
-			if (node.hasChild()) {
-				this.secondWalk(node.getLeftMostChild(), level + 1, modSum + node.modifier);
-			}
-			var rightSibling = node.getRightSibling();
-			if (rightSibling) {
-				this.secondWalk(rightSibling, level, modSum + node.modifier);
-			}
-
 		}
 
 	}
