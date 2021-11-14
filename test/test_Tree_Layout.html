@@ -12,6 +12,14 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<style>
+		@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);
+
+		body {
+			font-family: "Source Code Pro", Consolas, monaco, monospace;
+			line-height: 160%;
+			font-size: 16px;
+		}
+
 		pre {
 			margin: 0px;
 		}
@@ -33,7 +41,6 @@
 		.container {
 			display: inline-flex;
 			justify-content: space-between;
-			_outline: 1px dotted DodgerBlue;
 			width: 80%;
 			height: 80%;
 		}
@@ -47,8 +54,17 @@
 		}
 
 		#canvas {
-			outline: 1px dotted DodgerBlue;
+			border: 1px dotted DodgerBlue;
+			width: 100%;
+			height: 100%;
+		}
 
+		.canvas-container {
+			width: 100%;
+			height: 100%;
+			padding: 0px;
+			outline: 1px dotted red;
+			position:relative;
 		}
 	</style>
 </head>
@@ -59,10 +75,30 @@
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
 	</ul>
-	<canvas id="canvas" width="1000" height="800"></canvas>
+
+	<div id="tree_dimension"></div>
+	<div id="canvas_dimension"></div>
+
+<!--
+	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
+ -->
+	<div id="node_template" style="width:60px;height:30px;border:1px solid blue;visibility:visible">
+		Node DIV
+	</div>
+
+	<div id="chart" class="canvas-container">
+		<canvas id="canvas" width="1000" height="800"></canvas>
+	</div>
+
+	
 
 	<script>
+		var el_node_template = document.getElementById('node_template');
 
+
+		var node_template_rect = el_node_template.getBoundingClientRect();
+		console.log("node template rest");
+		console.log(node_template_rect);
 
 		function drawLine(ctx, begin, end, stroke = 'black', width = 1) {
 			ctx.save();
@@ -70,11 +106,9 @@
 			if (stroke) {
 				ctx.strokeStyle = stroke;
 			}
-
 			if (width) {
 				ctx.lineWidth = width;
 			}
-
 			ctx.beginPath();
 			ctx.moveTo(...begin);
 			ctx.lineTo(...end);
@@ -94,7 +128,7 @@
 		graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
-		
+
 
 		// 2nd Level
 		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
@@ -131,8 +165,8 @@
 		var treeLayout = new TreeLayout(graph_walker);
 		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var treeDimension = treeLayout.getTreeDimension();
-		console.log("treeDimension ==> " + treeDimension);
-		console.log(treeDimension);
+
+
 
 
 		var canvas = document.getElementById('canvas');
@@ -148,10 +182,15 @@
 
 		context.strokeStyle = 'rgb(41, 62, 64)';
 
-		context.shadowColor = "#999";
-		context.shadowBlur = 20;
-		context.shadowOffsetX = 10;
-		context.shadowOffsetY = 10;
+
+		var el_tree_dimension = document.getElementById('tree_dimension');
+		el_tree_dimension.innerHTML = "Tree Dimension: " + treeDimension.treeWidth + " x " + treeDimension.treeHeight;
+
+		var el_canvas_dimension = document.getElementById('canvas_dimension');
+		el_canvas_dimension.innerHTML = "Canvas Dimension: " + canvas.style.width + " x " + canvas.style.height;
+
+
+		var chart_container = document.getElementById('chart');
 
 
 		var x1, y1, x2, y2, x3, y3, x4, y4;
@@ -163,36 +202,56 @@
 			}
 			else {
 				context.fillStyle = '#0181a0';
+
 			}
 			//context.fillRect(node.x, node.y, node.width, node.height);
 
-		//	node.width = 5;
-		//	node.height = 5;
+			//	node.width = 5;
+			//	node.height = 5;
 
-			context.fillRect(node.x, node.y, node.width, node.height);
+			context.rect(node.x, node.y, node.width, node.height);
+
+			console.log("drawing node " + node.id);
+			//context.fill();
+			context.stroke();
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
 			context.save();
-			context.fillStyle = 'rgb(255, 250, 255)';
+			//context.fillStyle = 'rgb(255, 250, 255)';
 
 			context.textBaseline = "middle";
 			context.textAlign = "center";
 			var textWidth = 0;
 			//var textWidth = context.measureText(node.id ).width;
+			context.fillStyle = '#0181a0';
 			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
+
+
+			var node_div = el_node_template.cloneNode(true);
+
+			var canvasoffsetTop = 0;
+			var canvasoffsetLeft = 0;
+			node_div.style.top = (node.y + canvasoffsetTop) + "px";
+			node_div.style.left = (node.x + canvasoffsetLeft) + "px";
+			node_div.style.position = "absolute";
+
+			node_div.innerHTML = node.id;
+			node_div.id = "node_" + node.id;
+
+			chart_container.appendChild(node_div);
 
 
 			// Middle Of Node
 			x1 = node.x + (node.width / 2);
 			y1 = node.y + node.height;
-			var middleOfNode =  [x1, y1];
+			var middleOfNode = [x1, y1];
 
 			for (var i = 0; i < node.children.length; i++) {
 				var childNode = node.children[i];
 				x2 = childNode.x + node.width / 2;
 				y2 = childNode.y;
-				var middleOfChild =  [x2, y2];
-				drawLine(context, middleOfNode, middleOfChild, 'green', 1);
+				var middleOfChild = [x2, y2];
+				drawLine(context, middleOfNode, middleOfChild, 'black', 1);
 			}
 		}
 		//console.log(graph_walker.nodeList);
