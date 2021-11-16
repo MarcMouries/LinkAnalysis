@@ -63,10 +63,8 @@ var MCanvas = (function () {
     this.canvas.width = rect.width * this.dpr;
     this.canvas.height = rect.height * this.dpr;
     var mcanvas = this;
-    //  this.canvas.width = this.rect.width;
-    //  this.canvas.height = this.rect.height;
     this.ctx.scale(this.dpr, this.dpr);
-    //      this.canvas.style.width = this.rect.width + 'px';
+    //     this.canvas.style.width = this.rect.width + 'px';
     //    this.canvas.style.height = this.rect.height + 'px';
 
     var rect_info = "rect width: " + rect.width + "x" + rect.height;
@@ -141,21 +139,25 @@ var MCanvas = (function () {
       // this.ctx.beginPath()
       this.ctx.moveTo(x, oY);
       this.ctx.lineTo(x, height);
+      //x % increment == 0 ? this.ctx.strokeStyle = "red" : this.ctx.strokeStyle = "DarkGrey";
+      this.ctx.stroke();
 
-      x % increment == 0 ?  this.ctx.fillStyle = "black" : this.ctx.fillStyle = "DarkGrey";
-    this.ctx.fillText(x, x , oY + offset_text);
+
+      this.ctx.fillText(x, x, oY + offset_text);
 
 
     }
 
     /* horizontal lines */
     for (var y = oY; y < height; y += increment) {
-     // this.ctx.beginPath()
+      // this.ctx.beginPath()
       this.ctx.moveTo(oX, y);
       this.ctx.lineTo(width, y);
-      this.ctx.fillText(y, oX , y );
+      this.ctx.stroke();
+
+      this.ctx.fillText(y, oX, y);
     }
-    this.ctx.stroke();
+
 
     //this.ctx.restore();
   }
@@ -169,16 +171,35 @@ var MCanvas = (function () {
 
 
     this._drawGrid(0, 0, this.width, this.height, increment, line_color);
+  };
+
+
+  MCanvas.prototype.drawLine_BE = function(begin, end, stroke = 'black', width = 1) {
+    this.ctx.save();
+    if (stroke) {      this.ctx.strokeStyle = stroke;    }
+    if (width) {      this.ctx.lineWidth = width;    }
+    this.ctx.beginPath();
+    this.ctx.moveTo(...begin);
+    this.ctx.lineTo(...end);
+    this.ctx.stroke();
+    this.ctx.restore();
   }
 
-  MCanvas.prototype.drawLine = function (
-    startX,
-    startY,
-    endX,
-    endY,
-    strokeStyle,
-    lineWidth
-  ) {
+  MCanvas.prototype.drawTextOnLine = function(start, end, text, stroke = 'black', width = 1) {
+    this.ctx.save();
+    if (stroke) {      this.ctx.strokeStyle = stroke;    }
+    if (width) {      this.ctx.lineWidth = width;    }
+
+    this.ctx.font = "24px sans-serif";
+    this.ctx.translate(start.x,start.y);
+    this.ctx.rotate(Math.PI / 4);
+    this.ctx.fillText(text, 0,0);
+    this.ctx.fill();
+    this.ctx.restore();
+  }
+
+
+  MCanvas.prototype.drawLine = function (startX, startY,    endX,    endY,    strokeStyle,    lineWidth  ) {
     if (strokeStyle != null) this.ctx.strokeStyle = strokeStyle;
     if (lineWidth != null) this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
@@ -251,7 +272,7 @@ var MCanvas = (function () {
   ) {
     this.ctx.beginPath();
     this.ctx.moveTo(center.x, center.y);
-    this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, false);
+    this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, true);
 
     apply_styles(this.ctx, color_stroke, color_fill, line_width);
   };

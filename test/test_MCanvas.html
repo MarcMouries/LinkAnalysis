@@ -1,8 +1,8 @@
 <html>
 
 <head>
-	<script src="../src/MCanvas.js" />
-	</script>
+	<script src="../src/MCanvas.js"></script>
+	<script src="../src/trigo.js"></script>
 	<link rel="stylesheet" href="./style.css">
 	<style>
 		* {
@@ -36,7 +36,7 @@
 		<li><a href="../index.html">Home</a></li>
 		<li>Test MCanvas</li>
 	</ul>
-	<form id="mainform">
+	<form id="control_form">
 		<fieldset>
 			<legend>Options:</legend>
 			<input type="checkbox" id="display_grid" onchange="change_option();">
@@ -45,17 +45,42 @@
 	</form>
 	<div id="chart_container" class="chart_container"></div>
 	<script>
+		var control_form = document.getElementById('control_form');
+
 		var chart_container = document.getElementById('chart_container');
 		mcanvas = new MCanvas(chart_container);
 		//mcanvas.resize();
 		//mcanvas.drawPoint(100,100 , 50, "50,50"); //x, y, radius, text)
 		mcanvas.drawGrid();
 
+		var start= {x: 100, y:100};
+		var end = {x: 500, y:500};
+		//,    startY,    endX,    endY,    strokeStyle,    lineWidth 
+		mcanvas.drawLine (    start.x,    start.y,    end.x,    end.y  , "red", 2);
+
+		var x1 = 200, y1= 500, x2 = 600, y2=300;
+		mcanvas.drawLine_BE ([x1, y1], [x2, y2] , "blue", 2);
+
+		var  angleRAD = findAngle(start, end);
+		var  angleDEG = to_degrees(angleRAD);
+		console.log(angleRAD);
+		console.log(angleDEG);
+
+
+		// x,y, text, stroke = 'black', width = 1)
+		mcanvas.drawTextOnLine (end.x,    end.y, "text on a line", "blue",2);
+		//mcanvas.drawText_BE (x2, y2, "end", "blue", 2);
+
+		//center, radius,     start_angle, end_angle,    color_stroke,    color_fill,    line_width 
+		var angle_arc = start;
+		//angle_arc.x += 20;
+		//angle_arc.y += 20;
+			mcanvas.drawArc (start, 20, 0, Math.PI *1 , "DarkGrey", "transparent");
+    
+
 		function change_option() {
-			var display_grid = (document.forms[0].display_grid.value);
-			//alert(display_grid);
-			console.log(document.forms[0].display_grid);
-			console.log(document.forms[0].display_grid.checked);
+			//mcanvas.config.display_grid  = control_form.display_grid.checked;
+			//mcanvas.redraw();
 
 		}
 
