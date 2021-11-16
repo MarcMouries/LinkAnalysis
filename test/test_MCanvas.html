@@ -1,0 +1,63 @@
+<html>
+
+<head>
+	<script src="../src/MCanvas.js" />
+	</script>
+	<link rel="stylesheet" href="./style.css">
+	<style>
+		* {
+			margin: 0px;
+		}
+
+		body {
+			font-family: "Source Code Pro", Consolas, monaco, monospace;
+			line-height: 160%;
+			font-size: 16px;
+		}
+
+		canvas {
+			border: 2px dotted DodgerBlue;
+		}
+
+		.chart_container {
+			width: 100%;
+			height: 100%;
+			padding: 0px;
+			outline: 2px dotted red;
+			display: inline;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Test MCanvas</h1>
+	<ul class="breadcrumb">
+		<li><a href="../index.html">Home</a></li>
+		<li>Test MCanvas</li>
+	</ul>
+	<form id="mainform">
+		<fieldset>
+			<legend>Options:</legend>
+			<input type="checkbox" id="display_grid" onchange="change_option();">
+			<label for="fname">Display grid</label>
+		</fieldset>
+	</form>
+	<div id="chart_container" class="chart_container"></div>
+	<script>
+		var chart_container = document.getElementById('chart_container');
+		mcanvas = new MCanvas(chart_container);
+		//mcanvas.resize();
+		//mcanvas.drawPoint(100,100 , 50, "50,50"); //x, y, radius, text)
+		mcanvas.drawGrid();
+
+		function change_option() {
+			var display_grid = (document.forms[0].display_grid.value);
+			//alert(display_grid);
+			console.log(document.forms[0].display_grid);
+			console.log(document.forms[0].display_grid.checked);
+
+		}
+
+	</script>
+</body>

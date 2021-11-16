@@ -1,5 +1,5 @@
 // =============================================================
-//                          CANVAS
+//                          MCanvas
 // =============================================================
 var MCanvas = (function () {
 
@@ -17,14 +17,21 @@ var MCanvas = (function () {
   ];
 
   var MCanvas = function (container, options) {
+
+    if (container == null) {
+      console.error("MCanvas error: check that the container provided to MCanvas exist");
+      return;
+    }
+
     options || (options = {});
 
     this.canvas = document.createElement("canvas");
-    var self = this;
+    mcanvas = this;
 
 
     this.canvas.style.width = "100%";
     this.canvas.style.height = "100%";
+
     container.appendChild(this.canvas);
     this.ctx = this.canvas.getContext("2d");
     this.dpr = window.devicePixelRatio || 1;
@@ -35,6 +42,10 @@ var MCanvas = (function () {
     this.canvas.style.width = bc_rect.width + "px";
     this.canvas.style.height = bc_rect.height + "px";
 
+    console.log(" -  offsetLeft : " + this.canvas.offsetLeft);
+    console.log(" -  offsetTop : " + this.canvas.offsetTop);
+
+
     console.log("MCanvas = " + this.getWidth() + " x " + this.getHeight());
 
     this.margin = {
@@ -44,17 +55,17 @@ var MCanvas = (function () {
       left: 00,
     };
     this.width = this.canvas.width - this.margin.left - this.margin.right;
-    this.height = this.canvas.height - this.margin.top - this.margin.bottom;
+    this.height = this.canvas.height - this.margin.top - this.margin.bottom - this.canvas.offsetTop;
   }
 
   MCanvas.prototype.resize = function () {
-    var rect = thisCanvas.getBoundingClientRect();
-    thisCanvas.width = rect.width * mcanvas.dpr;
-    thisCanvas.height = rect.height * mcanvas.dpr;
+    var rect = this.canvas.getBoundingClientRect();
+    this.canvas.width = rect.width * this.dpr;
+    this.canvas.height = rect.height * this.dpr;
     var mcanvas = this;
     //  this.canvas.width = this.rect.width;
     //  this.canvas.height = this.rect.height;
-    thisCanvas.ctx.scale(mcanvas.dpr, mcanvas.dpr);
+    this.ctx.scale(this.dpr, this.dpr);
     //      this.canvas.style.width = this.rect.width + 'px';
     //    this.canvas.style.height = this.rect.height + 'px';
 
@@ -76,8 +87,8 @@ var MCanvas = (function () {
     mcanvas.ctx.fillStyle = "white"; //white
     mcanvas.ctx.fillText(resizeText, width / 2, height / 2);
 
-    drawLine(0, 0, width, height);
-    drawLine(0, height, width, 0);
+    this.drawLine(0, 0, width, height);
+    this.drawLine(0, height, width, 0);
 
   }
 
@@ -110,47 +121,55 @@ var MCanvas = (function () {
     };
   };
 
-  
   /**
    * oX : Origin X
    * oY : Origin Y
    */
-  MCanvas.prototype.drawGrid = function (oX, oY, width, height, opt_increment, line_color, font) {
+  MCanvas.prototype._drawGrid = function (oX, oY, width, height, opt_increment, line_color, font) {
     this.ctx.save();
     this.ctx.font = font || '12px Monospace';
     this.ctx.fillStyle = line_color || "DarkGrey";
     this.ctx.lineWidth = 0.35;
     increment = opt_increment || 100;
-    scale_margin_top = 6;
-    scale_margin_left = 10;
-    
+
+    console.log("DRAW GRID oX = " + oX);
+
+
+    var offset_text = 10;
     /* vertical lines */
-    for (var x = -100; x < width; x += increment) {
-      var diffX = x - oX;
-      
-      ctx.beginPath()
-      ctx.moveTo(x, oY);
-      ctx.lineTo(x, height);
-      ctx.stroke();
+    for (var x = oX; x < width; x += increment) {
+      // this.ctx.beginPath()
+      this.ctx.moveTo(x, oY);
+      this.ctx.lineTo(x, height);
 
-      //if ((x  % increment)==0) { ctx.fillStyle = "black";  }
-      //else {  ctx.fillStyle = "DarkGrey";}
-      ctx.fillText(x, x+scale_margin_left, oY + scale_margin_top);
+      x % increment == 0 ?  this.ctx.fillStyle = "black" : this.ctx.fillStyle = "DarkGrey";
+    this.ctx.fillText(x, x , oY + offset_text);
+
+
     }
-  
+
     /* horizontal lines */
-    for (var y = -100; y < height; y += increment) {
-      ctx.beginPath()
-      ctx.moveTo(oX, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-
-      ctx.fillText(y, oX+scale_margin_left, y+scale_margin_top);
+    for (var y = oY; y < height; y += increment) {
+     // this.ctx.beginPath()
+      this.ctx.moveTo(oX, y);
+      this.ctx.lineTo(width, y);
+      this.ctx.fillText(y, oX , y );
     }
-  
-    ctx.restore();
+    this.ctx.stroke();
+
+    //this.ctx.restore();
   }
 
+
+  MCanvas.prototype.drawGrid = function () {
+    var width = 200;
+    var height = 200;
+    var increment = 50;
+    var line_color = "black";
+
+
+    this._drawGrid(0, 0, this.width, this.height, increment, line_color);
+  }
 
   MCanvas.prototype.drawLine = function (
     startX,
@@ -168,7 +187,7 @@ var MCanvas = (function () {
     this.ctx.stroke();
     this.ctx.closePath();
   };
- 
+
   MCanvas.prototype.drawTextBG = function (txt, x, y, font, padding, background_color) {
     this.ctx.font = font;
     this.ctx.textBaseline = "top";
@@ -250,7 +269,7 @@ var MCanvas = (function () {
 
   /**
    *   draw point with text and circle around it.
-   */ 
+   */
   MCanvas.prototype.drawPoint = function (x, y, radius, text) {
     this.ctx.beginPath();
     this.ctx.strokeStyle = "grey";
@@ -267,7 +286,7 @@ var MCanvas = (function () {
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillStyle = "#384047"; // darkish
-    this.ctx.fillText(text, x, y );
+    this.ctx.fillText(text, x, y);
   };
 
   MCanvas.prototype.drawText = function (x, y, text, font, color, maxWidth, separator) {
