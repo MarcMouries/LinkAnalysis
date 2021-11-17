@@ -1,4 +1,3 @@
-
 // =============================================================
 //                          TRIGO FUNCTIONS
 // =============================================================
@@ -34,8 +33,14 @@ function pointInCircle(point, circle) {
 function pointInCircle(px, py, circle) {
   return distanceXY(px, py, circle.x, circle.y) < circle.radius;
 }
-
-
+/**
+ * Convert from cartesian coordinates (x, y) to polar coordinates (r, θ).
+ * @param {*} cx 
+ * @param {*} cy 
+ * @param {*} r 
+ * @param {*} angle 
+ * @returns 
+ */
 function getPointOnArc(cx, cy, r, angle) {
   return {
     x: cx + r * Math.cos(angle),
@@ -57,13 +62,10 @@ function rotate(x, y, angle) {
 }
 
 /*
- * Returns the angle θ to convert from cartesian coordinates (x, y) to polar coordinates (r, θ).
+ * Returns the angle θ between 2 points
  */
 function findAngle(p1, p2) {
-  var angleRAD = Math.atan2(p1.x - p2.x, p1.y - p2.y);
-  if (angleRAD < 0) {
-    angleRAD = 2 * Math.PI + angleRAD;
-  }
+  var angleRAD = Math.atan2(p2.y - p1.y, p2.x - p1.x);
   return angleRAD;
 }
 

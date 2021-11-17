@@ -45,6 +45,9 @@
 	</form>
 	<div id="chart_container" class="chart_container"></div>
 	<script>
+
+		var angle_color = "rgba(255, 0, 0, 0.2)";
+
 		var control_form = document.getElementById('control_form');
 
 		var chart_container = document.getElementById('chart_container');
@@ -53,30 +56,27 @@
 		//mcanvas.drawPoint(100,100 , 50, "50,50"); //x, y, radius, text)
 		mcanvas.drawGrid();
 
-		var start= {x: 100, y:100};
-		var end = {x: 500, y:500};
-		//,    startY,    endX,    endY,    strokeStyle,    lineWidth 
-		mcanvas.drawLine (    start.x,    start.y,    end.x,    end.y  , "red", 2);
+		var line_1_start= {x: 100, y:100}, line_1_end = {x: 500, y:300};
+		mcanvas.drawLine (  line_1_start.x,  line_1_start.y, line_1_end.x, line_1_end.y, "red", 2);
+		mcanvas.drawTextOnLine (line_1_start, line_1_end, "text on a red line", "red",2);
+		var  line_1_angleRAD = findAngle(line_1_start, line_1_end);
+		var  line_1_angleDEG = to_degrees(line_1_angleRAD);
+		mcanvas.drawArc (line_1_start, 50, 0, line_1_angleRAD , angle_color, angle_color);
 
-		var x1 = 200, y1= 500, x2 = 600, y2=300;
-		mcanvas.drawLine_BE ([x1, y1], [x2, y2] , "blue", 2);
+		console.log(line_1_angleRAD);
+		console.log(line_1_angleDEG);
 
-		var  angleRAD = findAngle(start, end);
-		var  angleDEG = to_degrees(angleRAD);
-		console.log(angleRAD);
-		console.log(angleDEG);
+		var line_2_start= {x: 100, y:500}, line_2_end = {x: 500, y:300};
+		mcanvas.drawLine (  line_2_start.x,  line_2_start.y, line_2_end.x, line_2_end.y, "blue", 2);
+		mcanvas.drawTextOnLine (line_2_start, line_2_end, "text on a blue line", "blue",2);
+		var  line_2_angleRAD = findAngle(line_2_start, line_2_end);
+		mcanvas.drawArc (line_2_start, 50, 0, line_2_angleRAD , angle_color, angle_color);
 
+		var line_3_start= line_2_start, line_3_end = line_1_start;
+		mcanvas.drawLine (  line_3_start.x,  line_3_start.y, line_3_end.x, line_3_end.y, "green", 2);
+		mcanvas.drawTextOnLine (line_3_start, line_3_end, "text on a green line", "blue",2);
+		var  line_3_angleRAD = findAngle(line_3_start, line_3_end);
 
-		// x,y, text, stroke = 'black', width = 1)
-		mcanvas.drawTextOnLine (end.x,    end.y, "text on a line", "blue",2);
-		//mcanvas.drawText_BE (x2, y2, "end", "blue", 2);
-
-		//center, radius,     start_angle, end_angle,    color_stroke,    color_fill,    line_width 
-		var angle_arc = start;
-		//angle_arc.x += 20;
-		//angle_arc.y += 20;
-			mcanvas.drawArc (start, 20, 0, Math.PI *1 , "DarkGrey", "transparent");
-    
 
 		function change_option() {
 			//mcanvas.config.display_grid  = control_form.display_grid.checked;
