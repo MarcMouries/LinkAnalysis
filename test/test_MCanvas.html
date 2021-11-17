@@ -56,9 +56,18 @@
 		//mcanvas.drawPoint(100,100 , 50, "50,50"); //x, y, radius, text)
 		mcanvas.drawGrid();
 
+
+
 		var line_1_start= {x: 100, y:100}, line_1_end = {x: 500, y:300};
 		mcanvas.drawLine (  line_1_start.x,  line_1_start.y, line_1_end.x, line_1_end.y, "red", 2);
 		mcanvas.drawTextOnLine (line_1_start, line_1_end, "text on a red line", "red",2);
+
+
+		var line_1_midpoint = midpoint(line_1_start.x, line_1_start.y, line_1_end.x, line_1_end.y);
+		console.log(line_1_midpoint);
+		mcanvas.drawArc (line_1_midpoint, 5, 0, 2*Math.PI , "blue", "blue");
+
+
 		var  line_1_angleRAD = findAngle(line_1_start, line_1_end);
 		var  line_1_angleDEG = to_degrees(line_1_angleRAD);
 		mcanvas.drawArc (line_1_start, 50, 0, line_1_angleRAD , angle_color, angle_color);
@@ -76,6 +85,8 @@
 		mcanvas.drawLine (  line_3_start.x,  line_3_start.y, line_3_end.x, line_3_end.y, "green", 2);
 		mcanvas.drawTextOnLine (line_3_start, line_3_end, "text on a green line", "blue",2);
 		var  line_3_angleRAD = findAngle(line_3_start, line_3_end);
+
+
 
 
 		function change_option() {

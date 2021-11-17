@@ -191,14 +191,7 @@ var MCanvas = (function () {
     if (width) {      this.ctx.lineWidth = width;    }
 
 		var  angleRAD = findAngle(start, end);
-  //  var angleRAD = Math.atan2(end.y - start.y, end.x - start.x);
-
-
-    //if (angle < 0) var bearingTT = (360 + angle) % 360;
-    var PI2=Math.PI*2;
-
-    angleRAD=(angleRAD+PI2)%PI2;
-
+  
 
     console.log ("drawTextOnLine: angleRAD: " + angleRAD);
 		var  angleDEG = to_degrees(angleRAD);
@@ -206,11 +199,13 @@ var MCanvas = (function () {
 
 
     this.ctx.font = "24px sans-serif";
-    this.ctx.translate(start.x + 20,start.y - 20);
+
+
+    var line_midpoint = midpoint(start.x, start.y, end.x, end.y);
+
+    this.ctx.translate(line_midpoint.x + 5,line_midpoint.y - 5);
     this.ctx.rotate( angleRAD );
-
-    this.ctx.textAlign='left';
-
+    this.ctx.textAlign='center';
     this.ctx.fillText(text, 0,0);
     this.ctx.fill();
     this.ctx.restore();
@@ -281,13 +276,8 @@ var MCanvas = (function () {
     ctx.restore();
 
   }
-  MCanvas.prototype.drawArc = function (
-    center, radius,
-    start_angle, end_angle,
-    color_stroke,
-    color_fill,
-    line_width
-  ) {
+  MCanvas.prototype.drawArc 
+  = function (center, radius, start_angle, end_angle, color_stroke, color_fill, line_width  ) {
     this.ctx.beginPath();
     this.ctx.moveTo(center.x, center.y);
     this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, false);
