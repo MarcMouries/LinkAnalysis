@@ -190,9 +190,27 @@ var MCanvas = (function () {
     if (stroke) {      this.ctx.strokeStyle = stroke;    }
     if (width) {      this.ctx.lineWidth = width;    }
 
+		var  angleRAD = findAngle(start, end);
+  //  var angleRAD = Math.atan2(end.y - start.y, end.x - start.x);
+
+
+    //if (angle < 0) var bearingTT = (360 + angle) % 360;
+    var PI2=Math.PI*2;
+
+    angleRAD=(angleRAD+PI2)%PI2;
+
+
+    console.log ("drawTextOnLine: angleRAD: " + angleRAD);
+		var  angleDEG = to_degrees(angleRAD);
+    console.log ("drawTextOnLine: angleDEG: " + angleDEG);
+
+
     this.ctx.font = "24px sans-serif";
-    this.ctx.translate(start.x,start.y);
-    this.ctx.rotate(Math.PI / 4);
+    this.ctx.translate(start.x + 20,start.y - 20);
+    this.ctx.rotate( angleRAD );
+
+    this.ctx.textAlign='left';
+
     this.ctx.fillText(text, 0,0);
     this.ctx.fill();
     this.ctx.restore();
@@ -272,7 +290,7 @@ var MCanvas = (function () {
   ) {
     this.ctx.beginPath();
     this.ctx.moveTo(center.x, center.y);
-    this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, true);
+    this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, false);
 
     apply_styles(this.ctx, color_stroke, color_fill, line_width);
   };
