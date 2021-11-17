@@ -69,6 +69,13 @@ function findAngle(p1, p2) {
   return angleRAD;
 }
 
+/**
+ * Calculates the midpoint between two points [x1,y1] &  [x2,y2]
+ */
+function midpoint(x1, y1, x2, y2) {
+  return [(x1 + x2) / 2, (y1 + y2) / 2];
+}
+
 
 //bearing between the compass'center point and the specified point
 function __getBearing(point) {
@@ -111,10 +118,10 @@ function containsShape(shape1, shape2) {
   console.log(shape2.toStringCoordinates());
 
 
-  var result_Y =   (shape1.getY()) > (shape2.getY()) &&
-       (shape1.getY() + shape1.getHeight()) <= (shape2.getY() + shape2.getHeight());
+  var result_Y = (shape1.getY()) > (shape2.getY()) &&
+    (shape1.getY() + shape1.getHeight()) <= (shape2.getY() + shape2.getHeight());
   var result_X = (shape1.getX()) > (shape2.getX()) &&
-       (shape1.getX() + shape1.getWidth()) < (shape2.getX() + shape2.getWidth());
+    (shape1.getX() + shape1.getWidth()) < (shape2.getX() + shape2.getWidth());
 
   return result_Y && result_X;
 }
