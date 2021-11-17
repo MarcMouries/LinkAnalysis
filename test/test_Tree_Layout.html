@@ -1,8 +1,7 @@
 <html>
 
 <head>
-	<script src="../src/Graph.js" />
-	</script>
+	<script src="../src/Graph.js" /></script>
 	<script src="data-json-criminal.js"></script>
 	<script src="data-json-org-chart.js"></script>
 	<script src="data-json-simple-tree.js"></script>
@@ -12,8 +11,6 @@
 	<link rel="stylesheet" href="./style.css">
 
 	<style>
-		@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);
-
 		body {
 			font-family: "Source Code Pro", Consolas, monaco, monospace;
 			line-height: 160%;
@@ -24,19 +21,7 @@
 			margin: 0px;
 		}
 
-		.card {
-			border: 2px solid rgb(96, 139, 168);
-			border-radius: 5px;
-		}
 
-		.card .content {
-			padding: 10px;
-		}
-
-		.card .title {
-			background-color: rgba(96, 139, 168, .2);
-			padding: 10px;
-		}
 
 		.container {
 			display: inline-flex;
@@ -64,7 +49,28 @@
 			height: 100%;
 			padding: 0px;
 			outline: 1px dotted red;
-			position:relative;
+			position: __________relative;
+		}
+
+		.card {
+			border: 2px solid rgb(96, 139, 168);
+			border-radius: 5px;
+			width:60px;
+			height:30px;
+			visibility:visible;
+		}
+
+		.card .content {
+			padding: 10px;
+		}
+
+		.card .title {
+			background-color: rgba(96, 139, 168, .2);
+			padding: 10px;
+		}
+		.card .user_photo img {
+			width: 50px;
+			border-radius: 50%;
 		}
 	</style>
 </head>
@@ -79,21 +85,23 @@
 	<div id="tree_dimension"></div>
 	<div id="canvas_dimension"></div>
 
-<!--
+	<!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  -->
-	<div id="node_template" style="width:60px;height:30px;border:1px solid blue;visibility:visible">
-		Node DIV
+ <div id="card" class="card">
+	<div id="xx" class="user_photo" >
+		<div>NODE_NAME</div>
+		<img src="https://randomuser.me/api/portraits/women/36.jpg">
 	</div>
+</div>
 
 	<div id="chart" class="canvas-container">
 		<canvas id="canvas" width="1000" height="800"></canvas>
 	</div>
 
-	
-
+	<!-- node_template -->
 	<script>
-		var el_node_template = document.getElementById('node_template');
+		var el_node_template = document.getElementById('card');
 
 
 		var node_template_rect = el_node_template.getBoundingClientRect();
@@ -162,7 +170,7 @@
 				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
 				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
 		*/
-		var treeLayout = new TreeLayout(graph_walker);
+		var treeLayout = new TreeLayout(graph_walker, {});
 		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var treeDimension = treeLayout.getTreeDimension();
 
@@ -172,6 +180,14 @@
 		var canvas = document.getElementById('canvas');
 		var context = canvas.getContext('2d');
 		let rect = canvas.getBoundingClientRect();
+		console.log("CANVAS RECT");
+		console.log(rect);
+		console.log("Canvas Offset");
+		//	var canvasoffsetTop = 0;
+		//	var canvasoffsetLeft = 0;
+		console.log(" -  offsetLeft : " + canvas.offsetLeft);
+		console.log(" -  offsetTop : " + canvas.offsetTop);
+
 
 		// increase the actual size of our canvas
 		canvas.width = rect.width * devicePixelRatio;
@@ -211,7 +227,6 @@
 
 			context.rect(node.x, node.y, node.width, node.height);
 
-			console.log("drawing node " + node.id);
 			//context.fill();
 			context.stroke();
 			//context.beginPath();
@@ -229,10 +244,9 @@
 
 			var node_div = el_node_template.cloneNode(true);
 
-			var canvasoffsetTop = 0;
-			var canvasoffsetLeft = 0;
-			node_div.style.top = (node.y + canvasoffsetTop) + "px";
-			node_div.style.left = (node.x + canvasoffsetLeft) + "px";
+
+			node_div.style.top = (node.y + canvas.offsetTop) + "px";
+			node_div.style.left = (node.x + canvas.offsetLeft) + "px";
 			node_div.style.position = "absolute";
 
 			node_div.innerHTML = node.id;

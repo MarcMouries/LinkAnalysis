@@ -13,6 +13,7 @@ Distance in arbitrary units for the separation between adjacent levels.
 */
 var TreeLayout = (function () {
 	function TreeLayout(graph, options) {
+
 		var treeLayout = this;
 
 		/** orientation === "NORTH"
@@ -22,12 +23,15 @@ var TreeLayout = (function () {
 		var defaults = {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
-			levelSeparation: 50,
+			levelSeparation: 100,
 			siblingSpacing: 50,
-			subtreeSeparation: 200,
-			nodeWidth: 20,
-			nodeHeight: 20
+			subtreeSeparation: 400,
+			nodeWidth: 100,
+			nodeHeight: 50
 		}
+		const opts = Object.assign({}, defaults, options);
+
+
 		options || (options = {});
 		for (var i in defaults) {
 			if (defaults.hasOwnProperty(i)) {
@@ -70,7 +74,7 @@ var TreeLayout = (function () {
 		}
 		else {  /* Do a post-order walk of the subtree.     */
 			var children_count = ThisNode.getChildrenCount();
-			console.log("  " + ThisNode.id + "/  children_count=" + children_count);
+			//console.log("  " + ThisNode.id + "/  children_count=" + children_count);
 			for (var i = 0; i < children_count; i++) {
 				var child = ThisNode.children[i];
 				leftmost = this.getLeftmost(child, currentLevel + 1, searchDepth);
@@ -133,7 +137,7 @@ var TreeLayout = (function () {
 		else if (isLeftMost) {
 			node.neighbor = this.lastNodeAtLevel[node.level];
 			if (node.neighbor) {
-				console.log("\\_setNodeNeighbor of " + node.id + " to " + node.neighbor.id);
+				//console.log("\\_setNodeNeighbor of " + node.id + " to " + node.neighbor.id);
 			}
 		}
 		else {
@@ -202,15 +206,14 @@ var TreeLayout = (function () {
 				node.prelim = leftSibling.prelim + this.siblingSpacing;
 				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
 				//	console.log("meanNodeSize = " + meanNodeSize);
-				console.log(node);
 				node.prelim += meanNodeSize;
-				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
+				//console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
 			}
 			else {  /*  no sibling on the left to worry about  */
 				node.prelim = 0;
-				console.log(node.id + " is a leaf with no left sibling");
-				console.log("prelim  = " + node.prelim);
-				console.log("modifier= " + node.modifier);
+				//console.log(node.id + " is a leaf with no left sibling");
+				//console.log("prelim  = " + node.prelim);
+				//console.log("modifier= " + node.modifier);
 			}
 		}
 		else {
@@ -224,7 +227,7 @@ var TreeLayout = (function () {
 			//console.log(node);
 
 			var midPoint = this.getMidPoint(node);
-			console.log("midPoint of " + node.id + "= " + midPoint);
+			//console.log("midPoint of " + node.id + "= " + midPoint);
 
 			//console.log(node.id + " is the parent of nodes " + leftMostChild.id + " and " + rightMostChild.id);
 
@@ -233,15 +236,14 @@ var TreeLayout = (function () {
 				var meanNodeSize = this.getMeanNodeSize(node, leftSibling);
 				node.prelim += meanNodeSize;
 				node.modifier = node.prelim - midPoint;
-				console.log(node);
-				console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
-				console.log("modifier= " + node.prelim + " - " + node.modifier);
-				console.log("Calling this.apportion for = " + node.id + " - level = " + level);
+				//console.log("prelim = " + leftSibling.prelim + " + " + this.siblingSpacing + " + " + meanNodeSize + " = " + node.prelim);
+				//console.log("modifier= " + node.prelim + " - " + node.modifier);
+				//console.log("Calling this.apportion for = " + node.id + " - level = " + level);
 				this.apportion(node, level);
 
 			} else {
 				node.prelim = midPoint;
-				console.log("prelim  = " + node.prelim);
+				//console.log("prelim  = " + node.prelim);
 			}
 		}
 	}
@@ -255,7 +257,7 @@ var TreeLayout = (function () {
 	*  Called for non-leaf nodes
 	*----------------------------------------------------*/
 	TreeLayout.prototype.apportion = function (node, level) {
-		console.log("_apportion " + node.id);
+		//console.log("_apportion " + node.id);
 
 		var firstChild = node.children[0];
 		var firstChildLeftNeighbor = firstChild.neighbor;
@@ -266,7 +268,6 @@ var TreeLayout = (function () {
 		if (firstChild && firstChildLeftNeighbor && compareDepth < depthToStop) {
 
 			var rightModSum, leftModSum, rightAncestor, leftAncestor;
-			var subtree, subtreeMoveAux;
 
 			leftModSum = 0;
 			rightModSum = 0;
@@ -286,16 +287,18 @@ var TreeLayout = (function () {
 
 			var totalGap = (firstChildLeftNeighbor.prelim + leftModSum + this.subtreeSeparation + meanNodeSize)
 				- (firstChild.prelim + rightModSum);
-			console.log("\\__apportion: totalGap of " + node.id + " = " + totalGap);
+			//console.log("\\__apportion: totalGap of " + node.id + " = " + totalGap);
 
 			if (totalGap > 0) {
 				/* Count interior sibling subtrees in LeftSiblings */
 
+				var subtree, subtreeMoveAux;
+
 				var numberOfLeftSiblings = 0;
 				for (subtree = node; subtree && subtree !== leftAncestor; subtree = subtree.getLeftSibling()) {
 					numberOfLeftSiblings += 1;
-					console.log("\\__apportion: numberOfLeftSiblings: " + numberOfLeftSiblings);
-					console.log("\\__apportion: leftAncestor = " + leftAncestor.id);
+					//console.log("\\__apportion: numberOfLeftSiblings: " + numberOfLeftSiblings);
+					//console.log("\\__apportion: leftAncestor = " + leftAncestor.id);
 				}
 
 				if (subtree) {
@@ -304,7 +307,7 @@ var TreeLayout = (function () {
 					subtreeMoveAux = node;
 
 					while (subtreeMoveAux !== leftAncestor) {
-						console.log("\\__apportion: subtree " + subtree.id + " & " + "subtreeMoveAux " + subtreeMoveAux.id);
+						//console.log("\\__apportion: subtree " + subtree.id + " & " + "subtreeMoveAux " + subtreeMoveAux.id);
 
 						subtreeMoveAux.prelim += totalGap;
 						subtreeMoveAux.modifier += totalGap;
@@ -357,8 +360,8 @@ var TreeLayout = (function () {
 
 			node.x = xTopAdjustment + node.prelim + modSum;
 			node.y = yTopAdjustment + (level * this.levelSeparation);
-			console.log("\\secondWalk: Node(" + node.id + " / " + xTopAdjustment + " / " + node.prelim + " / " + modSum);
-			console.log("\\secondWalk: " + node.x + "," + node.y);
+			//console.log("\\secondWalk: Node(" + node.id + " / " + xTopAdjustment + " / " + node.prelim + " / " + modSum);
+			//console.log("\\secondWalk: " + node.x + "," + node.y);
 
 
 			var children_count = node.getChildrenCount();

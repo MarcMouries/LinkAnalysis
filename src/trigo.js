@@ -73,7 +73,10 @@ function findAngle(p1, p2) {
  * Calculates the midpoint between two points [x1,y1] &  [x2,y2]
  */
 function midpoint(x1, y1, x2, y2) {
-  return [(x1 + x2) / 2, (y1 + y2) / 2];
+  return {
+    x: (x1 + x2) / 2, 
+    y: (y1 + y2) / 2
+  };
 }
 
 

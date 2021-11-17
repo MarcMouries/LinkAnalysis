@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script type="text/javascript" src="../src/trigo.js"></script>
+	<script type="text/javascript" src="../src/links_icons.js"></script>
+	<script type="text/javascript" src="../src/image_utils.js"></script>
+	<script type="text/javascript" src="../src/MCanvas.js"></script>
+</head>
+
+<body>
+	<div id="chart_container"></div>
+</body>
+
+<script>
+	window.onload = function () {
+		// =============================================================
+		//                          MChartModel
+		// =============================================================
+		function MChartModel({ nodes }) {
+			var m = this;
+			m.nodes = nodes;
+			var links = [];
+
+		}
+		MChartModel.prototype.addNode = function (node) {
+			nodes.push(node);
+			//this.update();
+		};
+		MChartModel.prototype.getNodes = function (node) {
+			return nodes;
+		};
+
+		// =============================================================
+		//                          MChartView
+		// =============================================================
+		function MChartView({ mcanvas }) {
+			console.log("MChartView()");
+			this.mcanvas = mcanvas;
+			this.ctx = mcanvas.getContext();
+			console.log(this.mcanvas);
+			console.log("getWidth = " + this.getWidth());
+			console.log("getHeight = " + this.getHeight());
+		}
+		MChartView.prototype.getContext = function () {
+			return this.ctx;
+		};
+		MChartView.prototype.getHeight = function () {
+			return this.mcanvas.getHeight();
+		};
+		MChartView.prototype.getWidth = function () {
+			return this.mcanvas.getWidth() ;
+		};
+		MChartView.prototype.addEventListener = function (type, listener) {
+			this.mcanvas.addEventListener(type, listener);
+		};
+		MChartView.prototype.clear = function () {
+			this.ctx.clearRect(0, 0, this.getWidth(), this.getHeight());
+		};
+		MChartView.prototype.drawBorder = function () {
+			console.log("MChartView .drawBorder");
+			this.mcanvas.drawBorder();
+		}
+
+
+		// =============================================================
+		//                          MChartLayoutManager
+		// =============================================================
+		function MChartLayoutManager({ model, width, height }) {
+			var nodes = model.nodes;
+			this.width = width;
+			this.height = height;
+			console.log("MChartLayoutManager()");
+
+			console.log("width = " + this.width);
+			console.log("height = " + this.height);
+//			var center = mcanvas.getCenter();
+
+		}
+		MChartLayoutManager.prototype.layout = function () {
+			//console.log("MChartLayoutManager : layout");
+
+			// Center the root
+			var root = nodes[0];
+			root.x = this.width / 2;
+			root.y = this.height / 2;
+
+			// replace by layout with Compass
+			for (var i = 1; i < nodes.length; i++) {
+				var node = nodes[i];
+				node.x = root.x + (i * 50);
+				node.y = root.y + (i * 50);
+			}
+		};
+		// =============================================================
+		//                          MChartController
+		// =============================================================
+		function MChartController({ model, view }) {
+			//	console.log("MChartController()");
+			this.NODE_RADIUS = 20;
+			this.model = model;
+			this.view = view;
+			controller = this;
+			var nodes = model.nodes;
+			this.current_node = null;
+
+			//this.canvas = this.view.getCanvas();
+			this.context = this.view.getContext();
+			var width = view.getWidth();
+			this.addEventListeners();
+			this.layoutMgr = new MChartLayoutManager({ model: model, width: view.getWidth(), height: view.getHeight() });
+			this.layoutMgr.layout();
+		}
+
+		MChartController.prototype.addEventListeners = function () {
+
+			console.log("addEventListeners");
+
+			this.view.addEventListener("mousemove", this._handleMouseMove, false);
+			this.view.addEventListener("mousedown", this._handleMouseDown, false);
+			this.view.addEventListener("mouseup", this._handleMouseUp, false);
+		};
+
+		MChartController.prototype._handleMouseMove = function (event) {
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+				if (pointInCircle(event.clientX, event.clientY, node)) {
+					node.isBelowMouse = true;
+				}
+				else {
+					node.isBelowMouse = false;
+				}
+			}
+			if (this.current_node) {
+				this.current_node.x = event.clientX - node.offset.x;
+				this.current_node.y = event.clientY - node.offset.y;
+			}
+			controller.render();
+		}
+
+		MChartController.prototype._handleMouseDown = function (event) {
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+
+
+				if (pointInCircle(event.clientX, event.clientY, node)) {
+					node.isClicked = true;
+					this.current_node = node;
+					console.log("going to set the offset");
+					node.offset.x = event.clientX - node.x;
+					node.offset.y = event.clientY - node.y;
+				}
+				else {
+					node.isClicked = false;
+				}
+			}
+			controller.render();
+		}
+
+		MChartController.prototype._handleMouseUp = function (event) {
+			if (this.current_node != null) {
+				this.current_node.isClicked = false;
+				this.current_node = null;
+			}
+			controller.render();
+		}
+
+		MChartController.prototype.render = function () {
+			console.log("MChartController .render");
+			//console.log(nodes);
+			//this.context.clearRect(0, 0, this.width, this.height);
+			this.view.clear();
+
+			this.view.drawBorder();
+
+			for (var i = 0; i < nodes.length; i++) {
+				var node = nodes[i];
+				node.draw(this.context);
+			}
+		}
+
+		// =============================================================
+		//                          LinkAnalysis
+		// =============================================================
+		function LinkAnalysis({ in_nodes, chart_container }) {
+
+			var NODE_GROUP_CLASS = "nodeXXX";
+			var image_width = 35;
+			var image_height = image_width;
+			var node_width = image_width;
+			var node_height = image_width;
+
+			var icon_width = 40;
+			var icon_heigth = 40;
+
+			var color_ring_isActivated = "#3b6978";
+			var color_ring_isBelowMouse = "#84a9ac";
+
+			// the imgs[] array now holds fully loaded images
+			var mcanvas = new MCanvas({ container: chart_container });
+
+			//this.canvas = document.getElementById("canvas");
+			//this.context = this.canvas.getContext("2d");
+
+
+			this.view = new MChartView({ mcanvas: mcanvas });
+			this.model = new MChartModel({ nodes: nodes });
+			this.controller = new MChartController({
+				model: this.model,
+				view: this.view
+			});
+
+			this.draw = function () {
+				console.log("in draw");
+
+				this.controller.render();
+			}
+		}
+
+		LinkAnalysis.prototype.setIconByNodeType = function (IconByNodeType) {
+			this.IconByNodeType = IconByNodeType;
+		}
+
+		LinkAnalysis.prototype.start = function () {
+			console.log("in start");
+			this.draw();
+		};
+
+		drawRing = function (x, y, radius, color) {
+			this.ctx.beginPath();
+			this.ctx.strokeStyle = color;
+			this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+			this.ctx.lineWidth = 5;
+			this.ctx.stroke();
+		};
+
+
+		function Link(source, target) {
+			this.source = source;
+			this.target = target;
+		}
+		Link.prototype.draw = function (context, color) {
+			var start_X = this.source.x;
+			var start_Y = this.source.y;
+			var end_X = this.target.x;
+			var end_Y = this.target.y;
+
+			// DRAW
+		}
+
+
+		function Circle(x, y, radius, fill, stroke) {
+			this.startingAngle = 0;
+			this.endAngle = 2 * Math.PI;
+			this.x = x;
+			this.y = y;
+			this.radius = radius;
+			this.fill = fill;
+			this.stroke = stroke;
+			this.isClicked = false;
+			this.isBelowMouse = false;
+			this.offset = { x: 0, y: 0 };
+
+
+			Circle.prototype.drawRing = function (context, color) {
+				context.beginPath();
+				context.strokeStyle = color;
+				context.arc(this.x, this.y, this.radius + 5, 0, 2 * Math.PI, false);
+				context.lineWidth = 5;
+				context.stroke();
+			};
+
+			Circle.prototype.drawImage = function (context, image) {
+				var icon_x = this.x - icon_width / 2; // to fit into circle
+				var icon_y = this.y - icon_heigth / 2; // to fit into circle
+				context.drawImage(image, icon_x, icon_y, icon_width, icon_heigth);
+			}
+
+			this.draw = function (context) {
+				//console.log("Circle.draw()");
+				context.beginPath();
+				context.fillStyle = this.fill;
+
+				//console.log("x=" + this.x + ", y=" + this.y + " r=" + this.radius);
+
+				context.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+				context.fill();
+
+				// TODO
+				// IconByNodeType does not exist in the class Circle
+				var node_type = "case";
+				/*
+				var icon_element = this.IconByNodeType[node_type];
+				if (icon_element) {
+					var image = icon_element.image;
+					if (!image) {
+						console.log("=====");
+						console.log(ICON_LIST[node_type]);
+						console.log("=====");
+					}
+					this.drawImage(context, image);
+				}
+				else {
+					console.log("IconByNodeType " + this.IconByNodeType + " does not exist in the class Circle");
+
+				}
+*/
+				//console.log("isBelowMouse: " + this.isBelowMouse);
+				if (this.isClicked) {
+					//this.drawRing(context, color_ring_isActivated);
+					this.drawRing(context, "blue");
+				}
+				else if (this.isBelowMouse) {
+					//this.drawRing(context, color_ring_isBelowMouse);
+					this.drawRing(context, "green");
+				}
+			}
+		}
+		// =============================================================
+		//                          MAIN FUNCTIONS
+		// =============================================================
+		var IconByNodeType = {
+			"case": {
+				"url": icon_case_base64
+			},
+			"arrest": {
+				"url": icon_arrest_base64
+			}
+		};
+
+		var circle_radius = 30;
+		var c1 = new Circle(300, 300, circle_radius, "#4e79a7", "black");
+		var c2 = new Circle(400, 300, circle_radius, "#f28e2c", "black");
+		var c3 = new Circle(500, 300, circle_radius, "#e15759", "black");
+		var nodes = [c1, c2, c3];
+
+
+		var chart_container = document.getElementById("chart_container");
+		var linkAnalysis = new LinkAnalysis({ in_nodes: nodes, chart_container: chart_container });
+		///var person = { id: "p_123", name: "Eric Fox", type: "person", photo: "https://randomuser.me/api/portraits/men/22.jpg" };
+		//////////linkAnalysis.addNode(person);
+		linkAnalysis.setIconByNodeType(IconByNodeType);
+		linkAnalysis.start();
+		//@TODO  LOAD
+		//loadAllImages(ICON_LIST, start);
+		//
+	}
+</script>
+
+</html>

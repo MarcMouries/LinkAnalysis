@@ -196,11 +196,11 @@ Graph.prototype.addObject = function (object) {
 	return node;
 };
 
-Graph.prototype.getRootNode = function (node) {
-	return this.root;
-}
-
-
+/**
+ * 
+ * @param {*} node 
+ * @returns 
+ */
 Graph.prototype.addNode = function (node) {
 	if (!(node.id in this.graph)) {
 		this.nodeList.push(node);
@@ -212,6 +212,9 @@ Graph.prototype.addNode = function (node) {
 	return node;
 };
 
+Graph.prototype.getRootNode = function (node) {
+	return this.root;
+}
 /**
  * Check if the specified node is a target in the list of links
  */

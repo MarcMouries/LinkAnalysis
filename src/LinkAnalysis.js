@@ -467,13 +467,15 @@ var LinkAnalysis = (function () {
 
 			if (this.graph.changed) {
 				// calculate the depth of each node from the starting vertex
+
+				/*
 				this.graph.visit_breadth_first(starting_vertex, function (level, nodes_at_current_level) {
 					// console.log("Level " + level + ": " + to_string);
 					linkAnalysis.nodes_at_level[level] = nodes_at_current_level;
 				});
 				console.log("nodes_at_level");
 				console.log(this.nodes_at_level);
-
+*/
 				this.center = mcanvas.getCenter();
 				this.layout.Calculate_Positions(this.graph, starting_vertex, this.center);
 				this.graph.changed = false;
