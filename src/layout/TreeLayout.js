@@ -24,12 +24,15 @@ var TreeLayout = (function () {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
-			siblingSpacing: 50,
-			subtreeSeparation: 400,
-			nodeWidth: 100,
+			siblingSpacing: 10,
+			subtreeSeparation: 200,
+			nodeWidth: 10,
 			nodeHeight: 50
 		}
+
+
 		const opts = Object.assign({}, defaults, options);
+
 
 
 		options || (options = {});
@@ -38,6 +41,15 @@ var TreeLayout = (function () {
 				this[i] = options[i] || defaults[i];
 			}
 		}
+
+		if (this.levelSeparation < (this.nodeHeight*2)) {
+			this.levelSeparation = this.nodeHeight * 2;
+		}
+		// should be proportional to the width of the tree
+		if (this.subtreeSeparation < (this.nodeWidth*3)) {
+			this.subtreeSeparation = this.nodeWidth*3;
+		}
+
 		/**
 		 * lastNodeAtLevel: stores the last node visited at each level to set as left most nodes' neighbor
 		 */
