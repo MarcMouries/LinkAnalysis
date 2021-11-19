@@ -185,27 +185,25 @@ var MCanvas = (function () {
     this.ctx.restore();
   }
 
-  MCanvas.prototype.drawTextOnLine = function(start, end, text, stroke = 'black', width = 1) {
+  MCanvas.prototype.drawTextOnLine = function(a, end, text, stroke = 'black', width = 1) {
     this.ctx.save();
     if (stroke) {      this.ctx.strokeStyle = stroke;    }
     if (width) {      this.ctx.lineWidth = width;    }
 
-		var  angleRAD = findAngle(start, end);
-  
+		var  angleRAD = findAngle(a, end);
+    if (angleRAD < 0) {     angleRAD = angleRAD + Math.PI;  }
+    if (angleRAD > Math.PI/2) {    angleRAD = angleRAD - Math.PI;    }
+    var line_midpoint = midpoint(a.x, a.y, end.x, end.y);
+    this.ctx.translate(line_midpoint.x, line_midpoint.y);
+    this.ctx.rotate( angleRAD );
+
 
     console.log ("drawTextOnLine: angleRAD: " + angleRAD);
 		var  angleDEG = to_degrees(angleRAD);
     console.log ("drawTextOnLine: angleDEG: " + angleDEG);
-
-
     this.ctx.font = "24px sans-serif";
-
-
-    var line_midpoint = midpoint(start.x, start.y, end.x, end.y);
-
-    this.ctx.translate(line_midpoint.x + 5,line_midpoint.y - 5);
-    this.ctx.rotate( angleRAD );
     this.ctx.textAlign='center';
+    this.ctx.textBaseline='bottom';
     this.ctx.fillText(text, 0,0);
     this.ctx.fill();
     this.ctx.restore();

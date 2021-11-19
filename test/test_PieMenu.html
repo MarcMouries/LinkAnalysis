@@ -49,35 +49,17 @@
 	resizeCanvas(canvas, 500, 500);
 
 	var menu = {
-		angle_start: 0,
-		items: [{
-				name: "Item1",
-				value: "Item1",
-				color: "#CFD3CA"
-			},
-			{
-				name: "Item2",
-				value: "Item2",
-				color: "#A9C0C1"
-			},
-			{
-				name: "Item3",
-				value: "Item3",
-				color: "#63858F"
-			},
-			{
-				name: "Item4",
-				value: "Item4",
-				color: "#344B52"
-			}
+		angle_start: 999,
+		items: [
+			//{	name: "Item1",			value: "Item1",		color: "#CFD3CA"	},
+			{	name: "Item2",			value: "Item2",		color: "#A9C0C1"	},
+			//{	name: "Item3",			value: "Item3",		color: "#63858F"	},
+			{	name: "Item4",			value: "Item4",		color: "#344B52"	}
 		]
 	};
 	var myPieMenu = new PieMenu({
 		canvas: canvas,
-		center: {
-			x: 300,
-			y: 300
-		}, //center: { x: canvas.width / 2, y: canvas.height / 2 },
+		center: { x: 300, y: 300 }, //center: { x: canvas.width / 2, y: canvas.height / 2 },
 		radius: 80,
 		menu: menu
 	});

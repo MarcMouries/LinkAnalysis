@@ -1,7 +1,8 @@
 <html>
 
 <head>
-	<script src="../src/Graph.js" /></script>
+	<script src="../src/Graph.js" />
+	</script>
 	<script src="data-json-criminal.js"></script>
 	<script src="data-json-org-chart.js"></script>
 	<script src="data-json-simple-tree.js"></script>
@@ -55,9 +56,9 @@
 		.card {
 			border: 2px solid rgb(96, 139, 168);
 			border-radius: 5px;
-			width:60px;
-			height:30px;
-			visibility:visible;
+			width: 160px;
+			height: 60px;
+			visibility: visible;
 		}
 
 		.card .content {
@@ -68,6 +69,7 @@
 			background-color: rgba(96, 139, 168, .2);
 			padding: 10px;
 		}
+
 		.card .user_photo img {
 			width: 50px;
 			border-radius: 50%;
@@ -88,12 +90,12 @@
 	<!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  -->
- <div id="card" class="card">
-	<div id="xx" class="user_photo" >
-		<div>NODE_NAME</div>
-		<img src="https://randomuser.me/api/portraits/women/36.jpg">
+	<div id="card" class="card">
+		<div id="xx" class="user_photo">
+			<div>NODE_NAME</div>
+			<img src="https://randomuser.me/api/portraits/women/36.jpg">
+		</div>
 	</div>
-</div>
 
 	<div id="chart" class="canvas-container">
 		<canvas id="canvas" width="1000" height="800"></canvas>
@@ -108,7 +110,7 @@
 		console.log("node template rest");
 		console.log(node_template_rect);
 
-		function drawLine(ctx, begin, end, stroke = 'black', width = 1) {
+		function drawLine(ctx, x1, y1, x2, y2, stroke = 'black', width = 1) {
 			ctx.save();
 
 			if (stroke) {
@@ -118,8 +120,8 @@
 				ctx.lineWidth = width;
 			}
 			ctx.beginPath();
-			ctx.moveTo(...begin);
-			ctx.lineTo(...end);
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
 			ctx.stroke();
 			ctx.restore();
 		}
@@ -170,11 +172,13 @@
 				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
 				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
 		*/
-		var treeLayout = new TreeLayout(graph_walker, {});
+		var treeLayout = new TreeLayout(graph_walker,
+			{
+				nodeWidth: 140,
+				nodeHeight: 60
+			});
 		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var treeDimension = treeLayout.getTreeDimension();
-
-
 
 
 		var canvas = document.getElementById('canvas');
@@ -209,26 +213,23 @@
 		var chart_container = document.getElementById('chart');
 
 
+		var connector_style = "ELBOW";
+		//var connector_style = "STRAIGHT";
+
+
 		var x1, y1, x2, y2, x3, y3, x4, y4;
 		for (let index = 0; index < graph_walker.nodeList.length; index++) {
 			const node = graph_walker.nodeList[index];
 
 			if (node.data.type && node.data.type == "NEW") {
-				context.fillStyle = 'rgb(128, 182, 161)';
+				context.strokeStyle = 'rgb(128, 182, 161)';
 			}
 			else {
-				context.fillStyle = '#0181a0';
+				context.strokeStyle = '#0181a0';
 
 			}
 			//context.fillRect(node.x, node.y, node.width, node.height);
-
-			//	node.width = 5;
-			//	node.height = 5;
-
-			context.rect(node.x, node.y, node.width, node.height);
-
-			//context.fill();
-			context.stroke();
+			context.strokeRect(node.x, node.y, node.width, node.height);
 			//context.beginPath();
 			context.font = 'bold 20px Calibri';
 			context.save();
@@ -238,13 +239,10 @@
 			context.textAlign = "center";
 			var textWidth = 0;
 			//var textWidth = context.measureText(node.id ).width;
-			context.fillStyle = '#0181a0';
+			//context.fillStyle = '#0181a0';
 			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
-
 			var node_div = el_node_template.cloneNode(true);
-
-
 			node_div.style.top = (node.y + canvas.offsetTop) + "px";
 			node_div.style.left = (node.x + canvas.offsetLeft) + "px";
 			node_div.style.position = "absolute";
@@ -254,18 +252,48 @@
 
 			chart_container.appendChild(node_div);
 
-
 			// Middle Of Node
 			x1 = node.x + (node.width / 2);
 			y1 = node.y + node.height;
 			var middleOfNode = [x1, y1];
 
+
+			context.fillStyle = "black";
+			context.font = '14px Calibri';
+			context.fillText("a", x1 + 5, y1 + 5);
+
 			for (var i = 0; i < node.children.length; i++) {
 				var childNode = node.children[i];
-				x2 = childNode.x + node.width / 2;
-				y2 = childNode.y;
-				var middleOfChild = [x2, y2];
-				drawLine(context, middleOfNode, middleOfChild, 'black', 1);
+
+				// STRAIGHT
+				if (connector_style == "STRAIGHT") {
+
+					x2 = childNode.x + node.width / 2;
+					y2 = childNode.y;
+					var color = 'black';
+					drawLine(context, x1, y1, x2, y2, color, 0.5);
+				}
+				// ELBOW ----------------------------
+				if (connector_style == "ELBOW") {
+					var line_color = 'black';
+					var line_width = 0.8;
+
+					x2 = x1;
+					y2 = (childNode.y + node.y + node.height) / 2;
+
+					context.fillText("b", x2 + 5, y2 + 5);
+					drawLine(context, x1, y1, x2, y2, color, line_width);//'red'
+
+					x3 = childNode.x + childNode.width / 2;
+					y3 = y2;
+					context.fillText("c", x3 + 5, y3 + 5);
+					drawLine(context, x2, y2, x3, y3, color, line_width);//'green'
+
+					x4 = x3;
+					y4 = childNode.y;
+					context.fillText("d", x4 + 5, y4 - 5);
+					drawLine(context, x3, y3, x4, y4, color, line_width); //'blue'
+				}
 			}
 		}
 		//console.log(graph_walker.nodeList);
