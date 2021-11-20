@@ -92,8 +92,7 @@
  -->
 	<div id="card" class="card">
 		<div id="xx" class="user_photo">
-			<div>NODE_NAME</div>
-			<img src="https://randomuser.me/api/portraits/women/36.jpg">
+			<div>{id}</div>
 		</div>
 	</div>
 
@@ -104,7 +103,6 @@
 	<!-- node_template -->
 	<script>
 		var el_node_template = document.getElementById('card');
-
 
 		var node_template_rect = el_node_template.getBoundingClientRect();
 		console.log("node template rest");
@@ -139,7 +137,6 @@
 		graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
 
-
 		// 2nd Level
 		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
 		graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
@@ -157,7 +154,6 @@
 		graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
 		graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
 
-
 		// New Nodes
 		graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
 		graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
@@ -167,7 +163,7 @@
 				console.log("==========================");
 				console.log("=Test getLeftmost");
 				console.log("==========================");
-		
+
 				var node = graph_walker.getNode("M");
 				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
 				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
@@ -209,8 +205,18 @@
 		var el_canvas_dimension = document.getElementById('canvas_dimension');
 		el_canvas_dimension.innerHTML = "Canvas Dimension: " + canvas.style.width + " x " + canvas.style.height;
 
-
 		var chart_container = document.getElementById('chart');
+
+
+		/* Populate template with data by replacing strings between braces with properties in the data object 
+		 * ex: "{first_name}" is replaced by data.first_name
+		*/
+		function populate(template, data) {
+			var content = template.replace(/\{(\w+)\}/g, function (_, k) {
+				return data[k];
+			});
+			return content;
+		}
 
 
 		var connector_style = "ELBOW";
@@ -242,14 +248,13 @@
 			//context.fillStyle = '#0181a0';
 			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
+			// Create Node Content
 			var node_div = el_node_template.cloneNode(true);
+			node_div.innerHTML = populate(node_div.innerHTML, node);
 			node_div.style.top = (node.y + canvas.offsetTop) + "px";
 			node_div.style.left = (node.x + canvas.offsetLeft) + "px";
 			node_div.style.position = "absolute";
-
-			node_div.innerHTML = node.id;
 			node_div.id = "node_" + node.id;
-
 			chart_container.appendChild(node_div);
 
 			// Middle Of Node
