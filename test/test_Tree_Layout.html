@@ -1,64 +1,41 @@
 <html>
 
 <head>
-	<script src="../src/Graph.js" />
-	</script>
+	<script src="../src/Graph.js"></script>
+	<script src="../src/layout/TreeLayout.js"></script>
 	<script src="data-json-criminal.js"></script>
 	<script src="data-json-org-chart.js"></script>
 	<script src="data-json-simple-tree.js"></script>
-	<script src="../src/layout/TreeLayout.js"></script>
-
-
 	<link rel="stylesheet" href="./style.css">
 
 	<style>
-		body {
-			font-family: "Source Code Pro", Consolas, monaco, monospace;
-			line-height: 160%;
-			font-size: 16px;
-		}
-
-		pre {
-			margin: 0px;
-		}
-
-
-
-		.container {
-			display: inline-flex;
-			justify-content: space-between;
-			width: 80%;
-			height: 80%;
-		}
-
-		.container>div {
-			margin: 10px;
-			width: 100%;
-			_background: #46B980;
-			padding: 5px;
-			_color: #fff;
-		}
-
 		#canvas {
 			border: 1px dotted DodgerBlue;
-			width: 100%;
-			height: 100%;
+			_width: 100%;
+			_height: 100%;
 		}
 
 		.canvas-container {
-			width: 100%;
-			height: 100%;
+			_width: 100%;
+			_height: 100%;
 			padding: 0px;
 			outline: 1px dotted red;
-			position: __________relative;
+			position: absolute;
+
+		}
+
+		.card_template_container {
+			display: none;
 		}
 
 		.card {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			border: 2px solid rgb(96, 139, 168);
 			border-radius: 5px;
 			width: 160px;
 			height: 60px;
-			visibility: visible;
 		}
 
 		.card .content {
@@ -90,23 +67,34 @@
 	<!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  -->
-	<div id="card" class="card">
-		<div id="xx" class="user_photo">
+	<div id="card_template_container" class="card_template_container">
+		<div id="card" class="card">
 			<div>{id}</div>
 		</div>
 	</div>
-
 	<div id="chart" class="canvas-container">
 		<canvas id="canvas" width="1000" height="800"></canvas>
 	</div>
 
 	<!-- node_template -->
 	<script>
-		var el_node_template = document.getElementById('card');
 
-		var node_template_rect = el_node_template.getBoundingClientRect();
-		console.log("node template rest");
-		console.log(node_template_rect);
+		function getDivDimensions(div) {
+			var cs = window.getComputedStyle(div);
+			var div_width = cs.getPropertyValue("width");
+			if (div_width) div_width = parseInt(div_width.replace('px', ''));
+			var div_height = cs.getPropertyValue("height");
+			if (div_height) div_height = parseInt(div_height.replace('px', ''));
+			return { width: div_width, height: div_height };
+		}
+
+		var card_template_container = document.getElementById('card_template_container');
+		var card_div = card_template_container.children[0];
+		var node_div_dim = getDivDimensions(card_div);
+		console.log("node_div_dim");
+		console.log(node_div_dim);
+		console.log("node_div dimensions: '" + node_div_dim.width + "' x '" + node_div_dim.height);
+
 
 		function drawLine(ctx, x1, y1, x2, y2, stroke = 'black', width = 1) {
 			ctx.save();
@@ -168,10 +156,12 @@
 				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
 				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
 		*/
+
+
 		var treeLayout = new TreeLayout(graph_walker,
 			{
-				nodeWidth: 140,
-				nodeHeight: 60
+				nodeWidth: node_div_dim.width,
+				nodeHeight: node_div_dim.height
 			});
 		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
 		var treeDimension = treeLayout.getTreeDimension();
@@ -249,14 +239,17 @@
 			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
 			// Create Node Content
-			var node_div = el_node_template.cloneNode(true);
+			console.log("node.type");
+			console.log(node);
+			//if (node.data.type == "NEW") {
+			var node_div = card_div.cloneNode(true);
 			node_div.innerHTML = populate(node_div.innerHTML, node);
 			node_div.style.top = (node.y + canvas.offsetTop) + "px";
 			node_div.style.left = (node.x + canvas.offsetLeft) + "px";
 			node_div.style.position = "absolute";
 			node_div.id = "node_" + node.id;
 			chart_container.appendChild(node_div);
-
+			//}
 			// Middle Of Node
 			x1 = node.x + (node.width / 2);
 			y1 = node.y + node.height;
@@ -265,7 +258,7 @@
 
 			context.fillStyle = "black";
 			context.font = '14px Calibri';
-			context.fillText("a", x1 + 5, y1 + 5);
+			//context.fillText("a", x1 + 5, y1 + 5);
 
 			for (var i = 0; i < node.children.length; i++) {
 				var childNode = node.children[i];
@@ -286,17 +279,17 @@
 					x2 = x1;
 					y2 = (childNode.y + node.y + node.height) / 2;
 
-					context.fillText("b", x2 + 5, y2 + 5);
+					//context.fillText("b", x2 + 5, y2 + 5);
 					drawLine(context, x1, y1, x2, y2, color, line_width);//'red'
 
 					x3 = childNode.x + childNode.width / 2;
 					y3 = y2;
-					context.fillText("c", x3 + 5, y3 + 5);
+					//context.fillText("c", x3 + 5, y3 + 5);
 					drawLine(context, x2, y2, x3, y3, color, line_width);//'green'
 
 					x4 = x3;
 					y4 = childNode.y;
-					context.fillText("d", x4 + 5, y4 - 5);
+					//context.fillText("d", x4 + 5, y4 - 5);
 					drawLine(context, x3, y3, x4, y4, color, line_width); //'blue'
 				}
 			}
