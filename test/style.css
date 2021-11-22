@@ -3,12 +3,31 @@
 
 html,
 body {
-   font-size: 12px;
-   font-family: 'Libre Baskerville', serif;
+  font-family: "Source Code Pro", Consolas, monaco, monospace;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 12px;
+  line-height: 160%;
+  font-size: 16px;
 }
 
+pre {
+  margin: 0px;
+}
 
+.container {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 80%;
+  height: 80%;
+}
 
+.container>div {
+  margin: 10px;
+  width: 100%;
+  _background: #46B980;
+  padding: 5px;
+  _color: #fff;
+}
 
 ul.breadcrumb {
     padding: 10px 16px;
