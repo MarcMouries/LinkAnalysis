@@ -14,12 +14,21 @@
 	</div>
 </body>
 <script type="module">
-     import MChart from '../src/MChart.js';
+    import MChart from '../src/MChart.js';
+    import Rectangle from '../src/Rectangle.js';
 
 var chart_container = document.getElementById("chart_container");
 var mChart = new MChart(chart_container);
 
-//  add shapes to canvas to draw
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+var rectangle1 = new Rectangle(100, 100, 100, 100);
+rectangle1.color = "CadetBlue";
+
+mChart.addObject(rectangle1);
+
+
 
 // orgChart. add objects 
 // orgChart. add objects 
