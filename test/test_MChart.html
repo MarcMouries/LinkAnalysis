@@ -16,18 +16,33 @@
 <script type="module">
     import MChart from '../src/MChart.js';
     import Rectangle from '../src/Rectangle.js';
+    import Circle from '../src/Circle.js';
+    import InputDeviceTracker from '../src/InputDeviceTracker.js';
+
 
 var chart_container = document.getElementById("chart_container");
 var mChart = new MChart(chart_container);
+mChart.init();
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-var rectangle1 = new Rectangle(100, 100, 100, 100);
-rectangle1.color = "CadetBlue";
+
+var rectangle1 = new Rectangle(100, 100, 100, 100);rectangle1.color = "CadetBlue";
+
+var rectangle2 = new Rectangle(200, 100, 100, 100);rectangle2.color = "MidnightBlue";
+
+var rectangle3 = new Rectangle(100, 200, 100, 100);rectangle3.color = "PeachPuff";
+
+var rectangle4 = new Rectangle(200, 200, 100, 100);rectangle4.color = "Salmon";
+
+var circle = new Circle(150, 150, 50);circle.color = "OrangeRed";
 
 mChart.addObject(rectangle1);
-
+mChart.addObject(rectangle2);
+mChart.addObject(rectangle3);
+mChart.addObject(rectangle4);
+mChart.addObject(circle);
 
 
 // orgChart. add objects 
