@@ -31,7 +31,7 @@ var TreeLayout = (function () {
 		}
 
 
-		const opts = Object.assign({}, defaults, options);
+		const opts = Object.assign(defaults, options);
 
 
 
