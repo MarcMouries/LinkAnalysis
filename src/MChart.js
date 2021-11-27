@@ -1,6 +1,5 @@
-//import  {MCanvas} from './MCanvas.js';
-
 import InputDeviceTracker from './InputDeviceTracker.js'
+import Rectangle from './Rectangle.js'
 
 export default class MChart {
 
@@ -8,8 +7,9 @@ export default class MChart {
     console.log("MChart container()");
     console.log(container);
     this.container = container;
-    var startX = 0;
-    var startY = 0;
+    this.startX = 0, this.startY = 0;
+    this.lastMoveX = 0, this.lastMoveY = 0;
+    this.selection = new Rectangle(100, 100, 100, 100);
 
 
 
@@ -24,6 +24,9 @@ export default class MChart {
     this.ctx = canvas.getContext("2d");
 
     self = this;
+
+    var selecting = false;
+
   }
   dump() {
     console.log("MChart container= ");
@@ -38,15 +41,33 @@ export default class MChart {
   }
 
   draw() {
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     this.objects.forEach((object) => object.render(this.ctx));
+
+    
+    if (this.selecting == true) {
+      this.selection = new Rectangle(
+        this.selection_startX,
+        this.selection_startY,
+        this.lastMoveX - this.selection_startX,
+        this.lastMoveY - this.selection_startY);
+      this.selection.strokeStyle = 'rgba(0,128,255,1)';
+      this.selection.fillStyle = 'rgba(0,128,255, 0.2)';
+      this.selection.render(this.ctx);
+      console.log(this.selection);
+    }
+
   }
 
   manageInputEvents(evtType, x, y) {
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     switch (evtType) {
       case "down":
         this.startX = x;
         this.startY = y;
+        this.lastMoveX = x;
+        this.lastMoveY = y;
+
 
         var clicked_on_the_canvas = true;
         // we start from last to check the shape that is on top first
@@ -58,24 +79,47 @@ export default class MChart {
             console.log("Clicked on : " + object.color);
             moveObjectToLastPosition(this.objects, object);
             clicked_on_the_canvas = false;
+            this.selecting = false;
             break;
           }
         }
         if (clicked_on_the_canvas) {
           console.log("clicked on the canvas");
+          this.selecting = true;
+          this.selection_startX = x;
+          this.selection_startY = y;
         }
-
         break;
 
       case "up":
+        this.selecting = false;
+
+          console.log("SELECTION STOP");
+          console.log("SELECTION startX : " + this.selection_startX);
+          console.log("SELECTION startY : " + this.selection_startY);
+          console.log("SELECTION last X : " + this.lastMoveX);
+          console.log("SELECTION last Y : " + this.lastMoveY);
+          var selectionWidth = Math.abs(this.selection_startX - this.lastMoveX);
+          var selectionHeight = Math.abs(this.selection_startY - this.lastMoveY);
+          var selectionRectangle = new Rectangle(
+            Math.floor(this.selection_startX),
+            Math.floor(this.selection_startY),
+            selectionWidth, selectionHeight);
+          console.log("selectionRectangle");
+          console.log(selectionRectangle);
+
         this.objects.forEach((object) => {
           object.isSelected = false;
         });
         break;
 
       case "move":
+        this.lastMoveX = x;
+        this.lastMoveY = y;
+
         var dx = x - this.startX;
         var dy = y - this.startY;
+
         this.startX = x;
         this.startY = y;
 
@@ -91,10 +135,7 @@ export default class MChart {
   }
 
   init() {
-
     this.inputDeviceTracker = new InputDeviceTracker(this.canvas, this.manageInputEvents.bind(this));
-
-  
   }
 
 
