@@ -3,18 +3,7 @@
 // =============================================================
 var MCanvas = (function () {
 
-  COLORS = [
-    "#4e79a7",
-    "#f28e2c",
-    "#e15759",
-    "#76b7b2",
-    "#59a14f",
-    "#edc949",
-    "#af7aa1",
-    "#ff9da7",
-    "#9c755f",
-    "#bab0ab",
-  ];
+
 
   var MCanvas = function (container, options) {
 
@@ -22,11 +11,28 @@ var MCanvas = (function () {
       console.error("MCanvas error: check that the container provided to MCanvas exist");
       return;
     }
+    this.version = "0.1";
+    this.COLORS = [
+      "#4e79a7",
+      "#f28e2c",
+      "#e15759",
+      "#76b7b2",
+      "#59a14f",
+      "#edc949",
+      "#af7aa1",
+      "#ff9da7",
+      "#9c755f",
+      "#bab0ab",
+    ];
 
-    options || (options = {});
+    const DEFAULTS = {
+      display_grid: false,
+    }
+    this.options = Object.assign({}, DEFAULTS, options);
+
 
     this.canvas = document.createElement("canvas");
-    mcanvas = this;
+    _mcanvas = this;
 
 
     this.canvas.style.width = "100%";
@@ -49,10 +55,10 @@ var MCanvas = (function () {
     console.log("MCanvas = " + this.getWidth() + " x " + this.getHeight());
 
     this.margin = {
-      top: 00,
-      right: 00,
-      bottom: 00,
-      left: 00,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
     };
     this.width = this.canvas.width - this.margin.left - this.margin.right;
     this.height = this.canvas.height - this.margin.top - this.margin.bottom - this.canvas.offsetTop;
@@ -136,10 +142,18 @@ var MCanvas = (function () {
     var offset_text = 10;
     /* vertical lines */
     for (var x = oX; x < width; x += increment) {
-      // this.ctx.beginPath()
+      this.ctx.beginPath()
       this.ctx.moveTo(x, oY);
       this.ctx.lineTo(x, height);
       //x % increment == 0 ? this.ctx.strokeStyle = "red" : this.ctx.strokeStyle = "DarkGrey";
+      if (x == 160) {
+        this.ctx.strokeStyle = "red";
+        this.ctx.stroke();
+
+      }
+      else {
+        this.ctx.strokeStyle = "blue";
+      }
       this.ctx.stroke();
 
 
@@ -150,7 +164,7 @@ var MCanvas = (function () {
 
     /* horizontal lines */
     for (var y = oY; y < height; y += increment) {
-      // this.ctx.beginPath()
+      this.ctx.beginPath()
       this.ctx.moveTo(oX, y);
       this.ctx.lineTo(width, y);
       this.ctx.stroke();
@@ -162,6 +176,16 @@ var MCanvas = (function () {
     //this.ctx.restore();
   }
 
+  MCanvas.prototype.draw = function () {
+    this.clear();
+    console.log("mcanvas draw");
+    console.log("this.options.display_grid = " + this.options.display_grid);
+
+    if (this.options.display_grid && this.options.display_grid == true) {
+      this.drawGrid();
+
+    }
+  }
 
   MCanvas.prototype.drawGrid = function () {
     var width = 200;
@@ -174,10 +198,10 @@ var MCanvas = (function () {
   };
 
 
-  MCanvas.prototype.drawLine_BE = function(begin, end, stroke = 'black', width = 1) {
+  MCanvas.prototype.drawLine_BE = function (begin, end, stroke = 'black', width = 1) {
     this.ctx.save();
-    if (stroke) {      this.ctx.strokeStyle = stroke;    }
-    if (width) {      this.ctx.lineWidth = width;    }
+    if (stroke) { this.ctx.strokeStyle = stroke; }
+    if (width) { this.ctx.lineWidth = width; }
     this.ctx.beginPath();
     this.ctx.moveTo(...begin);
     this.ctx.lineTo(...end);
@@ -185,32 +209,32 @@ var MCanvas = (function () {
     this.ctx.restore();
   }
 
-  MCanvas.prototype.drawTextOnLine = function(a, end, text, stroke = 'black', width = 1) {
+  MCanvas.prototype.drawTextOnLine = function (a, end, text, stroke = 'black', width = 1) {
     this.ctx.save();
-    if (stroke) {      this.ctx.strokeStyle = stroke;    }
-    if (width) {      this.ctx.lineWidth = width;    }
+    if (stroke) { this.ctx.strokeStyle = stroke; }
+    if (width) { this.ctx.lineWidth = width; }
 
-		var  angleRAD = findAngle(a, end);
-    if (angleRAD < 0) {     angleRAD = angleRAD + Math.PI;  }
-    if (angleRAD > Math.PI/2) {    angleRAD = angleRAD - Math.PI;    }
+    var angleRAD = findAngle(a, end);
+    if (angleRAD < 0) { angleRAD = angleRAD + Math.PI; }
+    if (angleRAD > Math.PI / 2) { angleRAD = angleRAD - Math.PI; }
     var line_midpoint = midpoint(a.x, a.y, end.x, end.y);
     this.ctx.translate(line_midpoint.x, line_midpoint.y);
-    this.ctx.rotate( angleRAD );
+    this.ctx.rotate(angleRAD);
 
 
-    console.log ("drawTextOnLine: angleRAD: " + angleRAD);
-		var  angleDEG = to_degrees(angleRAD);
-    console.log ("drawTextOnLine: angleDEG: " + angleDEG);
+    console.log("drawTextOnLine: angleRAD: " + angleRAD);
+    var angleDEG = to_degrees(angleRAD);
+    console.log("drawTextOnLine: angleDEG: " + angleDEG);
     this.ctx.font = "24px sans-serif";
-    this.ctx.textAlign='center';
-    this.ctx.textBaseline='bottom';
-    this.ctx.fillText(text, 0,0);
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'bottom';
+    this.ctx.fillText(text, 0, 0);
     this.ctx.fill();
     this.ctx.restore();
   }
 
 
-  MCanvas.prototype.drawLine = function (startX, startY,    endX,    endY,    strokeStyle,    lineWidth  ) {
+  MCanvas.prototype.drawLine = function (startX, startY, endX, endY, strokeStyle, lineWidth) {
     if (strokeStyle != null) this.ctx.strokeStyle = strokeStyle;
     if (lineWidth != null) this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
@@ -274,8 +298,7 @@ var MCanvas = (function () {
     ctx.restore();
 
   }
-  MCanvas.prototype.drawArc 
-  = function (center, radius, start_angle, end_angle, color_stroke, color_fill, line_width  ) {
+  MCanvas.prototype.drawArc = function (center, radius, start_angle, end_angle, color_stroke, color_fill, line_width) {
     this.ctx.beginPath();
     this.ctx.moveTo(center.x, center.y);
     this.ctx.arc(center.x, center.y, radius, start_angle, end_angle, false);
@@ -399,3 +422,6 @@ function getLineHeight(txt, font) {
   return height;
 }
 
+export {
+  MCanvas
+}

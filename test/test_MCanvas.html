@@ -28,9 +28,7 @@
 		}
 	</style>
 </head>
-
 <body>
-
 	<h1>Test MCanvas</h1>
 	<ul class="breadcrumb">
 		<li><a href="../index.html">Home</a></li>
@@ -54,7 +52,6 @@
 		mcanvas = new MCanvas(chart_container);
 		//mcanvas.resize();
 		//mcanvas.drawPoint(100,100 , 50, "50,50"); //x, y, radius, text)
-		mcanvas.drawGrid();
 
 
 
@@ -90,10 +87,8 @@
 
 
 		function change_option() {
-			//mcanvas.config.display_grid  = control_form.display_grid.checked;
-			//mcanvas.redraw();
-
+			mcanvas.options.display_grid  = control_form.display_grid.checked;
+			mcanvas.draw();
 		}
-
 	</script>
 </body>

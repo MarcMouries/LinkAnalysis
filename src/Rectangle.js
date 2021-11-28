@@ -13,10 +13,10 @@ export default class Rectangle extends Shape {
 
     isHit(x, y) {
         if (
-            x > this.x  &&
+            x > this.x &&
             x < this.x + this.width &&
             y > this.y &&
-            y < this.y + this.height 
+            y < this.y + this.height
         ) {
             return true;
         }
@@ -25,27 +25,21 @@ export default class Rectangle extends Shape {
         ctx.save();
         ctx.beginPath();
         ctx.rect(
-            this.x ,
-            this.y ,
+            this.x,
+            this.y,
             this.width,
             this.height
         );
 
         if (this.fillStyle) {
             ctx.fillStyle = this.fillStyle;
+            ctx.fill();
         }
-        else {ctx.fillStyle = this.color;}
-
         if (this.strokeStyle) {
-            ctx.strokeStyle = this.strokeStyle;
+            ctx.strokeStyle = this.strokeStyle; 
+            ctx.lineWidth = this.lineWidth;
+            ctx.stroke();
         }
-        else {ctx.strokeStyle = this.color;}
-    
-
-        ctx.fill();        
-        ctx.stroke();        
-
-
         ctx.restore();
     }
 }

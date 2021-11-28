@@ -27,22 +27,24 @@ mChart.init();
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
+var circle = new Circle(150, 150, 50);circle.fillStyle = "LightSeaGreen";
 
-var rectangle1 = new Rectangle(100, 100, 200, 100);rectangle1.color = "CadetBlue";
+var rectangle1 = new Rectangle(100, 100, 200, 100);rectangle1.fillStyle = "CadetBlue";
 
-var rectangle2 = new Rectangle(200, 100, 100, 100);rectangle2.color = "MidnightBlue";
+var rectangle2 = new Rectangle(200, 100, 100, 100);rectangle2.fillStyle = "MidnightBlue";
 
-var rectangle3 = new Rectangle(100, 200, 100, 100);rectangle3.color = "PeachPuff";
+var rectangle3 = new Rectangle(100, 200, 100, 100);rectangle3.fillStyle = "PeachPuff";
 
-var rectangle4 = new Rectangle(200, 200, 100, 100);rectangle4.color = "Salmon";
+var rectangle4 = new Rectangle(200, 200, 100, 100);rectangle4.fillStyle = "Salmon";
 
-var circle = new Circle(150, 150, 50);circle.color = "OrangeRed";
+
+mChart.addObject(circle);
 
 mChart.addObject(rectangle1);
 mChart.addObject(rectangle2);
 mChart.addObject(rectangle3);
 mChart.addObject(rectangle4);
-mChart.addObject(circle);
+
 
 
 // orgChart. add objects 
