@@ -17,15 +17,6 @@ export default class InputDeviceTracker {
         this.canvas.addEventListener('touchstart', this.onDown.bind(this));
         this.canvas.addEventListener('touchmove', this.onMove.bind(this));
         this.canvas.addEventListener('touchend', this.onUp.bind(this));
-
-
-    }
-     
-
-    init() {
-
-        console.log("init this");
-        console.log(this);
     }
 
     getCoordinatesFromEvent(evt) {
