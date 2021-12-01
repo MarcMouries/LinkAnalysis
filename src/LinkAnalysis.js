@@ -274,18 +274,20 @@ var LinkAnalysis = (function () {
 			var info_mouse_action = document.getElementById("mouse_action");
 			info_mouse_action.innerHTML = "Mouse Action: " + "Down";
 
-			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
-			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
+			var mouseT = {
+				x: parseInt((mouse.x - self.translatePos.x) / self.scale),
+				y: parseInt((mouse.y - self.translatePos.y) / self.scale)};
+			
 
 			// Node Selection
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				if (pointInCircle(mouseXT, mouseYT, node)) {
+				if (pointInCircle(mouseT.x, mouseT.y, node)) {
 					node.isClicked = true;
 					self.selection = node;
-					self.dragoffx = mouseXT - node.x;
-					self.dragoffy = mouseYT - node.y;
+					self.dragoffx = mouseT.x - node.x;
+					self.dragoffy = mouseT.y - node.y;
 					self.dragging_node = true;
 					self.valid = false;
 					deselectNodes(nodes);
