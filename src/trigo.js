@@ -30,9 +30,6 @@ function pointInCircle(point, circle) {
   return distanceXY(point.x, point.y, circle.x, circle.y) < circle.radius;
 }
 
-function pointInCircle(px, py, circle) {
-  return distanceXY(px, py, circle.x, circle.y) < circle.radius;
-}
 /**
  * Convert from cartesian coordinates (x, y) to polar coordinates (r, θ).
  * @param {*} cx 
@@ -111,20 +108,21 @@ function __getBearing(point) {
  *    │                  heigth│
  *    └────────────────────────┘ heigth
 
- * @param {*} shape1 
- * @param {*} shape2 
+ * @param {*} rect1 
+ * @param {*} rect2 
  * @returns 
  */
-function containsShape(shape1, shape2) {
-  console.log("shapeContains");
-  console.log(shape1.toStringCoordinates());
-  console.log(shape2.toStringCoordinates());
+function rectContainsRect(shape1, rect2) {
+  console.log("rectContainsRect");
+ // console.log(rect1.toStringCoordinates());
+ // console.log(rect2.toStringCoordinates());
 
+  var result_X = (rect1.getX()) < (rect2.getX()) &&
+  (rect1.getX() + rect1.getWidth()) < (rect2.getX() + rect2.getWidth());
 
-  var result_Y = (shape1.getY()) > (shape2.getY()) &&
-    (shape1.getY() + shape1.getHeight()) <= (shape2.getY() + shape2.getHeight());
-  var result_X = (shape1.getX()) > (shape2.getX()) &&
-    (shape1.getX() + shape1.getWidth()) < (shape2.getX() + shape2.getWidth());
+  var result_Y = (rect1.getY()) > (rect2.getY()) &&
+    (rect1.getY() + rect1.getHeight()) <= (rect2.getY() + rect2.getHeight());
+  
 
-  return result_Y && result_X;
+  return result_X & result_Y;
 }
