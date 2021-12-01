@@ -42,4 +42,7 @@ export default class Rectangle extends Shape {
         }
         ctx.restore();
     }
+    toString() {
+        return `rectangle:  (${this.x},${this.y}) x (${this.width},${this.height})` ;
+    }
 }
