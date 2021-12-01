@@ -1,4 +1,5 @@
 import Shape from '../src/Shape.js';
+import { NONE } from './Constants.js';
 
 
 export default class Rectangle extends Shape {
@@ -35,14 +36,14 @@ export default class Rectangle extends Shape {
             ctx.fillStyle = this.fillStyle;
             ctx.fill();
         }
-        if (this.strokeStyle) {
-            ctx.strokeStyle = this.strokeStyle; 
+        if (this.strokeStyle != NONE) {
+            ctx.strokeStyle = this.strokeStyle;
             ctx.lineWidth = this.lineWidth;
             ctx.stroke();
         }
         ctx.restore();
     }
     toString() {
-        return `rectangle:  (${this.x},${this.y}) x (${this.width},${this.height})` ;
+        return `rectangle:  (${this.x},${this.y}) x (${this.width},${this.height})`;
     }
 }

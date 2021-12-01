@@ -1,15 +1,13 @@
 import Shape from '../src/Shape.js';
 
 
-export default class Rectangle extends Shape {
-    constructor(x, y, width, height) {
-        super(x, y);
-        this.width = width;
-        this.height = height;
+export default class Connector extends Shape {
+    constructor(a, b) {
+        super();
+        this.a = a;
+        this.b = b;
     }
-    getArea() {
-        return this.width * this.height;
-    }
+
 
     isHit(x, y) {
         if (

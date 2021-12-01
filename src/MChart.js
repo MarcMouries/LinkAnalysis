@@ -16,19 +16,19 @@ export default class MChart {
 
     const DEFAULTS = {
       display_grid: false,
-      selection : {
-        strokeStyle: '#CC0000', //'rgba(0,128,255,1)';
-        lineWidth: 3,
-        fillStyle: 'rgba(205,0,25, 0.2)'  //'rgba(0,128,255, 0.2)';
+      selection: {
+        strokeStyle: '#CC0000', //  'rgba(255,51,0,1)', //'rgba(0,128,255,1)';
+        lineWidth: 1,
+        fillStyle: 'rgba(255,51,0,0.01)'  //'rgba(0,128,255, 0.2)';
+      }
     }
-  }
     this.options = Object.assign({}, DEFAULTS, options);
 
     /* The selection rectangle */
     this.selection = new Rectangle(100, 100, 100, 100);
-    this.selection.strokeStyle = this.options.selection.strokeStyle; 
-    this.selection.fillStyle = this.options.selection.fillStyle; 
+    this.selection.strokeStyle = this.options.selection.strokeStyle;
     this.selection.fillStyle = this.options.selection.fillStyle;
+    this.selection.lineWidth = this.options.selection.lineWidth;
 
     /* The list of ojbects to draw */
     this.objects = [];
@@ -47,7 +47,6 @@ export default class MChart {
     console.log("MChart container= ");
     console.log("- objects= ");
     console.log(this.objects);
-
   }
 
   addObject(object) {
@@ -69,9 +68,8 @@ export default class MChart {
         else {
           selection = new Rectangle(object.x, object.y, object.width, object.height);
         }
-        selection.strokeStyle = this.options.selection.strokeStyle; 
+        selection.strokeStyle = this.options.selection.strokeStyle;
         selection.lineWidth = this.options.selection.lineWidth;
-
         selection.render(this.ctx);
       }
 

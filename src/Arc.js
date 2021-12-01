@@ -1,4 +1,5 @@
 import Shape from './Shape.js';
+import { NONE } from './Constants.js';
 
 export default class Arc extends Shape {
   constructor(x, y, radius, radians) {
@@ -24,19 +25,12 @@ export default class Arc extends Shape {
       ctx.fill();
     }
 
-    if (this.isSelected) {
-      console.log("circle strokeStyle = " + this.strokeStyle);
-      if (this.strokeStyle) {
-
-        ctx.strokeStyle = this.strokeStyle;
-        ctx.lineWidth = this.lineWidth;
-        ctx.arc(this.x+22, this.y+22, this.radius, 0, this.radians, false);
-
-        ctx.stroke();
-      }
-
+    if (this.strokeStyle != NONE) {
+      ctx.strokeStyle = this.strokeStyle;
+      ctx.lineWidth = this.lineWidth;
+      ctx.stroke();
     }
-    
+
     ctx.restore();
   }
 }
