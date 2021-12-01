@@ -287,11 +287,15 @@ var CircleSector = function (name, radius, startAngle, endAngle, color, lineWidt
     PieMenu = function (options) {
         var name = options.name || "default";
         var sectorHighlight_width = 10;
+
+        this.sectorArcWidth = 20;
+        this.distance = this.sectorArcWidth;
+
         this.options = options;
         this.menu_items = this.options.menu.items;
         this.center = options.center;
         this.radius = options.radius;
-        this.sectorArcWidth = 20;
+        
         var half_sectorArcWidth = this.sectorArcWidth / 2;
         this.sector_count = this.menu_items.length;
         this.slice_angle = (2 * Math.PI) / this.sector_count;
@@ -385,7 +389,7 @@ var CircleSector = function (name, radius, startAngle, endAngle, color, lineWidt
                 ctx,
                 pieMenu.center.x,
                 pieMenu.center.y,
-                pieMenu.radius + 18,
+                pieMenu.radius + 20, //this.distance,
                 sector.startAngle,
                 sector.endAngle,
                 sector.color,
