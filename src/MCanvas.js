@@ -421,7 +421,3 @@ function getLineHeight(txt, font) {
 
   return height;
 }
-
-export {
-  MCanvas
-}
