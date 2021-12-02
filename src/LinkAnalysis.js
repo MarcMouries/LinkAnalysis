@@ -29,12 +29,12 @@ var LinkAnalysis = (function () {
 		LINK_WIDTH = options.link_width || 1;
 		NODE_ICON_WIDTH = options.node_icon_width || 30;
 		NODE_RADIUS = options.node_radius || 20;
-		FONT = options.font || "10px Arial";
+		this.FONT = options.font || "10px Arial";
 		TEXT_COLOR = options.font || "#080808";
 
 
-		this.dpr = 1;//window.devicePixelRatio || 1;
-		this.original_scale = this.dpr;
+		this.dpr = window.devicePixelRatio || 1;
+		this.original_scale = 1;//this.dpr;
 		this.scale = this.original_scale;
 		this.scaleMultiplier = 0.9;
 		this.startDragOffset = { x: 0, y: 0 };
@@ -197,6 +197,7 @@ var LinkAnalysis = (function () {
 		 */
 		var renderLink = function (link) {
 			mcanvas.drawLine(link.source.x, link.source.y, link.target.x, link.target.y, LINK_COLOR, LINK_WIDTH);
+			mcanvas.draw
 		};
 
 		var renderNode = function (node) {
@@ -205,7 +206,7 @@ var LinkAnalysis = (function () {
 			//mcanvas.drawPoint(node.x, node.y, node.radius, node.data.id);
 
 			// NODE RING
-			var ring_width = 10;
+			var ring_width = 20;
 			var ring_radius = node.radius + ring_width;
 			var ring_color = "";
 			if (node.isClicked) {
@@ -232,12 +233,11 @@ var LinkAnalysis = (function () {
 			var maxLineWidth = 1.5 * (2 * node.radius);
 			// CENTER TEXT
 			var y = node.y + 18; //padding_node_title;
-			mcanvas.drawText(node.x, node.y + 28, node.data.id, FONT, TEXT_COLOR, maxLineWidth, ",");
-			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, font, 0, COLOR_BACKGROUND);
+			mcanvas.drawText(node.x, node.y + 28, node.data.id, this.FONT, TEXT_COLOR, maxLineWidth, ",");
+			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, this.FONT, 0, COLOR_BACKGROUND);
 		};
 
 		var drawBorder = function () {
-			//log("MChartView.drawBorder");
 			mcanvas.drawBorder(this.background_color);
 		};
 
@@ -275,15 +275,18 @@ var LinkAnalysis = (function () {
 			info_mouse_action.innerHTML = "Mouse Action: " + "Down";
 
 			var mouseT = {
-				x: parseInt((mouse.x - self.translatePos.x) / self.scale),
-				y: parseInt((mouse.y - self.translatePos.y) / self.scale)};
-			
+				x: ((mouse.x - self.translatePos.x) / self.scale),
+				y: ((mouse.y - self.translatePos.y) / self.scale)};
+
+			console.log("netPanning : " + self.netPanningX + ", " + self.netPanningY);
+			console.log("mouse      : " + mouse.x + ", " + mouse.y);
+			console.log("mouseT     : " + mouseT.x + ", " + mouseT.y);
 
 			// Node Selection
 			var nodes = linkAnalysis.graph.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				if (pointInCircle(mouseT.x, mouseT.y, node)) {
+				if (pointInCircle(mouseT, node)) {
 					node.isClicked = true;
 					self.selection = node;
 					self.dragoffx = mouseT.x - node.x;
@@ -333,14 +336,7 @@ var LinkAnalysis = (function () {
 
 				//console.log("move: dx: " + dx + ", dy " + dy);
 				//console.log("move: start drag.: " + self.startDragOffset.x + ", dy " + self.startDragOffset.y);
-				console.log("move: netPanningX: " + self.netPanningX + ", netPanningY " + self.netPanningY);
 			}
-
-			var mouseXT = parseInt((mouse.x - self.translatePos.x) / self.scale);
-			var mouseYT = parseInt((mouse.y - self.translatePos.y) / self.scale);
-
-
-
 			var coord_norm = document.getElementById("coord_screen");
 			var coord_trans = document.getElementById("coord_transf");
 			coord_norm.innerHTML = "Screen Coordinates: " + mouse.x + "/" + mouse.y;
@@ -350,18 +346,19 @@ var LinkAnalysis = (function () {
 			var info_mouse_action = document.getElementById("mouse_action");
 			info_mouse_action.innerHTML = "Mouse Action: " + "Hovering";
 
+			var mouseT = {
+				x: ((mouse.x - self.translatePos.x) / self.scale),
+				y: ((mouse.y - self.translatePos.y) / self.scale)};
 
 			// Highlight Node when mouse over
 			if (!self.dragging_node) {
 				var newCursor;
 				var nodes = linkAnalysis.graph.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
-					var node = nodes[i];
-					//if (pointInCircle(event.clientX, event.clientY, node)) {
-					//if (pointInCircle(mouse.Y, mouse.Y, node)) {
-					if (pointInCircle(mouseXT, mouseYT, node)) {
+					var node = nodes[i];					
+					if (pointInCircle(mouseT, node)) {
 						newCursor = 'pointer';  //grab
-						if (!node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'");
+						if (!node.isBelowMouse) console.log("handle Move: Mouse over node '" + node.data.id + "'" + node.data.label);
 						node.isBelowMouse = true;
 						break;
 					} else {
@@ -429,10 +426,10 @@ var LinkAnalysis = (function () {
 			// BACKGROUND
 			/*
 			mcanvas.drawBackground(
-				0, //- this.netPanningX,
-				0, //- this.netPanningY,
-				this.getWidth(), 
-				this.getHeight());
+				0,// - this.netPanningX,
+				0, // - this.netPanningY,
+				this.getWidth() - this.netPanningX,
+				this.getHeight() - this.netPanningY);
 */
 			// Draw point do debug panning
 			//var pointX = 100 - this.netPanningX;
