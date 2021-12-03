@@ -233,7 +233,7 @@ var LinkAnalysis = (function () {
 			var maxLineWidth = 1.5 * (2 * node.radius);
 			// CENTER TEXT
 			var y = node.y + 18; //padding_node_title;
-			mcanvas.drawText(node.x, node.y + 28, node.data.id, this.FONT, TEXT_COLOR, maxLineWidth, ",");
+			mcanvas.drawText(node.x, node.y + 20, node.data.id, this.FONT, TEXT_COLOR, maxLineWidth, ",");
 			//mcanvas.drawTextBG("B. " + node.data.id, node.x, node.y, this.FONT, 0, COLOR_BACKGROUND);
 		};
 
@@ -377,8 +377,8 @@ var LinkAnalysis = (function () {
 				// We don't want to drag the object by its top-left corner,
 				// we want to drag from where we clicked.
 				// Thats why we saved the offset and use it here
-				self.selection.x = mouseXT - self.dragoffx;
-				self.selection.y = mouseYT - self.dragoffy;
+				self.selection.x = mouseT.x - self.dragoffx;
+				self.selection.y = mouseT.y - self.dragoffy;
 
 				self.valid = false; // Something's dragging so we must redraw
 			}
