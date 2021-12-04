@@ -27,7 +27,7 @@ var TreeLayout = (function () {
 			maximumDepth: 50,
 			levelSeparation: 100,
 			siblingSpacing: 10,
-			subtreeSeparation: 200,
+			subtreeSeparation: 100,
 			nodeWidth: 10,
 			nodeHeight: 50
 		}
@@ -49,7 +49,7 @@ var TreeLayout = (function () {
 		}
 		// should be proportional to the width of the tree
 		if (this.subtreeSeparation < (this.nodeWidth*3)) {
-			this.subtreeSeparation = this.nodeWidth*3;
+			this.subtreeSeparation = this.nodeWidth*2;
 		}
 
 		/**
