@@ -22,7 +22,7 @@ var TreeLayout = (function () {
 		 *  Orientation === "SOUTH"
 		 */
 
-		var defaults = {
+		var DEFAULTS = {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
@@ -33,14 +33,14 @@ var TreeLayout = (function () {
 		}
 
 
-		const opts = Object.assign(defaults, options);
+		this.options = Object.assign({}, DEFAULTS, options);
 
 
 
 		options || (options = {});
-		for (var i in defaults) {
-			if (defaults.hasOwnProperty(i)) {
-				this[i] = options[i] || defaults[i];
+		for (var i in DEFAULTS) {
+			if (DEFAULTS.hasOwnProperty(i)) {
+				this[i] = options[i] || DEFAULTS[i];
 			}
 		}
 
