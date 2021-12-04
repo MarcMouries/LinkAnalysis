@@ -22,10 +22,10 @@ var data_json_criminal_string = `{
 
         { "id": "Billy Bob",  "type": "person", "name": "Billy Bob", "photo": "http://i.imgur.com/gwlPu.jpg" },
         { "id": "AR-784724",  "type": "arrest" },
-        { "id": "Known Addresses2", "type": "location" },
-        { "id": "family2", "type": "Family" },
-        { "id": "case2", "type": "case" },
-        { "id": "work2", "type": "case" }
+        { "id": "Known Addresses2", "type": "location",  "label": "Known Addresses"},
+        { "id": "family2",          "type": "Family",    "label": "Family"},
+        { "id": "case2",            "type": "case" },
+        { "id": "work2",            "type": "case" }
     ],
     "links": [
         { "source" : "Joe Smith",       "target": "AR-784723" },
