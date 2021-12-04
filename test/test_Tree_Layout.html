@@ -36,6 +36,7 @@
 			border-radius: 5px;
 			width: 160px;
 			height: 60px;
+			background: Salmon;
 		}
 
 		.card .content {
@@ -55,7 +56,7 @@
 </head>
 
 <body>
-	<h1>Test Tree Layout</h1>
+	<h1>Test Org Chart </h1>
 	<ul class="breadcrumb">
 		<li><a href="../index.html">Home</a></li>
 		<li>Test Graph</li>
@@ -66,7 +67,7 @@
 
 	<!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
- -->
+ 	-->
 	<div id="card_template_container" class="card_template_container">
 		<div id="card" class="card">
 			<div>{id}</div>
@@ -122,21 +123,22 @@
 
 		// 1st Level
 		graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
-		graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
+	//	graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
 		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
+
 
 		// 2nd Level
 		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
 		graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
 
 		graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
-		graph_walker.addObject({ id: "M", parentId: "N", type: "standard" });
+		graph_walker.addObject({ id: "M", parentId: "N", type: "NEW" });
 
 		// 3rd Level
 		graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
-		graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
+		graph_walker.addObject({ id: "C", parentId: "D", type: "NEW" });
 		//
-		graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
+/*		graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
 		graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
 		graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
 		graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
@@ -145,7 +147,7 @@
 		// New Nodes
 		graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
 		graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
-
+*/
 
 		/*
 				console.log("==========================");
@@ -226,7 +228,7 @@
 			}
 			//context.fillRect(node.x, node.y, node.width, node.height);
 			context.strokeRect(node.x, node.y, node.width, node.height);
-			//context.beginPath();
+			
 			context.font = 'bold 20px Calibri';
 			context.save();
 			//context.fillStyle = 'rgb(255, 250, 255)';
@@ -239,17 +241,16 @@
 			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
 
 			// Create Node Content
-			console.log("node.type");
-			console.log(node);
-			//if (node.data.type == "NEW") {
-			var node_div = card_div.cloneNode(true);
-			node_div.innerHTML = populate(node_div.innerHTML, node);
-			node_div.style.top = (node.y + canvas.offsetTop) + "px";
-			node_div.style.left = (node.x + canvas.offsetLeft) + "px";
-			node_div.style.position = "absolute";
-			node_div.id = "node_" + node.id;
-			chart_container.appendChild(node_div);
-			//}
+			//console.log("node.type");			console.log(node);
+			if (node.data.type == "NEW") {
+				var node_div = card_div.cloneNode(true);
+				node_div.innerHTML = populate(node_div.innerHTML, node);
+				node_div.style.top = (node.y + canvas.offsetTop) + "px";
+				node_div.style.left = (node.x + canvas.offsetLeft) + "px";
+				node_div.style.position = "absolute";
+				node_div.id = "node_" + node.id;
+				chart_container.appendChild(node_div);
+			}
 			// Middle Of Node
 			x1 = node.x + (node.width / 2);
 			y1 = node.y + node.height;
@@ -257,10 +258,21 @@
 
 
 			context.fillStyle = "black";
-			context.font = '14px Calibri';
-			//context.fillText("a", x1 + 5, y1 + 5);
+			context.font = '10px Calibri';
+			//context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
+			
+			var line_color = 'black';
+			var line_width = 0.8;
 
-			for (var i = 0; i < node.children.length; i++) {
+			var childrenCount = node.children.length;
+			if (childrenCount > 0) {
+				var yy1 = y1 + treeLayout.levelSeparation/2 - node.height/2;
+				console.log ("y1  = " + y1);
+				console.log ("yy1 = " + yy1);
+				console.log ("levelSeparation = " + treeLayout.levelSeparation);
+				drawLine(context, x1, y1, x1, yy1, line_color, line_width);
+			}
+			for (var i = 0; i < childrenCount; i++) {
 				var childNode = node.children[i];
 
 				// STRAIGHT
@@ -268,29 +280,34 @@
 
 					x2 = childNode.x + node.width / 2;
 					y2 = childNode.y;
-					var color = 'black';
-					drawLine(context, x1, y1, x2, y2, color, 0.5);
+					drawLine(context, x1, y1, x2, y2, line_color, 0.5);
 				}
 				// ELBOW ----------------------------
 				if (connector_style == "ELBOW") {
-					var line_color = 'black';
-					var line_width = 0.8;
+					//var line_color = 'black';
 
 					x2 = x1;
 					y2 = (childNode.y + node.y + node.height) / 2;
 
-					//context.fillText("b", x2 + 5, y2 + 5);
-					drawLine(context, x1, y1, x2, y2, color, line_width);//'red'
+					//line_color = 'green';
+				//context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
+				console.log ("b = " + x2 +", "+ y2);
+
+					//drawLine(context, x1, y1, x2, y2, line_color, line_width);
 
 					x3 = childNode.x + childNode.width / 2;
 					y3 = y2;
-					//context.fillText("c", x3 + 5, y3 + 5);
-					drawLine(context, x2, y2, x3, y3, color, line_width);//'green'
+					//context.fillText("c", x3 + 5 + i*10, y3 + 5);
+					line_color = 'red';
+					
+
+					drawLine(context, x2, y2, x3, y3, line_color, line_width);
 
 					x4 = x3;
 					y4 = childNode.y;
-					//context.fillText("d", x4 + 5, y4 - 5);
-					drawLine(context, x3, y3, x4, y4, color, line_width); //'blue'
+					//context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
+					line_color = 'blue';
+					drawLine(context, x3, y3, x4, y4, line_color, line_width);
 				}
 			}
 		}

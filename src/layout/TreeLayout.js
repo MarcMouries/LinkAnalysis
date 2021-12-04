@@ -1,15 +1,17 @@
 // =============================================================
 //                          TreeLayout
 // =============================================================
-/*
-SiblingSeparation
-Distance in arbitrary units for the distance between siblings.
-
-SubtreeSeparation
-Distance in arbitrary units for the distance between neighbouring subtrees.
-
-LevelSeparation
-Distance in arbitrary units for the separation between adjacent levels.
+/**
+ * 
+ * Options:
+ * - SiblingSeparation
+ * Distance in arbitrary units for the distance between siblings.
+ * 
+ * = SubtreeSeparation: 
+ * Distance in arbitrary units for the distance between neighbouring subtrees.
+ * 
+ * - LevelSeparation
+ * Distance in arbitrary units for the separation between adjacent levels.
 */
 var TreeLayout = (function () {
 	function TreeLayout(graph, options) {
@@ -20,25 +22,25 @@ var TreeLayout = (function () {
 		 *  Orientation === "SOUTH"
 		 */
 
-		var defaults = {
+		var DEFAULTS = {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
 			siblingSpacing: 10,
-			subtreeSeparation: 200,
+			subtreeSeparation: 100,
 			nodeWidth: 10,
 			nodeHeight: 50
 		}
 
 
-		const opts = Object.assign(defaults, options);
+		this.options = Object.assign({}, DEFAULTS, options);
 
 
 
 		options || (options = {});
-		for (var i in defaults) {
-			if (defaults.hasOwnProperty(i)) {
-				this[i] = options[i] || defaults[i];
+		for (var i in DEFAULTS) {
+			if (DEFAULTS.hasOwnProperty(i)) {
+				this[i] = options[i] || DEFAULTS[i];
 			}
 		}
 
@@ -47,7 +49,7 @@ var TreeLayout = (function () {
 		}
 		// should be proportional to the width of the tree
 		if (this.subtreeSeparation < (this.nodeWidth*3)) {
-			this.subtreeSeparation = this.nodeWidth*3;
+			this.subtreeSeparation = this.nodeWidth*2;
 		}
 
 		/**
