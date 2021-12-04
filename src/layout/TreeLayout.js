@@ -1,15 +1,17 @@
 // =============================================================
 //                          TreeLayout
 // =============================================================
-/*
-SiblingSeparation
-Distance in arbitrary units for the distance between siblings.
-
-SubtreeSeparation
-Distance in arbitrary units for the distance between neighbouring subtrees.
-
-LevelSeparation
-Distance in arbitrary units for the separation between adjacent levels.
+/**
+ * 
+ * Options:
+ * - SiblingSeparation
+ * Distance in arbitrary units for the distance between siblings.
+ * 
+ * = SubtreeSeparation: 
+ * Distance in arbitrary units for the distance between neighbouring subtrees.
+ * 
+ * - LevelSeparation
+ * Distance in arbitrary units for the separation between adjacent levels.
 */
 var TreeLayout = (function () {
 	function TreeLayout(graph, options) {
