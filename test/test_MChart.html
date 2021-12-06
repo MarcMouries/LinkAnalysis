@@ -9,10 +9,25 @@
         <li><a href="../index.html">Home</a></li>
         <li>Org Chart</li>
     </ul>
+    <form id="control_form">
+		<fieldset>
+			<legend>Options:</legend>
+			<input type="checkbox" id="display_grid" onchange="change_option();">
+			<label for="fname">Show grid</label>
+		</fieldset>
+	</form>
     <div id="chart_container" class="chart_container">
 		<canvas id="canvas" width="800" height="800"></canvas>
 	</div>
 </body>
+<script>
+function change_option() {
+    mChart.options.display_grid  = control_form.display_grid.checked;
+    mChart.draw();
+		}
+
+</script>
+
 <script type="module">
     import MChart from '../src/MChart.js';
     import Rectangle from '../src/Rectangle.js';
@@ -46,6 +61,12 @@ mChart.addObject(rectangle3);
 mChart.addObject(rectangle4);
 
 
+/*
+var graph_walker = new Graph();
+		// Root Node
+		graph_walker.addObject({ id: "O", parentId: null, name: "Test GP O" });
+*/
+
 
 // orgChart. add objects 
 // orgChart. add objects 
@@ -53,5 +74,9 @@ mChart.addObject(rectangle4);
 // set HTML  
 
 // layout
+
+
+
+
 
 </script>
