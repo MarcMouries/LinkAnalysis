@@ -1,157 +1,156 @@
 <html>
+  <head>
+    <script src="../src/Graph.js"></script>
+    <script src="../src/layout/TreeLayout.js"></script>
+    <script src="data-json-criminal.js"></script>
+    <script src="data-json-org-chart.js"></script>
+    <script src="data-json-simple-tree.js"></script>
+    <link rel="stylesheet" href="./style.css" />
 
-<head>
-	<script src="../src/Graph.js"></script>
-	<script src="../src/layout/TreeLayout.js"></script>
-	<script src="data-json-criminal.js"></script>
-	<script src="data-json-org-chart.js"></script>
-	<script src="data-json-simple-tree.js"></script>
-	<link rel="stylesheet" href="./style.css">
+    <style>
+      #canvas {
+        border: 1px dotted DodgerBlue;
+        width: auto;
+        height: 500px;
+      }
 
-	<style>
-		#canvas {
-			border: 1px dotted DodgerBlue;
-			_width: 100%;
-			_height: 100%;
-		}
+      .canvas-container {
+        width: 1400px;
+        height: 400px;
+        border: 1px solid #000;
+        overflow: auto;
+      }
 
-		.canvas-container {
-			_width: 100%;
-			_height: 100%;
-			padding: 0px;
-			outline: 1px dotted red;
-			position: absolute;
+      .card_template_container {
+        display: none;
+      }
 
-		}
+      .card {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgb(96, 139, 168);
+        border-radius: 5px;
+        width: 160px;
+        height: 60px;
+        background: Salmon;
+        font-size: 22px;
+        font-family: "Source Code Pro", Consolas, monaco, monospace;
+      }
 
-		.card_template_container {
-			display: none;
-		}
+      .card .content {
+        padding: 10px;
+      }
 
-		.card {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border: 2px solid rgb(96, 139, 168);
-			border-radius: 5px;
-			width: 160px;
-			height: 60px;
-			background: Salmon;
-			font-size: 22px;
-			font-family: "Source Code Pro", Consolas, monaco, monospace;
-		}
+      .card .title {
+        background-color: rgba(96, 139, 168, 0.2);
+        padding: 10px;
+      }
 
-		.card .content {
-			padding: 10px;
-		}
+      .card .user_photo img {
+        width: 50px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
 
-		.card .title {
-			background-color: rgba(96, 139, 168, .2);
-			padding: 10px;
-		}
+  <body>
+    <h1>Test Org Chart</h1>
+    <ul class="breadcrumb">
+      <li><a href="../index.html">Home</a></li>
+      <li>Test Graph</li>
+    </ul>
 
-		.card .user_photo img {
-			width: 50px;
-			border-radius: 50%;
-		}
-	</style>
-</head>
+    <div id="tree_dimension"></div>
+    <div id="canvas_dimension"></div>
 
-<body>
-	<h1>Test Org Chart </h1>
-	<ul class="breadcrumb">
-		<li><a href="../index.html">Home</a></li>
-		<li>Test Graph</li>
-	</ul>
-
-	<div id="tree_dimension"></div>
-	<div id="canvas_dimension"></div>
-
-	<!--
+    <!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  	-->
-	<div id="card_template_container" class="card_template_container">
-		<div id="card" class="card">
-			<div>{id}</div>
-		</div>
-	</div>
-	<div id="chart" class="canvas-container">
-		<canvas id="canvas" width="1000" height="800"></canvas>
-	</div>
+    <div id="card_template_container" class="card_template_container">
+      <div id="card" class="card">
+        <div>{id}</div>
+      </div>
+    </div>
+    <div id="chart" class="canvas-container">
+      <canvas id="canvas" width="1000" height="800"></canvas>
+    </div>
 
-	<!-- node_template -->
-	<script>
+    <!-- node_template -->
+    <script>
+      function getDivDimensions(div) {
+        var cs = window.getComputedStyle(div);
+        var div_width = cs.getPropertyValue("width");
+        if (div_width) div_width = parseInt(div_width.replace("px", ""));
+        var div_height = cs.getPropertyValue("height");
+        if (div_height) div_height = parseInt(div_height.replace("px", ""));
+        return { width: div_width, height: div_height };
+      }
 
-		function getDivDimensions(div) {
-			var cs = window.getComputedStyle(div);
-			var div_width = cs.getPropertyValue("width");
-			if (div_width) div_width = parseInt(div_width.replace('px', ''));
-			var div_height = cs.getPropertyValue("height");
-			if (div_height) div_height = parseInt(div_height.replace('px', ''));
-			return { width: div_width, height: div_height };
-		}
+      var card_template_container = document.getElementById("card_template_container");
+      var card_div = card_template_container.children[0];
+      var node_div_dim = getDivDimensions(card_div);
+      console.log("node_div_dim");
+      console.log(node_div_dim);
+      console.log("node_div dimensions: '" + node_div_dim.width + "' x '" + node_div_dim.height);
 
-		var card_template_container = document.getElementById('card_template_container');
-		var card_div = card_template_container.children[0];
-		var node_div_dim = getDivDimensions(card_div);
-		console.log("node_div_dim");
-		console.log(node_div_dim);
-		console.log("node_div dimensions: '" + node_div_dim.width + "' x '" + node_div_dim.height);
+      function drawLine(ctx, x1, y1, x2, y2, stroke = "black", width = 1) {
+        ctx.save();
 
+        if (stroke) {
+          ctx.strokeStyle = stroke;
+        }
+        if (width) {
+          ctx.lineWidth = width;
+        }
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.restore();
+      }
+      console.log("==========================");
+      //	var nodeZ = new Node("Z", {});
+      //	nodeZ.attr("width", 666);
+      console.log("==========================");
 
-		function drawLine(ctx, x1, y1, x2, y2, stroke = 'black', width = 1) {
-			ctx.save();
+      var graph_walker = new Graph();
+      // Root Node
+      graph_walker.addObject({ id: "O", parentId: null, type: "standard" });
 
-			if (stroke) {
-				ctx.strokeStyle = stroke;
-			}
-			if (width) {
-				ctx.lineWidth = width;
-			}
-			ctx.beginPath();
-			ctx.moveTo(x1, y1);
-			ctx.lineTo(x2, y2);
-			ctx.stroke();
-			ctx.restore();
-		}
-		console.log("==========================");
-		//	var nodeZ = new Node("Z", {});
-		//	nodeZ.attr("width", 666);
-		console.log("==========================");
+      // 1st Level
+      graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
+      graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
+      graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
 
-		var graph_walker = new Graph();
-		// Root Node
-		graph_walker.addObject({ id: "O", parentId: null, type: "standard" });
+      // 2nd Level
+      graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
+      graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
 
-		// 1st Level
-		graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
-	//	graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
-		graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
+      graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
+      graph_walker.addObject({ id: "M", parentId: "N", type: "NEW" });
 
+      // 3rd Level
+      graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
+      graph_walker.addObject({ id: "C", parentId: "D", type: "NEW" });
+      //
+      graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
 
-		// 2nd Level
-		graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
-		graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
+      console.log("==========================");
+      console.log("graph_walker", graph_walker);
+      console.log("==========================");
 
-		graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
-		graph_walker.addObject({ id: "M", parentId: "N", type: "NEW" });
+      
 
-		// 3rd Level
-		graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
-		graph_walker.addObject({ id: "C", parentId: "D", type: "NEW" });
-		//
-/*		graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
-		graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
-		graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
-		graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
-		graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
+      // New Nodes
+      //	graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
+      //	graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
 
-		// New Nodes
-		graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
-		graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
-*/
-
-		/*
+      /*
 				console.log("==========================");
 				console.log("=Test getLeftmost");
 				console.log("==========================");
@@ -161,158 +160,146 @@
 				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
 		*/
 
+      var treeLayout = new TreeLayout(graph_walker, {
+        nodeWidth: node_div_dim.width,
+        nodeHeight: node_div_dim.height,
+      });
+      treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
+      var treeDimension = treeLayout.getTreeDimension();
 
-		var treeLayout = new TreeLayout(graph_walker,
-			{
-				nodeWidth: node_div_dim.width,
-				nodeHeight: node_div_dim.height
-			});
-		treeLayout.Calculate_Positions(graph_walker, { x: 100, y: 100 });
-		var treeDimension = treeLayout.getTreeDimension();
+      var canvas = document.getElementById("canvas");
+      var context = canvas.getContext("2d");
+      let rect = canvas.getBoundingClientRect();
+      console.log("CANVAS RECT");
+      console.log(rect);
+      console.log("Canvas Offset");
+      //	var canvasoffsetTop = 0;
+      //	var canvasoffsetLeft = 0;
+      console.log(" -  offsetLeft : " + canvas.offsetLeft);
+      console.log(" -  offsetTop : " + canvas.offsetTop);
 
+      // increase the actual size of our canvas
+      canvas.width = rect.width * devicePixelRatio;
+      canvas.height = rect.height * devicePixelRatio;
+      context.scale(devicePixelRatio, devicePixelRatio);
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
 
-		var canvas = document.getElementById('canvas');
-		var context = canvas.getContext('2d');
-		let rect = canvas.getBoundingClientRect();
-		console.log("CANVAS RECT");
-		console.log(rect);
-		console.log("Canvas Offset");
-		//	var canvasoffsetTop = 0;
-		//	var canvasoffsetLeft = 0;
-		console.log(" -  offsetLeft : " + canvas.offsetLeft);
-		console.log(" -  offsetTop : " + canvas.offsetTop);
+      context.strokeStyle = "rgb(41, 62, 64)";
 
+      var el_tree_dimension = document.getElementById("tree_dimension");
+      el_tree_dimension.innerHTML = "Tree Dimension: " + treeDimension.treeWidth + " x " + treeDimension.treeHeight;
 
-		// increase the actual size of our canvas
-		canvas.width = rect.width * devicePixelRatio;
-		canvas.height = rect.height * devicePixelRatio;
-		context.scale(devicePixelRatio, devicePixelRatio);
-		canvas.style.width = rect.width + 'px';
-		canvas.style.height = rect.height + 'px';
+      var el_canvas_dimension = document.getElementById("canvas_dimension");
+      el_canvas_dimension.innerHTML = "Canvas Dimension: " + canvas.style.width + " x " + canvas.style.height;
 
-		context.strokeStyle = 'rgb(41, 62, 64)';
+      var chart_container = document.getElementById("chart");
 
+      /* Populate template with data by replacing strings between braces with properties in the data object
+       * ex: "{first_name}" is replaced by data.first_name
+       */
+      function populate(template, data) {
+        var content = template.replace(/\{(\w+)\}/g, function (_, k) {
+          return data[k];
+        });
+        return content;
+      }
 
-		var el_tree_dimension = document.getElementById('tree_dimension');
-		el_tree_dimension.innerHTML = "Tree Dimension: " + treeDimension.treeWidth + " x " + treeDimension.treeHeight;
+      var connector_style = "ELBOW";
+      //var connector_style = "STRAIGHT";
 
-		var el_canvas_dimension = document.getElementById('canvas_dimension');
-		el_canvas_dimension.innerHTML = "Canvas Dimension: " + canvas.style.width + " x " + canvas.style.height;
+      var x1, y1, x2, y2, x3, y3, x4, y4;
+      for (let index = 0; index < graph_walker.nodeList.length; index++) {
+        const node = graph_walker.nodeList[index];
 
-		var chart_container = document.getElementById('chart');
+        if (node.data.type && node.data.type == "NEW") {
+          context.strokeStyle = "rgb(128, 182, 161)";
+        } else {
+          context.strokeStyle = "#0181a0";
+        }
+        //context.fillRect(node.x, node.y, node.width, node.height);
+        context.strokeRect(node.x, node.y, node.width, node.height);
 
+        context.font = "bold 20px Calibri";
+        context.save();
+        //context.fillStyle = 'rgb(255, 250, 255)';
 
-		/* Populate template with data by replacing strings between braces with properties in the data object 
-		 * ex: "{first_name}" is replaced by data.first_name
-		*/
-		function populate(template, data) {
-			var content = template.replace(/\{(\w+)\}/g, function (_, k) {
-				return data[k];
-			});
-			return content;
-		}
+        context.textBaseline = "middle";
+        context.textAlign = "center";
+        var textWidth = 0;
+        //var textWidth = context.measureText(node.id ).width;
+        //context.fillStyle = '#0181a0';
+        context.fillText(node.id, node.x + node.width / 2 - textWidth / 2, node.y + node.height / 2);
 
+        // Create Node Content
+        //console.log("node.type");			console.log(node);
+        if (node.data.type == "NEW") {
+          var node_div = card_div.cloneNode(true);
+          node_div.innerHTML = populate(node_div.innerHTML, node);
+          node_div.style.top = node.y + canvas.offsetTop + "px";
+          node_div.style.left = node.x + canvas.offsetLeft + "px";
+          node_div.style.position = "absolute";
+          node_div.id = "node_" + node.id;
+          chart_container.appendChild(node_div);
+        }
+        // Middle Of Node
+        x1 = node.x + node.width / 2;
+        y1 = node.y + node.height;
+        var middleOfNode = [x1, y1];
 
-		var connector_style = "ELBOW";
-		//var connector_style = "STRAIGHT";
+        context.fillStyle = "black";
+        context.font = "10px Calibri";
+        //context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
 
+        var line_color = "black";
+        var line_width = 0.8;
 
-		var x1, y1, x2, y2, x3, y3, x4, y4;
-		for (let index = 0; index < graph_walker.nodeList.length; index++) {
-			const node = graph_walker.nodeList[index];
+        var childrenCount = node.children.length;
+        if (childrenCount > 0) {
+          var yy1 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
+          console.log("y1  = " + y1);
+          console.log("yy1 = " + yy1);
+          console.log("levelSeparation = " + treeLayout.levelSeparation);
+          drawLine(context, x1, y1, x1, yy1, line_color, line_width);
+        }
+        for (var i = 0; i < childrenCount; i++) {
+          var childNode = node.children[i];
 
-			if (node.data.type && node.data.type == "NEW") {
-				context.strokeStyle = 'rgb(128, 182, 161)';
-			}
-			else {
-				context.strokeStyle = '#0181a0';
+          // STRAIGHT
+          if (connector_style == "STRAIGHT") {
+            x2 = childNode.x + node.width / 2;
+            y2 = childNode.y;
+            drawLine(context, x1, y1, x2, y2, line_color, 0.5);
+          }
+          // ELBOW ----------------------------
+          if (connector_style == "ELBOW") {
+            //var line_color = 'black';
 
-			}
-			//context.fillRect(node.x, node.y, node.width, node.height);
-			context.strokeRect(node.x, node.y, node.width, node.height);
-			
-			context.font = 'bold 20px Calibri';
-			context.save();
-			//context.fillStyle = 'rgb(255, 250, 255)';
+            x2 = x1;
+            y2 = (childNode.y + node.y + node.height) / 2;
 
-			context.textBaseline = "middle";
-			context.textAlign = "center";
-			var textWidth = 0;
-			//var textWidth = context.measureText(node.id ).width;
-			//context.fillStyle = '#0181a0';
-			context.fillText(node.id, node.x + (node.width / 2) - (textWidth / 2), node.y + node.height / 2);
+            //line_color = 'green';
+            //context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
+            console.log("b = " + x2 + ", " + y2);
 
-			// Create Node Content
-			//console.log("node.type");			console.log(node);
-			if (node.data.type == "NEW") {
-				var node_div = card_div.cloneNode(true);
-				node_div.innerHTML = populate(node_div.innerHTML, node);
-				node_div.style.top = (node.y + canvas.offsetTop) + "px";
-				node_div.style.left = (node.x + canvas.offsetLeft) + "px";
-				node_div.style.position = "absolute";
-				node_div.id = "node_" + node.id;
-				chart_container.appendChild(node_div);
-			}
-			// Middle Of Node
-			x1 = node.x + (node.width / 2);
-			y1 = node.y + node.height;
-			var middleOfNode = [x1, y1];
+            //drawLine(context, x1, y1, x2, y2, line_color, line_width);
 
+            x3 = childNode.x + childNode.width / 2;
+            y3 = y2;
+            //context.fillText("c", x3 + 5 + i*10, y3 + 5);
+            line_color = "red";
 
-			context.fillStyle = "black";
-			context.font = '10px Calibri';
-			//context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
-			
-			var line_color = 'black';
-			var line_width = 0.8;
+            drawLine(context, x2, y2, x3, y3, line_color, line_width);
 
-			var childrenCount = node.children.length;
-			if (childrenCount > 0) {
-				var yy1 = y1 + treeLayout.levelSeparation/2 - node.height/2;
-				console.log ("y1  = " + y1);
-				console.log ("yy1 = " + yy1);
-				console.log ("levelSeparation = " + treeLayout.levelSeparation);
-				drawLine(context, x1, y1, x1, yy1, line_color, line_width);
-			}
-			for (var i = 0; i < childrenCount; i++) {
-				var childNode = node.children[i];
-
-				// STRAIGHT
-				if (connector_style == "STRAIGHT") {
-
-					x2 = childNode.x + node.width / 2;
-					y2 = childNode.y;
-					drawLine(context, x1, y1, x2, y2, line_color, 0.5);
-				}
-				// ELBOW ----------------------------
-				if (connector_style == "ELBOW") {
-					//var line_color = 'black';
-
-					x2 = x1;
-					y2 = (childNode.y + node.y + node.height) / 2;
-
-					//line_color = 'green';
-				//context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
-				console.log ("b = " + x2 +", "+ y2);
-
-					//drawLine(context, x1, y1, x2, y2, line_color, line_width);
-
-					x3 = childNode.x + childNode.width / 2;
-					y3 = y2;
-					//context.fillText("c", x3 + 5 + i*10, y3 + 5);
-					line_color = 'red';
-					
-
-					drawLine(context, x2, y2, x3, y3, line_color, line_width);
-
-					x4 = x3;
-					y4 = childNode.y;
-					//context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
-					line_color = 'blue';
-					drawLine(context, x3, y3, x4, y4, line_color, line_width);
-				}
-			}
-		}
-		//console.log(graph_walker.nodeList);
-	</script>
-</body>
+            x4 = x3;
+            y4 = childNode.y;
+            //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
+            line_color = "blue";
+            drawLine(context, x3, y3, x4, y4, line_color, line_width);
+          }
+        }
+      }
+      //console.log(graph_walker.nodeList);
+    </script>
+  </body>
+</html>
