@@ -90,7 +90,7 @@
       console.log(node_div_dim);
       console.log("node_div dimensions: '" + node_div_dim.width + "' x '" + node_div_dim.height);
 
-      function drawLine(ctx, x1, y1, x2, y2, stroke = "black", width = 1) {
+      function drawLine(ctx, x1, y1, x2, y2, stroke = "black", width = 2) {
         ctx.save();
 
         if (stroke) {
@@ -120,7 +120,7 @@
       graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
 
       // 2nd Level
-      graph_walker.addObject({ id: "A", parentId: "E", type: "standard" });
+      graph_walker.addObject({ id: "A", parentId: "E", type: "NEW" });
       graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
 
       graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
@@ -130,7 +130,7 @@
       graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
       graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
       //
-      graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "H", parentId: "M", type: "NEW" });
       graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
@@ -209,7 +209,7 @@
       }
 
       var connector_style = "ELBOW";
-      //var connector_style = "STRAIGHT";
+     // var connector_style = "STRAIGHT";
 
       var x1, y1, x2, y2, x3, y3, x4, y4;
       for (let index = 0; index < graph_walker.nodeList.length; index++) {
@@ -232,7 +232,7 @@
         context.textAlign = "center";
         var textWidth = 0;
         //var textWidth = context.measureText(node.id ).width;
-        //context.fillStyle = '#0181a0';
+        context.fillStyle = '#0181a0';
         context.fillText(node.id, node.x + node.width / 2 - textWidth / 2, node.y + node.height / 2);
 
         // Create Node Content
@@ -253,27 +253,30 @@
 
         context.fillStyle = "black";
         context.font = "10px Calibri";
-        //context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
+        context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
 
         var line_color = "black";
         var line_width = 0.8;
 
         var childrenCount = node.children.length;
-        if (childrenCount > 0) {
+
+        // Straight line from parent to child just below it
+        if (connector_style == "ELBOW" &&  childrenCount > 0) {
           var yy1 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
           console.log("y1  = " + y1);
           console.log("yy1 = " + yy1);
           console.log("levelSeparation = " + treeLayout.levelSeparation);
-          drawLine(context, x1, y1, x1, yy1, line_color, line_width);
+          drawLine(context, x1, y1, x1, yy1, "red", line_width);
         }
         for (var i = 0; i < childrenCount; i++) {
           var childNode = node.children[i];
 
-          // STRAIGHT
+          // STRAIGHT Connectors
+          //
           if (connector_style == "STRAIGHT") {
             x2 = childNode.x + node.width / 2;
             y2 = childNode.y;
-            drawLine(context, x1, y1, x2, y2, line_color, 0.5);
+            drawLine(context, x1, y1, x2, y2, "green", 0.5);
           }
           // ELBOW ----------------------------
           if (connector_style == "ELBOW") {
@@ -282,22 +285,22 @@
             x2 = x1;
             y2 = (childNode.y + node.y + node.height) / 2;
 
-            //line_color = 'green';
-            //context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
+            line_color = 'green';
+            context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
             console.log("b = " + x2 + ", " + y2);
 
             //drawLine(context, x1, y1, x2, y2, line_color, line_width);
 
             x3 = childNode.x + childNode.width / 2;
             y3 = y2;
-            //context.fillText("c", x3 + 5 + i*10, y3 + 5);
+            context.fillText("c", x3 + 5 + i*10, y3 + 5);
             line_color = "red";
 
             drawLine(context, x2, y2, x3, y3, line_color, line_width);
 
             x4 = x3;
             y4 = childNode.y;
-            //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
+            context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
             line_color = "blue";
             drawLine(context, x3, y3, x4, y4, line_color, line_width);
           }
