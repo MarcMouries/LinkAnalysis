@@ -26,10 +26,10 @@ var TreeLayout = (function () {
 			rootOrientation: "NORTH",
 			maximumDepth: 50,
 			levelSeparation: 100,
-			siblingSpacing: 10,
-			subtreeSeparation: 100,
-			nodeWidth: 10,
-			nodeHeight: 50
+			siblingSpacing: 20,
+			subtreeSeparation: 500,
+			nodeWidth: 1000,
+			nodeHeight: 500
 		}
 
 
@@ -171,7 +171,7 @@ var TreeLayout = (function () {
 				treeHeight = Math.max(treeHeight, node.y + node.height);
 			}
 		}
-		return { "treeWidth": treeWidth, "treeHeight": treeHeight };
+		return { "width": treeWidth, "height": treeHeight };
 	}
 
 	TreeLayout.prototype.getMidPoint = function (node) {
