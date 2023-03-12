@@ -6,6 +6,21 @@
     <link rel="stylesheet" href="./style.css" />
 
     <style>
+      :root {
+        --tree-bg-color: rgb(228, 241, 235);
+
+        --node-bg-color: rgb(204, 251, 165);
+        --node-bg-color-hover: rgb(31, 161, 90);
+        --node-border-color: rgb(38, 196, 109);
+        --node-font-color: #464646;
+
+        --emp-count-bg-color: rgb(38, 196, 109);
+        --emp-count-bg-color-hover: rgb(16, 94, 51);
+        --emp-count-border-color: rgb(38, 196, 109);
+
+        --breadcrumb-bg: linear-gradient(to right, rgb(38, 196, 109) 10%, rgb(204, 251, 165));
+      }
+
       .canvas-container {
         max-width: 100%;
         overflow: scroll;
@@ -25,13 +40,44 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid rgb(96, 139, 168);
+        border: 1px solid var(--node-border-color);
         border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+
         width: 160px;
         height: 60px;
-        background: Salmon;
-        font-size: 22px;
-        font-family: "Source Code Pro", Consolas, monaco, monospace;
+        background: var(--node-bg-color);
+        color: (--node-font-color);
+        font-size: 1.2em;
+        font-family: sans-serif;
+        cursor: pointer;
+      }
+
+      .card_TEST {
+        display: inline-block;
+        position: absolute;
+        background: var(--node-bg-color);
+        padding: 0.3em;
+        word-spacing: normal;
+        border-radius: 0;
+        border: 1px solid var(--node-border-color);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        text-shadow: none;
+        color: (--node-font-color);
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 1.2em;
+        font-family: sans-serif;
+        z-index: 100;
+        cursor: pointer;
+      }
+
+      .card:hover {
+        background: var(--node-bg-color-hover);
+        transform: scale(1.2);
+        z-index: 999;
+        transition: 0.1s all ease;
+        color: #fff;
       }
 
       .card .content {
@@ -209,7 +255,7 @@
       }
 
       var connector_style = "ELBOW";
-     // var connector_style = "STRAIGHT";
+      // var connector_style = "STRAIGHT";
 
       var x1, y1, x2, y2, x3, y3, x4, y4;
       for (let index = 0; index < graph_walker.nodeList.length; index++) {
@@ -232,7 +278,7 @@
         context.textAlign = "center";
         var textWidth = 0;
         //var textWidth = context.measureText(node.id ).width;
-        context.fillStyle = '#0181a0';
+        context.fillStyle = "#0181a0";
         context.fillText(node.id, node.x + node.width / 2 - textWidth / 2, node.y + node.height / 2);
 
         // Create Node Content
@@ -253,7 +299,7 @@
 
         context.fillStyle = "black";
         context.font = "10px Calibri";
-        context.fillText(`a (${x1},${y1})`, x1 + 5 + index*10, y1 + 5);
+        context.fillText(`a (${x1},${y1})`, x1 + 5 + index * 10, y1 + 5);
 
         var line_color = "black";
         var line_width = 0.8;
@@ -261,7 +307,7 @@
         var childrenCount = node.children.length;
 
         // Straight line from parent to child just below it
-        if (connector_style == "ELBOW" &&  childrenCount > 0) {
+        if (connector_style == "ELBOW" && childrenCount > 0) {
           var yy1 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
           console.log("y1  = " + y1);
           console.log("yy1 = " + yy1);
@@ -285,7 +331,7 @@
             x2 = x1;
             y2 = (childNode.y + node.y + node.height) / 2;
 
-            line_color = 'green';
+            line_color = "green";
             context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
             console.log("b = " + x2 + ", " + y2);
 
@@ -293,7 +339,7 @@
 
             x3 = childNode.x + childNode.width / 2;
             y3 = y2;
-            context.fillText("c", x3 + 5 + i*10, y3 + 5);
+            context.fillText("c", x3 + 5 + i * 10, y3 + 5);
             line_color = "red";
 
             drawLine(context, x2, y2, x3, y3, line_color, line_width);
