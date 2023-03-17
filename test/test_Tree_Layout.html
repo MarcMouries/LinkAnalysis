@@ -318,14 +318,18 @@
           drawLine(context, x1, y1, x1, yy1, "red", line_width);
         }
       
+        // draw a line across top of children
         if (!node.isLeaf()) {
             console.log ("Node is not a leaf : " + node.id)
             let leftMostChild = node.getLeftMostChild();
             let rightMostChild = node.getRightMostChild();
             console.log ("leftMostChild : " + leftMostChild)
             console.log ("rightMostChild : " + rightMostChild)
+            drawLine(context,
+                leftMostChild.x +  ( node.width /2), leftMostChild.y - ( node.height /2),
+                rightMostChild.x +  ( node.width /2), rightMostChild.y - ( node.height /2),
+                "red", line_width);
 
-            
         } 
 
         /*
@@ -354,7 +358,7 @@
             // from the center of the parent to the center of this child node
 
 
-            // instead draw a line across top of children
+            // instead 
 
 
           // var leftMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getLeftMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));

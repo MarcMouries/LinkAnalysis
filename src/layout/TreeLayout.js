@@ -141,7 +141,7 @@ var TreeLayout = (function () {
 		//console.log("Calling setNodeNeighbor      = " + node);
 		var isLeftMost = node.isLeftMost();
 		var isRightMost = node.isRightMost();
-		//console.log("setNodeNeighbor NODE= " + node.id + " , level= " + node.level + ", isLeftMost(" + isLeftMost + ")" + ", isRightMost(" + isRightMost + ")");
+		console.log("setNodeNeighbor NODE= " + node.id + " , level= " + node.level + ", isLeftMost(" + isLeftMost + ")" + ", isRightMost(" + isRightMost + ")");
 
 		if (isRightMost) {
 			//console.log("\\_setNodeNeighbor lastNodeAtLevel      = " + node.id);

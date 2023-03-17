@@ -23,9 +23,12 @@ function Node(id, data) {
 	this.level = 0;
 	this.children = [];
 	this.parent;
-	this.neighbor;
 	this.isCollapsed = false;
 
+}
+
+Node.prototype.toString = function () {
+	return "Node " + "(" + this.id + ")";
 }
 
 Node.prototype.addChild = function (node) {
@@ -61,6 +64,9 @@ Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
 }
 Node.prototype.isAncestorCollapsed = function () {
+
+
+	//if ( this.level == 4) { return true; }
 	if (this.parent == null) { return false; }
 	return this.parent.isCollapsed ? true :
 		this.parent.id === -1 ? false :
@@ -388,8 +394,8 @@ Graph.prototype.visit_Preorder = function (starting_node, callback) {
 /**
  *  Depth First Traversal:  Post order
  *  Post order (Root, Left, Right) : 1 2 4 5 3 6
- * 
- *         1
+ *
+ *        1
  *      / | \
  *    2   3  6
  *   / \
