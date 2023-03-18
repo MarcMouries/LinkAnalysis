@@ -196,7 +196,7 @@ Graph.prototype.addObject = function (object) {
 			const nodeIndex = node.parent.children.push(node) - 1;
 
 			const parentPath = node.parent ? node.parent.path : "";
-			const path = parentPath === "" ? `${nodeIndex + 1}` : `${parentPath}.${nodeIndex + 1}`;
+			const path = parentPath === "" ? `${nodeIndex + 1}` : `${parentPath}-${nodeIndex + 1}`;
 			node.path = path;
 		}
 	}
