@@ -7,13 +7,18 @@
 
     <style>
       :root {
-        --node-bg-color-1: #c4dcc3;
-        --node-bg-color-2: #aad4e7;
-        --node-bg-color-3: #d9c0d5;
-        --node-bg-color-4: #ffcbcb;
+        --node-bg-color-1: #255D83;
+        --node-bg-color-1-1: #735983;
+        --node-bg-color-1-2: #cc6686;
+        --node-bg-color-1-3: #ff687e;
+        --node-bg-color-1-4: #FFAF87;
+
+        
+
+        --node-childcount-bg-color : #FAFAFA;
 
         --node-bg-color-hover: rgb(31, 161, 90);
-        --node-border-color: rgb(38, 196, 109);
+        --node-border-color: #464646;
         --node-font-color: #464646;
 
         --emp-count-bg-color: rgb(38, 196, 109);
@@ -24,17 +29,17 @@
       }
 
       .canvas-container {
-        background: #dedede;
+        _background: #dedede;
         max-width: 100%;
         overflow: scroll;
-        border: 2px solid red;
+        _border: 2px solid red;
         position: relative; /* allows the position: absolute; property of the child element (in this case, the .node/card-div)
          to be positioned relative to the .canvas-container element. */
       }
 
       /* width and height are calculated by the tree layout */
       #tree {
-        border: 2px dotted yellowgreen;
+        _border: 2px dotted yellowgreen;
       }
 
       .card_template_container {
@@ -79,7 +84,7 @@
 
       .card:hover {
         background: var(--node-bg-color-hover);
-        transform: scale(1.2);
+        transform: scale(1.1);
         z-index: 999;
         transition: 0.1s all ease;
         color: #fff;
@@ -101,8 +106,8 @@
 
       .child-count {
         font-size: 0.6em;
-        background: var(--emp-count-bg-color);
-        color: white;
+        background: var(--node-childcount-bg-color);
+        color: black;
         position: absolute;
         right: 50%;
         bottom: 0;
@@ -113,7 +118,7 @@
         line-height: 1em;
         vertical-align: middle;
         display: inline-block;
-        border: 1px solid var(--emp-count-border-color);
+        border: 1px solid var(--node-childcount-bg-color);
         text-align: center;
         box-sizing: content-box;
         transform: translate(50%, 100%);
@@ -121,7 +126,8 @@
       }
 
       .child-count:hover {
-        background: var(--emp-count-bg-color-hover);
+        background:  rgba(96, 139, 168);
+        color: white;
       }
     </style>
   </head>
@@ -298,37 +304,51 @@
       }
 
       function assignColor(node, colors) {
-        // Create an array to store the colors for each path
-        if (!assignColor.colorPaths) {
-          assignColor.colorPaths = {};
-        }
-        // Get the colors array for the current path or create one if it doesn't exist
-        const pathColors = assignColor.colorPaths[node.path] || (assignColor.colorPaths[node.path] = []);
-        // Get the index of the last color assigned for the current path
-        const lastIndex = pathColors.length - 1;
-        // If no colors have been assigned for the current path, assign the next color in the colors array
-        if (lastIndex < 0) {
-          pathColors.push(0);
-          return colors[0];
-        }
-        // Otherwise, assign a lighter shade of the last color assigned
-        const lastColorIndex = pathColors[lastIndex];
-        const parentPath = node.parent ? node.parent.path : "";
-        const parentColorIndex = parentPath ? assignColor.colorPaths[parentPath][lastIndex] : -1;
-        const nextColorIndex = parentColorIndex + 1 >= colors.length ? parentColorIndex : parentColorIndex + 1;
-        const nextColor = colors[nextColorIndex];
-        pathColors.push(nextColorIndex);
-        return nextColor;
-      }
+  // Create an object to store the colors for each path
+  if (!assignColor.colorPaths) {
+    assignColor.colorPaths = {};
+  }
 
+  // Get the colors array for the current path or create one if it doesn't exist
+  const pathColors = assignColor.colorPaths[node.path] || (assignColor.colorPaths[node.path] = []);
+
+  // If no colors have been assigned for the current path, assign the next color in the colors array
+  if (pathColors.length === 0) {
+    const colorIndex = Object.keys(assignColor.colorPaths).length - 1;
+    pathColors.push(colorIndex);
+    return colors[colorIndex];
+  }
+
+  // Otherwise, assign a lighter shade of the last color assigned
+  const lastColorIndex = pathColors[pathColors.length - 1];
+  const parentPath = node.parent ? node.parent.path : "";
+  const parentColors = assignColor.colorPaths[parentPath] || [];
+
+  // If the parent node has a different path, reset the color array for the current node's path
+  if (node.path !== parentPath) {
+    const colorIndex = Object.keys(assignColor.colorPaths).length - 1;
+    pathColors.length = 0;
+    pathColors.push(colorIndex);
+    return colors[colorIndex];
+  }
+
+  const parentLastColorIndex = parentColors[parentColors.length - 1] || -1;
+  const nextColorIndex = parentLastColorIndex + 1 >= colors.length ? parentLastColorIndex : parentLastColorIndex + 1;
+  const nextColor = colors[nextColorIndex];
+  pathColors.push(nextColorIndex);
+  return nextColor;
+}
+
+
+
+      
       toggleNodeCollapsedProperty = function (nodeId) {
         let node = graph_walker.getNode(nodeId);
         node.isCollapsed = !node.isCollapsed;
       };
 
       function drawNode(node, nodeElement) {
-        console.log(`node id: "${node.id}", level: ${node.level}`);
-        console.log("------------------- ");
+        console.log(`node id: "${node.id}", level: ${node.level}, path: ${node.path}`);
 
         var connector_style = "ELBOW";
         //var connector_style = "STRAIGHT";
@@ -339,7 +359,7 @@
         const childCount = node.children.length;
 
         if (node.parent) {
-          console.log("node.parent : ", node.parent);
+         // console.log("node.parent : ", node.parent);
         }
 
         // COLOR
@@ -355,7 +375,7 @@
           context.strokeStyle = "#0181a0";
         }
         //context.fillRect(node.x, node.y, node.width, node.height);
-        context.strokeRect(node.x, node.y, node.width, node.height);
+      //  context.strokeRect(node.x, node.y, node.width, node.height);
 
         // draw Node id inside rect
         context.font = "bold 20px Calibri";
@@ -374,8 +394,8 @@
           node_div.style.top = node.y + canvas.offsetTop + "px";
           node_div.style.left = node.x + canvas.offsetLeft + "px";
           node_div.style.position = "absolute";
-          node_div.style.background = color;
-
+          //node_div.style.background = color;
+          node_div.style.background = 'var(--node-bg-color-' + node.path + ')';
           node_div.id = "node_" + node.id;
           var nodeContent = document.createElement("div");
           nodeContent.classList.add("node__content");
@@ -414,15 +434,15 @@
 
         context.fillStyle = "black";
         context.font = "10px Calibri";
-        context.fillText(`a (${x1},${y1})`, x1 + 5, y1 + 5);
+        //context.fillText(`a (${x1},${y1})`, x1 + 5, y1 + 5);
 
         var line_color = "black";
-        var line_width = 1.8;
+        var line_width = 1.2;
 
         // line across top of children
-        line_color = "red";
+        line_color = "black";
         if (!node.isLeaf()) {
-          console.log("Node is not a leaf : " + node.id);
+          //console.log("Node is not a leaf : " + node.id);
 
           // Straight line from parent to child just below it
           if (connector_style == "ELBOW" && childCount > 0) {
@@ -435,12 +455,12 @@
             // Straight line from parent to child just below it
             var y2 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
             //console.log("levelSeparation = " + treeLayout.levelSeparation);
-            drawLine(context, x1, y1, x1, y2, "orange", line_width);
+            drawLine(context, x1, y1, x1, y2, line_color, line_width);
 
             let leftMostChild = node.getLeftMostChild();
             let rightMostChild = node.getRightMostChild();
-            console.log("leftMostChild : " + leftMostChild);
-            console.log("rightMostChild : " + rightMostChild);
+            //console.log("leftMostChild : " + leftMostChild);
+            //console.log("rightMostChild : " + rightMostChild);
             drawLine(context, leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
           }
         }
@@ -452,9 +472,8 @@
           y2 = topMiddlePoint.y - node.height / 2;
           context.strokeStyle = "#0181a0";
 
-          context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, x1 + 5, y1 - 5);
-          context.fillText(`d 2 (${x2},${y2})`, x2 + 5, y2 - 5);
-          // line_color = "yellowgreen";
+          //context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, x1 + 5, y1 - 5);
+          //context.fillText(`d 2 (${x2},${y2})`, x2 + 5, y2 - 5);
           drawLine(context, topMiddlePoint.x, topMiddlePoint.y, topMiddlePoint.x, y2, line_color, line_width);
         }
 
