@@ -20,7 +20,8 @@ function log(msg) {
 function Node(id, data) {
 	this.id = id;
 	this.data = data;
-	this.level = 0;
+	this.level = 1;
+	this.path = "1";
 	this.children = [];
 	this.parent;
 	this.isCollapsed = false;
@@ -58,7 +59,8 @@ Node.prototype.isLeaf = function () {
 	return (this.children && this.children.length == 0);
 }
 Node.prototype.hasChild = function () {
-	return (this.children && this.children.length > 0)
+	return (this.children && this.children.length > 0);
+	// || this.isCollapsed;
 }
 Node.prototype.getLastChild = function () {
 	return this.getChildAt(this.getChildrenCount() - 1);
@@ -191,7 +193,11 @@ Graph.prototype.addObject = function (object) {
 		}
 		else {
 			node.level = node.parent.level + 1;
-			node.parent.children.push(node);
+			const nodeIndex = node.parent.children.push(node) - 1;
+
+			const parentPath = node.parent ? node.parent.path : "";
+			const path = parentPath === "" ? `${nodeIndex + 1}` : `${parentPath}.${nodeIndex + 1}`;
+			node.path = path;
 		}
 	}
 	else {
