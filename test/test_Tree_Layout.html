@@ -27,7 +27,6 @@
         border: 2px solid red;
         position: relative; /* allows the position: absolute; property of the child element (in this case, the .node/card-div)
          to be positioned relative to the .canvas-container element. */
-
       }
 
       /* width and height are calculated by the tree layout */
@@ -109,7 +108,7 @@
     <div id="tree_dimension"></div>
     <div id="canvas_dimension"></div>
 
-    <!--
+  <!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  	-->
     <div id="card_template_container" class="card_template_container">
@@ -177,13 +176,13 @@
 
       // // 3rd Level
       graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
-     graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
+      graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
       // //
-       graph_walker.addObject({ id: "H", parentId: "M", type: "NEW" });
-       graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
-       graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
-       graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
-       graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "H", parentId: "M", type: "NEW" });
+      graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
+      graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
 
       console.log("==========================");
       console.log("graph_walker", graph_walker);
@@ -273,12 +272,8 @@
         //context.fillRect(node.x, node.y, node.width, node.height);
         context.strokeRect(node.x, node.y, node.width, node.height);
 
+        // draw Node id inside rect
         context.font = "bold 20px Calibri";
-        context.save();
-        //context.fillStyle = 'rgb(255, 250, 255)';
-
-        context.textBaseline = "middle";
-        context.textAlign = "center";
         var textWidth = 0;
         //var textWidth = context.measureText(node.id ).width;
         context.fillStyle = "#0181a0";
@@ -317,22 +312,34 @@
           console.log("levelSeparation = " + treeLayout.levelSeparation);
           drawLine(context, x1, y1, x1, yy1, "red", line_width);
         }
-      
-        // draw a line across top of children
-        if (!node.isLeaf()) {
-            console.log ("Node is not a leaf : " + node.id)
-            let leftMostChild = node.getLeftMostChild();
-            let rightMostChild = node.getRightMostChild();
-            console.log ("leftMostChild : " + leftMostChild)
-            console.log ("rightMostChild : " + rightMostChild)
-            drawLine(context,
-                leftMostChild.x +  ( node.width /2), leftMostChild.y - ( node.height /2),
-                rightMostChild.x +  ( node.width /2), rightMostChild.y - ( node.height /2),
-                "red", line_width);
 
-        } 
+        // line across top of children
+        line_color = "red";
+        if (node.hasChild()) {
+          console.log("Node is not a leaf : " + node.id);
+          let leftMostChild = node.getLeftMostChild();
+          let rightMostChild = node.getRightMostChild();
+          console.log("leftMostChild : " + leftMostChild);
+          console.log("rightMostChild : " + rightMostChild);
+          drawLine(context, leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
+        }
 
-        /*
+        // line to to the line across top of children
+        if (node.parent !== null) {
+          let topMiddlePoint = {x: node.x + node.width / 2, y: node.y};
+          x2 = topMiddlePoint.x;
+          y2 = topMiddlePoint.y;
+          context.strokeStyle = "#0181a0";
+
+          context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, x1 + 5, y1 - 5);
+          context.fillText(`d 2 (${x2},${y2})`, x2 + 5, y2 - 5);
+          line_color = "yellowgreen";
+          drawLine(context,
+            topMiddlePoint.x, topMiddlePoint.y,
+            topMiddlePoint.x, topMiddlePoint.y - node.height / 2,
+            line_color, line_width);
+        }
+/*
         for (var i = 0; i < childrenCount; i++) {
           var childNode = node.children[i];
 
@@ -350,53 +357,49 @@
             x2 = x1;
             y2 = (childNode.y + node.y + node.height) / 2;
             line_color = "cyan";
-           // context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
+            // context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
             console.log("b = " + x2 + ", " + y2);
-         // drawLine(context, x1, y1, x2, y2, line_color, line_width);
+            // drawLine(context, x1, y1, x2, y2, line_color, line_width);
 
             // line connecting the children to the center line connecting to the parent
             // from the center of the parent to the center of this child node
 
+            // instead
 
-            // instead 
-
-
-          // var leftMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getLeftMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
-          // var rightMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getRightMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
-          // var lineAcrossTopOfChildren = org_helper_1.createSvgLine(leftMostChildPoint.x, leftMostChildPoint.y, rightMostChildPoint.x, rightMostChildPoint.y, 'edge');
- 
+            // var leftMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getLeftMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
+            // var rightMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getRightMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
+            // var lineAcrossTopOfChildren = org_helper_1.createSvgLine(leftMostChildPoint.x, leftMostChildPoint.y, rightMostChildPoint.x, rightMostChildPoint.y, 'edge');
 
             x3 = childNode.x + childNode.width / 2;
-            y3 = y2;
-            if (i == 0 ) {
+            y3 = y2; //y2 = (childNode.y + node.y + node.height) / 2;
+            if (i == 0) {
               line_color = "Tomato";
-            }
-            else if (i == 1 ) {
+            } else if (i == 1) {
               line_color = "GreenYellow";
-            }
-            else if (i == 2 ) {
+            } else if (i == 2) {
               line_color = "DodgerBlue";
-            }
-            else if (i == 3 ) {
+            } else if (i == 3) {
               line_color = "Turquoise";
-            }
-            else if (i == 4 ) {
+            } else if (i == 4) {
               line_color = "SlateBlue";
             }
-            context.fillText("c" + i + childNode.id, x3 + 5 , y3 + 5 + i * 10);
-            drawLine(context, x2, y2 + (i*10), x3 , y3 + (i*10), line_color, line_width);
+            context.fillText("c" + i + childNode.id, x3 + 5, y3 + 5 + i * 10);
+            //  drawLine(context, x2, y2 + (i*10), x3 , y3 + (i*10), line_color, line_width);
 
-            x4 = x3;
-            y4 = childNode.y;
-            //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
-            line_color = "blue";
-            drawLine(context, x3, y3, x4, y4, line_color, line_width);
+            // line to parent
+            if (node.parent !== null) {
+              x4 = x3;
+              y4 = childNode.y;
+              //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
+              line_color = "yellowgreen";
+              drawLine(context, x3, y3, x4, y4, line_color, line_width);
+            }
           }
-        }
-      */
+          
+        }*/
       }
       //console.log(graph_walker.nodeList);
-/*
+      /*
       const canvasContainer = document.querySelector('.canvas-container');
 const floatingDiv = document.querySelector('.card');
 
