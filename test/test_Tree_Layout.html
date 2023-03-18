@@ -7,9 +7,11 @@
 
     <style>
       :root {
-        --tree-bg-color: rgb(228, 241, 235);
+        --node-bg-color-1: #c4dcc3;
+        --node-bg-color-2: #aad4e7;
+        --node-bg-color-3: #d9c0d5;
+        --node-bg-color-4: #ffcbcb;
 
-        --node-bg-color: rgb(204, 251, 165);
         --node-bg-color-hover: rgb(31, 161, 90);
         --node-border-color: rgb(38, 196, 109);
         --node-font-color: #464646;
@@ -22,6 +24,7 @@
       }
 
       .canvas-container {
+        background: #dedede;
         max-width: 100%;
         overflow: scroll;
         border: 2px solid red;
@@ -48,7 +51,7 @@
 
         width: 160px;
         height: 60px;
-        background: var(--node-bg-color);
+        background: var(--node-bg-color-1);
         color: (--node-font-color);
         font-size: 1.2em;
         font-family: sans-serif;
@@ -95,6 +98,31 @@
         width: 50px;
         border-radius: 50%;
       }
+
+      .child-count {
+        font-size: 0.6em;
+        background: var(--emp-count-bg-color);
+        color: white;
+        position: absolute;
+        right: 50%;
+        bottom: 0;
+        padding: 4px;
+        z-index: 10;
+        cursor: pointer;
+        min-width: 1em;
+        line-height: 1em;
+        vertical-align: middle;
+        display: inline-block;
+        border: 1px solid var(--emp-count-border-color);
+        text-align: center;
+        box-sizing: content-box;
+        transform: translate(50%, 100%);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      }
+
+      .child-count:hover {
+        background: var(--emp-count-bg-color-hover);
+      }
     </style>
   </head>
 
@@ -108,7 +136,7 @@
     <div id="tree_dimension"></div>
     <div id="canvas_dimension"></div>
 
-  <!--
+    <!--
 	Create a template for the nodes and set the style visibility = "hidden" so that its dimensions can be calculated
  	-->
     <div id="card_template_container" class="card_template_container">
@@ -122,6 +150,19 @@
 
     <!-- node_template -->
     <script>
+      const colors = ["#c4dcc3", "#AAD4E7", "#d9c0d5", "#ffcbcb", "#0000ff", "#4b0082", "#9400d3"];
+      function lightenColor(color, amount) {
+        // Convert the hex color to an RGB value
+        const rgb = color
+          .substring(1)
+          .match(/.{2}/g)
+          .map((c) => parseInt(c, 16));
+        // Increase each RGB value by the specified amount (0 to 1)
+        const newRgb = rgb.map((c) => Math.min(255, Math.round(c * (1 + amount))));
+        // Convert the RGB value back to a hex color
+        return "#" + newRgb.map((c) => c.toString(16).padStart(2, "0")).join("");
+      }
+
       function getDivDimensions(div) {
         var cs = window.getComputedStyle(div);
         var div_width = cs.getPropertyValue("width");
@@ -160,16 +201,16 @@
 
       var graph_walker = new Graph();
       // Root Node
-      graph_walker.addObject({ id: "O", parentId: null, type: "standard" });
+      graph_walker.addObject({ id: "O", parentId: null, type: "NEW" });
 
       // 1st Level
-      graph_walker.addObject({ id: "E", parentId: "O", type: "standard" });
-      graph_walker.addObject({ id: "F", parentId: "O", type: "standard" });
-      graph_walker.addObject({ id: "N", parentId: "O", type: "standard" });
+      graph_walker.addObject({ id: "E", parentId: "O", type: "NEW" });
+      graph_walker.addObject({ id: "F", parentId: "O", type: "NEW" });
+      graph_walker.addObject({ id: "N", parentId: "O", type: "NEW" });
 
       // 2nd Level
       graph_walker.addObject({ id: "A", parentId: "E", type: "NEW" });
-      graph_walker.addObject({ id: "D", parentId: "E", type: "standard" });
+      graph_walker.addObject({ id: "D", parentId: "E", type: "NEW" });
 
       graph_walker.addObject({ id: "G", parentId: "N", type: "standard" });
       graph_walker.addObject({ id: "M", parentId: "N", type: "standard" });
@@ -178,7 +219,7 @@
       graph_walker.addObject({ id: "B", parentId: "D", type: "standard" });
       graph_walker.addObject({ id: "C", parentId: "D", type: "standard" });
       // //
-      graph_walker.addObject({ id: "H", parentId: "M", type: "NEW" });
+      graph_walker.addObject({ id: "H", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "I", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "J", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
@@ -193,14 +234,14 @@
       //	graph_walker.addObject({ id: "Y", parentId: "N", type: "NEW" });
 
       /*
-				console.log("==========================");
-				console.log("=Test getLeftmost");
-				console.log("==========================");
+      				console.log("==========================");
+      				console.log("=Test getLeftmost");
+      				console.log("==========================");
 
-				var node = graph_walker.getNode("M");
-				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
-				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
-		*/
+      				var node = graph_walker.getNode("M");
+      				var Leftmost =  treeLayout.getLeftmost_ONE(node, 0, 2);
+      				console.log("==> Test getLeftmost " + node.id + " = " + Leftmost);
+      		*/
 
       var treeLayout = new TreeLayout(graph_walker, {
         nodeWidth: node_div_dim.width,
@@ -256,13 +297,57 @@
         return content;
       }
 
-      var connector_style = "ELBOW";
-      //var connector_style = "STRAIGHT";
+      function assignColor(node, colors) {
+        // Create an array to store the colors for each path
+        if (!assignColor.colorPaths) {
+          assignColor.colorPaths = {};
+        }
+        // Get the colors array for the current path or create one if it doesn't exist
+        const pathColors = assignColor.colorPaths[node.path] || (assignColor.colorPaths[node.path] = []);
+        // Get the index of the last color assigned for the current path
+        const lastIndex = pathColors.length - 1;
+        // If no colors have been assigned for the current path, assign the next color in the colors array
+        if (lastIndex < 0) {
+          pathColors.push(0);
+          return colors[0];
+        }
+        // Otherwise, assign a lighter shade of the last color assigned
+        const lastColorIndex = pathColors[lastIndex];
+        const parentPath = node.parent ? node.parent.path : "";
+        const parentColorIndex = parentPath ? assignColor.colorPaths[parentPath][lastIndex] : -1;
+        const nextColorIndex = parentColorIndex + 1 >= colors.length ? parentColorIndex : parentColorIndex + 1;
+        const nextColor = colors[nextColorIndex];
+        pathColors.push(nextColorIndex);
+        return nextColor;
+      }
 
-      var x1, y1, x2, y2, x3, y3, x4, y4;
-      for (let index = 0; index < graph_walker.nodeList.length; index++) {
-        const node = graph_walker.nodeList[index];
+      toggleNodeCollapsedProperty = function (nodeId) {
+        let node = graph_walker.getNode(nodeId);
+        node.isCollapsed = !node.isCollapsed;
+      };
 
+      function drawNode(node, nodeElement) {
+        console.log(`node id: "${node.id}", level: ${node.level}`);
+        console.log("------------------- ");
+
+        var connector_style = "ELBOW";
+        //var connector_style = "STRAIGHT";
+
+        var x1, y1, x2, y2, x3, y3, x4, y4;
+        //  for (let index = 0; index < graph_walker.nodeList.length; index++) {
+        //   const node = graph_walker.nodeList[index];
+        const childCount = node.children.length;
+
+        if (node.parent) {
+          console.log("node.parent : ", node.parent);
+        }
+
+        // COLOR
+        const color = assignColor(node, colors);
+
+        if (node.parent && node.parent.isCollapsed) {
+          return;
+        }
         if (node.data.type && node.data.type == "NEW") {
           context.strokeStyle = "rgb(128, 182, 161)";
           context.strokeSize = 2;
@@ -283,12 +368,44 @@
         //console.log("node.type");			console.log(node);
         if (node.data.type == "NEW") {
           var node_div = card_div.cloneNode(true);
+          node_div.dataset.nodeId = node.id.toString();
+
           node_div.innerHTML = populate(node_div.innerHTML, node);
           node_div.style.top = node.y + canvas.offsetTop + "px";
           node_div.style.left = node.x + canvas.offsetLeft + "px";
           node_div.style.position = "absolute";
+          node_div.style.background = color;
+
           node_div.id = "node_" + node.id;
-          chart_container.appendChild(node_div);
+          var nodeContent = document.createElement("div");
+          nodeContent.classList.add("node__content");
+          if (childCount > 0) {
+            var childCountElement = document.createElement("span");
+            childCountElement.classList.add("child-count");
+            childCountElement.innerHTML = "" + childCount;
+            nodeContent.appendChild(childCountElement);
+
+            childCountElement.addEventListener("click", function (e) {
+              var target = e.target;
+              var nodeElement = target.parentElement.parentElement;
+              let nodeId = nodeElement.dataset.nodeId;
+              console.log("nodeId=" + nodeId);
+              // toggleNodeCollapsedProperty(nodeId);
+              let node = graph_walker.getNode(nodeId);
+              const rootElement = document.getElementById("nodes");
+              if (!node.isCollapsed) {
+                //nodeElement.innerHTML = '';  // remove all children
+                while (rootElement.firstChild) {
+                  rootElement.removeChild(rootElement.firstChild);
+                }
+              }
+              node.isCollapsed = !node.isCollapsed;
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              drawNode(graph_walker.getRootNode(), rootElement);
+            });
+          }
+          node_div.appendChild(nodeContent);
+          nodeElement.appendChild(node_div);
         }
         // Middle Of Node
         x1 = node.x + node.width / 2;
@@ -297,117 +414,133 @@
 
         context.fillStyle = "black";
         context.font = "10px Calibri";
-        context.fillText(`a (${x1},${y1})`, x1 + 5 + index * 10, y1 + 5);
+        context.fillText(`a (${x1},${y1})`, x1 + 5, y1 + 5);
 
         var line_color = "black";
         var line_width = 1.8;
 
-        var childrenCount = node.children.length;
-
-        // Straight line from parent to child just below it
-        if (connector_style == "ELBOW" && childrenCount > 0) {
-          var yy1 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
-          console.log("y1  = " + y1);
-          console.log("yy1 = " + yy1);
-          console.log("levelSeparation = " + treeLayout.levelSeparation);
-          drawLine(context, x1, y1, x1, yy1, "red", line_width);
-        }
-
         // line across top of children
         line_color = "red";
-        if (node.hasChild()) {
+        if (!node.isLeaf()) {
           console.log("Node is not a leaf : " + node.id);
-          let leftMostChild = node.getLeftMostChild();
-          let rightMostChild = node.getRightMostChild();
-          console.log("leftMostChild : " + leftMostChild);
-          console.log("rightMostChild : " + rightMostChild);
-          drawLine(context, leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
+
+          // Straight line from parent to child just below it
+          if (connector_style == "ELBOW" && childCount > 0) {
+            var y2 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
+            //console.log("levelSeparation = " + treeLayout.levelSeparation);
+            //       drawLine(context, x1, y1, x1, y2, "orange", line_width);
+          }
+
+          if (!node.isCollapsed && node.children.length > 1) {
+            // Straight line from parent to child just below it
+            var y2 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
+            //console.log("levelSeparation = " + treeLayout.levelSeparation);
+            drawLine(context, x1, y1, x1, y2, "orange", line_width);
+
+            let leftMostChild = node.getLeftMostChild();
+            let rightMostChild = node.getRightMostChild();
+            console.log("leftMostChild : " + leftMostChild);
+            console.log("rightMostChild : " + rightMostChild);
+            drawLine(context, leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
+          }
         }
 
-        // line to to the line across top of children
+        // line to the line across top of children
         if (node.parent !== null) {
-          let topMiddlePoint = {x: node.x + node.width / 2, y: node.y};
+          let topMiddlePoint = { x: node.x + node.width / 2, y: node.y };
           x2 = topMiddlePoint.x;
-          y2 = topMiddlePoint.y;
+          y2 = topMiddlePoint.y - node.height / 2;
           context.strokeStyle = "#0181a0";
 
           context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, x1 + 5, y1 - 5);
           context.fillText(`d 2 (${x2},${y2})`, x2 + 5, y2 - 5);
-          line_color = "yellowgreen";
-          drawLine(context,
-            topMiddlePoint.x, topMiddlePoint.y,
-            topMiddlePoint.x, topMiddlePoint.y - node.height / 2,
-            line_color, line_width);
+          // line_color = "yellowgreen";
+          drawLine(context, topMiddlePoint.x, topMiddlePoint.y, topMiddlePoint.x, y2, line_color, line_width);
         }
-/*
-        for (var i = 0; i < childrenCount; i++) {
-          var childNode = node.children[i];
 
-          // STRAIGHT Connectors
-          //
-          if (connector_style == "STRAIGHT") {
-            x2 = childNode.x + node.width / 2;
-            y2 = childNode.y;
-            drawLine(context, x1, y1, x2, y2, "green", 0.5);
-          }
-          // ELBOW ----------------------------
-          if (connector_style == "ELBOW") {
-            //line_color = 'black';
-
-            x2 = x1;
-            y2 = (childNode.y + node.y + node.height) / 2;
-            line_color = "cyan";
-            // context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
-            console.log("b = " + x2 + ", " + y2);
-            // drawLine(context, x1, y1, x2, y2, line_color, line_width);
-
-            // line connecting the children to the center line connecting to the parent
-            // from the center of the parent to the center of this child node
-
-            // instead
-
-            // var leftMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getLeftMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
-            // var rightMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getRightMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
-            // var lineAcrossTopOfChildren = org_helper_1.createSvgLine(leftMostChildPoint.x, leftMostChildPoint.y, rightMostChildPoint.x, rightMostChildPoint.y, 'edge');
-
-            x3 = childNode.x + childNode.width / 2;
-            y3 = y2; //y2 = (childNode.y + node.y + node.height) / 2;
-            if (i == 0) {
-              line_color = "Tomato";
-            } else if (i == 1) {
-              line_color = "GreenYellow";
-            } else if (i == 2) {
-              line_color = "DodgerBlue";
-            } else if (i == 3) {
-              line_color = "Turquoise";
-            } else if (i == 4) {
-              line_color = "SlateBlue";
-            }
-            context.fillText("c" + i + childNode.id, x3 + 5, y3 + 5 + i * 10);
-            //  drawLine(context, x2, y2 + (i*10), x3 , y3 + (i*10), line_color, line_width);
-
-            // line to parent
-            if (node.parent !== null) {
-              x4 = x3;
-              y4 = childNode.y;
-              //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
-              line_color = "yellowgreen";
-              drawLine(context, x3, y3, x4, y4, line_color, line_width);
-            }
-          }
-          
-        }*/
+        // Draw this node's children.
+        if (!node.isCollapsed) {
+          node.children.forEach(function (child) {
+            drawNode(child, nodeElement);
+          });
+        }
       }
+      /*
+              for (var i = 0; i < childrenCount; i++) {
+                var childNode = node.children[i];
+
+                // STRAIGHT Connectors
+                //
+                if (connector_style == "STRAIGHT") {
+                  x2 = childNode.x + node.width / 2;
+                  y2 = childNode.y;
+                  drawLine(context, x1, y1, x2, y2, "green", 0.5);
+                }
+                // ELBOW ----------------------------
+                if (connector_style == "ELBOW") {
+                  //line_color = 'black';
+
+                  x2 = x1;
+                  y2 = (childNode.y + node.y + node.height) / 2;
+                  line_color = "cyan";
+                  // context.fillText(`b (${x2},${y2})`, x2 + 5, y2 + 5);
+                  console.log("b = " + x2 + ", " + y2);
+                  // drawLine(context, x1, y1, x2, y2, line_color, line_width);
+
+                  // line connecting the children to the center line connecting to the parent
+                  // from the center of the parent to the center of this child node
+
+                  // instead
+
+                  // var leftMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getLeftMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
+                  // var rightMostChildPoint = new org_models_1.Point(_this.NODE_MARGIN_X + (node.getRightMostChild().x * (_this.NODE_WIDTH + _this.NODE_MARGIN_X)) + (_this.NODE_WIDTH / 2), nodeBottomMiddlePoint.y + (_this.NODE_MARGIN_Y / 2));
+                  // var lineAcrossTopOfChildren = org_helper_1.createSvgLine(leftMostChildPoint.x, leftMostChildPoint.y, rightMostChildPoint.x, rightMostChildPoint.y, 'edge');
+
+                  x3 = childNode.x + childNode.width / 2;
+                  y3 = y2; //y2 = (childNode.y + node.y + node.height) / 2;
+                  if (i == 0) {
+                    line_color = "Tomato";
+                  } else if (i == 1) {
+                    line_color = "GreenYellow";
+                  } else if (i == 2) {
+                    line_color = "DodgerBlue";
+                  } else if (i == 3) {
+                    line_color = "Turquoise";
+                  } else if (i == 4) {
+                    line_color = "SlateBlue";
+                  }
+                  context.fillText("c" + i + childNode.id, x3 + 5, y3 + 5 + i * 10);
+                  //  drawLine(context, x2, y2 + (i*10), x3 , y3 + (i*10), line_color, line_width);
+
+                  // line to parent
+                  if (node.parent !== null) {
+                    x4 = x3;
+                    y4 = childNode.y;
+                    //context.fillText(`d (${x4},${y4})`, x4 + 5, y4 - 5);
+                    line_color = "yellowgreen";
+                    drawLine(context, x3, y3, x4, y4, line_color, line_width);
+                  }
+                }
+
+              }*/
+
       //console.log(graph_walker.nodeList);
       /*
-      const canvasContainer = document.querySelector('.canvas-container');
-const floatingDiv = document.querySelector('.card');
+            const canvasContainer = document.querySelector('.canvas-container');
+      const floatingDiv = document.querySelector('.card');
 
-canvasContainer.addEventListener('scroll', () => {
-  floatingDiv.style.top = `${canvasContainer.scrollTop}px`;
-  floatingDiv.style.left = `${canvasContainer.scrollLeft}px`;
-});
-*/
+      canvasContainer.addEventListener('scroll', () => {
+        floatingDiv.style.top = `${canvasContainer.scrollTop}px`;
+        floatingDiv.style.left = `${canvasContainer.scrollLeft}px`;
+      });
+      */
+      let rootNode = graph_walker.getRootNode();
+      var rootNodeElement = document.createElement("div");
+      rootNodeElement.setAttribute("id", "nodes");
+
+      chart_container.appendChild(rootNodeElement);
+
+      drawNode(rootNode, rootNodeElement);
     </script>
   </body>
 </html>
