@@ -55,6 +55,12 @@ Node.prototype.getFirstChild = function () {
 Node.prototype.getChildrenCount = function () {
 	return this.children.length;
 }
+
+Node.prototype.getIndex = function () {
+	return this.parent.children.indexOf(this);
+}
+
+
 Node.prototype.isLeaf = function () {
 	return (this.children && this.children.length == 0);
 }
