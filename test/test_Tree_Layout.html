@@ -205,6 +205,7 @@
       //	nodeZ.attr("width", 666);
       console.log("==========================");
 
+      /*
       var graph_walker = new Graph();
       // Root Node
       graph_walker.addObject({ id: "O", parentId: null, type: "NEW" });
@@ -231,9 +232,21 @@
       graph_walker.addObject({ id: "K", parentId: "M", type: "standard" });
       graph_walker.addObject({ id: "L", parentId: "M", type: "standard" });
 
+
+      */
+      var graph_walker = new Graph();
+      // Root Node
+      graph_walker.addObject({ id: "O", parentId: null, type: "NEW" });
+      graph_walker.addObject({ id: "E", parentId: "O", type: "NEW" });
+      graph_walker.addObject({ id: "F", parentId: "O", type: "NEW" });
+      graph_walker.addObject({ id: "E1", parentId: "E", type: "NEW" });
+      graph_walker.addObject({ id: "E2", parentId: "E", type: "NEW" });
+      graph_walker.addObject({ id: "F1", parentId: "F", type: "NEW" });
+      graph_walker.addObject({ id: "F2", parentId: "F", type: "NEW" });
       console.log("==========================");
       console.log("graph_walker", graph_walker);
       console.log("==========================");
+
 
       // New Nodes
       //	graph_walker.addObject({ id: "X", parentId: "N", type: "NEW" });
