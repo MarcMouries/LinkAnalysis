@@ -24,12 +24,13 @@ var TreeLayout = (function () {
 
 		var DEFAULTS = {
 			rootOrientation: "NORTH",
-			maximumDepth: 50,
-			levelSeparation: 100,
-			siblingSpacing: 20,
-			subtreeSeparation: 500,
-			nodeWidth: 1000,
-			nodeHeight: 500
+			maximumDepth: 3,
+			levelSeparation: 50,    /* distance between levels = vertical spread */
+			siblingSpacing: 50,    /* distance between leaf siblings */
+			subtreeSeparation: 160,  /* distance between each subtree */
+			leavesStacked : true,
+			nodeWidth: 0,
+			nodeHeight: 0
 		}
 
 
@@ -49,7 +50,7 @@ var TreeLayout = (function () {
 		}
 		// should be proportional to the width of the tree
 		if (this.subtreeSeparation < (this.nodeWidth*3)) {
-			this.subtreeSeparation = this.nodeWidth*2;
+			//this.subtreeSeparation = this.nodeWidth*2;
 		}
 
 		/**
@@ -372,11 +373,22 @@ var TreeLayout = (function () {
 			var xTopAdjustment = 0;
 			var yTopAdjustment = 0;
 
+
+
 			node.x = xTopAdjustment + node.prelim + modSum;
 			node.y = yTopAdjustment + (level * this.levelSeparation);
 			//console.log("\\secondWalk: Node(" + node.id + " / " + xTopAdjustment + " / " + node.prelim + " / " + modSum);
 			//console.log("\\secondWalk: " + node.x + "," + node.y);
 
+			if (this.leavesStacked) {
+			if (node.isLeaf()) {
+				const indentation = 30;
+				let index = node.getIndex();
+				node.x = node.parent.x + indentation;
+				node.y += (node.getIndex() * this.nodeHeight) + (node.getIndex() * this.siblingSpacing); //	shift the node down
+				console.log(`secondWalk: ${node} #${index}  (${node.x}, ${node.y})`);
+			}
+		}
 
 			var children_count = node.getChildrenCount();
 			for (var i = 0; i < children_count; i++) {
