@@ -29,7 +29,7 @@ function Node(id, data) {
 }
 
 Node.prototype.toString = function () {
-	return "Node " + "(" + this.id + ")";
+	return "Node " + this.id + " (" + this.x + ", " + this.y + ")";
 }
 
 Node.prototype.addChild = function (node) {
