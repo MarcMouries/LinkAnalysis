@@ -145,6 +145,7 @@
  	-->
     <div id="card_template_container" class="card_template_container">
       <div id="card" class="card">
+        <div style="margin-top: -50px; background-color: #3ab6e3; height: 10px; width: 100%; border-radius: 1px"></div>
         <div>{id}</div>
       </div>
     </div>
@@ -420,13 +421,14 @@
               // toggleNodeCollapsedProperty(nodeId);
               let node = graph_walker.getNode(nodeId);
               const rootElement = document.getElementById("nodes");
-              if (!node.isCollapsed) {
-                //nodeElement.innerHTML = '';  // remove all children
+              node.isCollapsed = !node.isCollapsed;
+              if (node.isCollapsed) {
+                // remove all children
+                //nodeElement.innerHTML = '';
                 while (rootElement.firstChild) {
                   rootElement.removeChild(rootElement.firstChild);
                 }
               }
-              node.isCollapsed = !node.isCollapsed;
               context.clearRect(0, 0, canvas.width, canvas.height);
               drawNode(graph_walker.getRootNode(), rootElement);
             });
@@ -465,7 +467,7 @@
           var middleOfNode = [x1, y1];
 
           // line across top of children
-          line_color = "black";
+         // line_color = "cyan";
           if (!node.isLeaf()) {
             //console.log("Node is not a leaf : " + node.id);
 
@@ -473,35 +475,38 @@
             if (connector_style == "ELBOW" && childCount > 0) {
               var y2 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
               //console.log("levelSeparation = " + treeLayout.levelSeparation);
-              //       drawLine(context, x1, y1, x1, y2, "orange", line_width);
+              //drawLine(context, x1, y1, x1, y2, "orange", line_width);
             }
 
+            // ┌──────┼──────┐
             if (node.level == 1) {
-              if (!node.isCollapsed && node.children.length > 1) {
+              if (!node.isCollapsed) {
                 // Straight line from parent to child just below it
                 var y2 = y1 + treeLayout.levelSeparation / 2 - node.height / 2;
                 //console.log("levelSeparation = " + treeLayout.levelSeparation);
-                drawLine(context, x1, y1, x1, y2, line_color, line_width);
+                drawLine(context, x1, y1, x1, y2, "cyan", line_width);
 
                 // horizontal line from leftMostChild to the rightMostChild
                 let leftMostChild = node.getLeftMostChild();
                 let rightMostChild = node.getRightMostChild();
-                //console.log("leftMostChild : " + leftMostChild);
-                //console.log("rightMostChild : " + rightMostChild);
-                line_color = "blue";
-                drawLine(context, leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
+                console.log("=> leftMostChild : " + leftMostChild);
+                console.log("=> rightMostChild : " + rightMostChild);
+                line_color = "pink";
+                drawLine(context, 
+                leftMostChild.x + node.width / 2, leftMostChild.y - node.height / 2, 
+                rightMostChild.x + node.width / 2, rightMostChild.y - node.height / 2, line_color, line_width);
               }
             }
 
-            // line to the line across top of children
+            // vertical line from the child to the line across top of children
             if (node.parent !== null) {
               const topMiddlePoint = { x: node.x + node.width / 2, y: node.y };
               x2 = topMiddlePoint.x;
               y2 = topMiddlePoint.y - node.height / 2;
               context.strokeStyle = "#0181a0";
 
-              //context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, x1 + 5, y1 - 5);
-              //context.fillText(`d 2 (${x2},${y2})`, x2 + 5, y2 - 5);
+              context.fillText(`d 1 (${topMiddlePoint.x},${topMiddlePoint.y})`, topMiddlePoint.x + 3, topMiddlePoint.y - 2);
+              context.fillText(`d 2 (${x2},${y2})`, topMiddlePoint.x + 3, y2 - 2);
               line_color = "green";
               drawLine(context, topMiddlePoint.x, topMiddlePoint.y, topMiddlePoint.x, y2, line_color, line_width);
             }
