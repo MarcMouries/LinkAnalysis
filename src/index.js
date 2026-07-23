@@ -10,5 +10,11 @@
 export { Graph, Node, Link } from "./Graph.js";
 export { NONE, pi } from "./Constants.js";
 export * from "./trigo.js";
+export {
+	transformServiceNowData,
+	validatePOLEData,
+	POLE_NODE_TYPES,
+	POLE_EDGE_TYPES,
+} from "./data-adapter.js";
 
 export const version = "1.0.0";
