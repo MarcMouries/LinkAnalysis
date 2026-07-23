@@ -1,0 +1,3 @@
+[install]
+# Pin exact versions for reproducible installs.
+exact = true

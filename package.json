@@ -1,27 +1,53 @@
 {
-  "name": "LinkAnalysis",
-  "version": "1.0.0",
-  "description": "![Screenshot](docs/LinkAnalysis.png)",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs",
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MarcMouries/LinkAnalysis.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/MarcMouries/LinkAnalysis/issues"
-  },
-  "homepage": "https://github.com/MarcMouries/LinkAnalysis#readme",
-  "devDependencies": {
-    "eslint": "^8.3.0"
-  }
+	"name": "link-analysis",
+	"version": "1.0.0",
+	"description": "Link analysis graph visualization for intelligence / POLE entity networks",
+	"type": "module",
+	"main": "dist/cjs/index.cjs",
+	"module": "dist/esm/index.js",
+	"browser": "dist/umd/link-analysis.min.js",
+	"exports": {
+		".": {
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.cjs",
+			"default": "./dist/esm/index.js"
+		}
+	},
+	"directories": {
+		"doc": "docs",
+		"test": "test"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build:esm": "bun build src/index.js --outfile dist/esm/index.js --format=esm --sourcemap=linked",
+		"build:cjs": "bun build src/index.js --outfile dist/cjs/index.cjs --format=cjs --sourcemap=linked",
+		"build:iife": "bun build src/iife.js --outfile dist/umd/link-analysis.min.js --format=iife --minify --sourcemap=linked",
+		"build": "bun run clean && bun run build:esm && bun run build:cjs && bun run build:iife",
+		"dev": "bun build src/index.js --outfile dist/esm/index.js --format=esm --watch",
+		"test": "bun test",
+		"prepublishOnly": "bun run build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MarcMouries/LinkAnalysis.git"
+	},
+	"keywords": [
+		"graph",
+		"link-analysis",
+		"visualization",
+		"pole",
+		"radial-layout"
+	],
+	"author": "Marc Mouries",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/MarcMouries/LinkAnalysis/issues"
+	},
+	"homepage": "https://github.com/MarcMouries/LinkAnalysis#readme",
+	"dependencies": {},
+	"devDependencies": {}
 }
