@@ -7,10 +7,21 @@ A graph-visualization library for intelligence / link-analysis (POLE entity) net
 ## Status
 
 The core is being modernized into ES modules bundled with [Bun](https://bun.sh).
-The data model (`Graph`, `Node`, `Link`), the geometry helpers (`trigo`) and the
-radial layout (`MRadialLayout`) are now ES modules with a test suite. The canvas
-renderer, `PieMenu`, and `TreeLayout` are still being migrated and are loaded via
-`<script>` tags by the manual harnesses under `test/`.
+The data model (`Graph`, `Node`, `Link`) and the geometry helpers (`trigo`) are
+now ES modules with a test suite.
+
+**Layout algorithms live in the [GraphJS](https://github.com/MarcMouries/GraphJS)
+engine, not here.** LinkAnalysis depends on GraphJS and consumes its
+`ForceDirected`, `RadialLayout` and `TreeLayout`:
+
+```javascript
+import { RadialLayout, ForceDirected } from "graphjs";
+```
+
+LinkAnalysis owns the domain layer: the data model, the POLE data adapter, and
+(upcoming) POLE node/edge templates and presets. The legacy canvas renderer and
+`PieMenu` are still `<script>`-loaded by the manual harnesses under `test/` and
+will be rewired onto the GraphJS engine.
 
 ## Development
 
@@ -35,7 +46,8 @@ they are not committed.
 ## Usage
 
 ```javascript
-import { Graph, MRadialLayout } from "link-analysis";
+import { Graph } from "link-analysis";
+import { RadialLayout } from "graphjs";
 
 const graph = new Graph();
 graph.loadJSON({
@@ -46,7 +58,7 @@ graph.loadJSON({
   ],
 });
 
-const layout = new MRadialLayout();
-layout.Calculate_Positions(graph, graph.getNode("subject"), { x: 400, y: 300 });
+// The layout algorithm comes from the GraphJS engine.
+new RadialLayout(graph, { centerNode: "subject", center: { x: 400, y: 300 } }).run();
 // each node now has x / y coordinates
 ```

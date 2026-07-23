@@ -48,6 +48,8 @@
 		"url": "https://github.com/MarcMouries/LinkAnalysis/issues"
 	},
 	"homepage": "https://github.com/MarcMouries/LinkAnalysis#readme",
-	"dependencies": {},
+	"dependencies": {
+		"graphjs": "^0.0.5"
+	},
 	"devDependencies": {}
 }
