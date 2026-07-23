@@ -4,6 +4,7 @@
 export { Graph, Node, Link } from "./Graph.js";
 export { GraphLayout } from "./layout/GraphLayout.js";
 export { MRadialLayout } from "./layout/MRadialLayout.js";
+export { ForceLayout } from "./layout/ForceLayout.js";
 export { NONE, pi } from "./Constants.js";
 export * from "./trigo.js";
 
