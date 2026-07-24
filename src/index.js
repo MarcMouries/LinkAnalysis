@@ -14,6 +14,7 @@ export * from "./trigo.js";
 export {
 	transformServiceNowData,
 	validatePOLEData,
+	POLE_TAXONOMY,
 	POLE_NODE_TYPES,
 	POLE_EDGE_TYPES,
 } from "./data-adapter.js";
@@ -28,6 +29,7 @@ export {
 	POLE_NODE_LABELS,
 	POLE_EDGE_LABELS,
 	POLE_NODE_ICONS,
+	POLE_REL_QUALIFIERS,
 } from "./pole-presets.js";
 
 export const version = "1.0.0";

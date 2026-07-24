@@ -1,106 +1,165 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="684" height="552" viewBox="0 0 684 552" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="876" height="726" viewBox="0 0 876 726" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
 <defs>
     <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <filter id="softglow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="9"/></filter>
-    <radialGradient id="vign" cx="36.8%" cy="50.0%" r="75%">
+    <radialGradient id="vign" cx="31.5%" cy="37.4%" r="75%">
       <stop offset="0%" stop-color="#0f1830"/><stop offset="55%" stop-color="#0a0e17"/><stop offset="100%" stop-color="#05070e"/></radialGradient>
     <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
       <path d="M42 0H0V42" fill="none" stroke="#37e0ff" stroke-opacity="0.06" stroke-width="1"/></pattern>
   </defs>
-<rect width="684" height="552" rx="14" fill="url(#vign)"/>
-<rect width="504" height="552" fill="url(#grid)"/>
-<circle cx="251.9" cy="276" r="150" fill="#37e0ff" opacity="0.10" filter="url(#softglow)"/>
-<line x1="251.9" y1="276" x2="407.8" y2="366" stroke="#58a6ff" stroke-width="7.5" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="407.8" y2="366" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="251.9" y2="456" stroke="#58a6ff" stroke-width="7.5" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="251.9" y2="456" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="96" y2="366" stroke="#3fb950" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="96" y2="366" stroke="#3fb950" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="96" y2="186" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="96" y2="186" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="251.9" y2="96" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="251.9" y2="96" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="407.8" y2="186" stroke="#f85149" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
-<line x1="251.9" y1="276" x2="407.8" y2="186" stroke="#f85149" stroke-width="2" stroke-dasharray="5,3" opacity="0.9" stroke-linecap="round"/>
-<line x1="96" y1="366" x2="96" y2="186" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
-<line x1="96" y1="366" x2="96" y2="186" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
-<rect x="312.7" y="313.0" width="34.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="329.9" y="321.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Wife</text>
-<rect x="226.3" y="358.0" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="251.9" y="366.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Brother</text>
-<rect x="142.8" y="313.0" width="62.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="173.9" y="321.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Associate</text>
-<rect x="131.5" y="223.0" width="84.8" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="173.9" y="231.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Known Address</text>
-<rect x="217.9" y="178.0" width="68.0" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="251.9" y="186.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Registered</text>
-<rect x="307.1" y="223.0" width="45.6" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="329.9" y="231.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Arrest</text>
-<rect x="70.4" y="268.0" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
-<text x="96.0" y="276.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Address</text>
-<circle cx="251.9" cy="276" r="37.7" fill="#f78166" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="251.9" cy="276" r="36.7" fill="none" stroke="#f78166" stroke-width="1.4" opacity="0.7"/>
-<circle cx="251.9" cy="276" r="29.700000000000003" fill="#0e1626" stroke="#f78166" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="251.9" cy="276" r="29.700000000000003" fill="none" stroke="#f78166" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(233.3 257.4) scale(1.547)" fill="#f78166"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
-<text x="251.9" y="320.7" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Eric Fox</text>
-<text x="251.9" y="333.7" fill="#f78166" font-size="8.5" text-anchor="middle" letter-spacing="2" font-family="ui-monospace, monospace">◆ SUBJECT</text>
-<circle cx="407.8" cy="366" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="407.8" cy="366" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="407.8" cy="366" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(394.1 352.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
-<text x="407.8" y="403" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Jane Fox</text>
-<circle cx="251.9" cy="456" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="251.9" cy="456" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="251.9" cy="456" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(238.2 442.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
-<text x="251.9" y="493" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Sam Fox</text>
-<circle cx="96" cy="366" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="96" cy="366" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="96" cy="366" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(82.3 352.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
-<text x="96" y="403" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Rick Vale</text>
-<circle cx="96" cy="186" r="30" fill="#3fb950" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="96" cy="186" r="22" fill="#0e1626" stroke="#3fb950" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="96" cy="186" r="22" fill="none" stroke="#3fb950" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(82.3 172.3) scale(1.146)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
-<text x="96" y="223" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">3260 Jay St</text>
-<circle cx="251.9" cy="96" r="30" fill="#a371f7" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="251.9" cy="96" r="22" fill="#0e1626" stroke="#a371f7" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="251.9" cy="96" r="22" fill="none" stroke="#a371f7" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(238.2 82.3) scale(1.146)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
-<text x="251.9" y="133" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Plate ABC-123</text>
-<circle cx="407.8" cy="186" r="30" fill="#d29922" opacity="0.12" filter="url(#softglow)"/>
-<circle cx="407.8" cy="186" r="22" fill="#0e1626" stroke="#d29922" stroke-width="2.4"/>
-<g filter="url(#glow)"><circle cx="407.8" cy="186" r="22" fill="none" stroke="#d29922" stroke-width="2.4" opacity="0.85"/></g>
-<g transform="translate(394.1 172.3) scale(1.146)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
-<text x="407.8" y="223" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">2020-01-30</text>
-<line x1="504" y1="0" x2="504" y2="552" stroke="#37e0ff" stroke-opacity="0.14"/>
-<text x="522" y="22" fill="#eaf6ff" font-size="13" font-weight="800" letter-spacing="1">LEGEND</text>
-<text x="522" y="44" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">ENTITIES</text>
-<circle cx="530" cy="64" r="9" fill="#0e1626" stroke="#58a6ff" stroke-width="1.8"/>
-<g transform="translate(524.5 58.5) scale(0.458)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
-<text x="548" y="68" fill="#dcebf7" font-size="11.5">Person</text>
-<circle cx="530" cy="88" r="9" fill="#0e1626" stroke="#3fb950" stroke-width="1.8"/>
-<g transform="translate(524.5 82.5) scale(0.458)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
-<text x="548" y="92" fill="#dcebf7" font-size="11.5">Location</text>
-<circle cx="530" cy="112" r="9" fill="#0e1626" stroke="#d29922" stroke-width="1.8"/>
-<g transform="translate(524.5 106.5) scale(0.458)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
-<text x="548" y="116" fill="#dcebf7" font-size="11.5">Rap Sheet</text>
-<circle cx="530" cy="136" r="9" fill="#0e1626" stroke="#a371f7" stroke-width="1.8"/>
-<g transform="translate(524.5 130.5) scale(0.458)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
-<text x="548" y="140" fill="#dcebf7" font-size="11.5">Vehicle</text>
-<circle cx="530" cy="160" r="9" fill="none" stroke="#f78166" stroke-width="2"/>
-<text x="548" y="164" fill="#dcebf7" font-size="11.5">Subject</text>
-<text x="522" y="192" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">RELATIONSHIPS</text>
-<line x1="522" y1="212" x2="539" y2="212" stroke="#58a6ff" stroke-width="2.6" stroke-linecap="round"/>
-<text x="548" y="216" fill="#dcebf7" font-size="11.5">Family</text>
-<line x1="522" y1="236" x2="539" y2="236" stroke="#3fb950" stroke-width="2.6" stroke-linecap="round"/>
-<text x="548" y="240" fill="#dcebf7" font-size="11.5">Associate</text>
-<line x1="522" y1="260" x2="539" y2="260" stroke="#d29922" stroke-width="2.6" stroke-linecap="round"/>
-<text x="548" y="264" fill="#dcebf7" font-size="11.5">Address</text>
-<line x1="522" y1="284" x2="539" y2="284" stroke="#f85149" stroke-width="2.6" stroke-dasharray="5,3" stroke-linecap="round"/>
-<text x="548" y="288" fill="#dcebf7" font-size="11.5">Arrest</text>
-<line x1="522" y1="308" x2="539" y2="308" stroke="#8b949e" stroke-width="2.6" stroke-linecap="round"/>
-<text x="548" y="312" fill="#dcebf7" font-size="11.5">Other</text>
+<rect width="876" height="726" rx="14" fill="url(#vign)"/>
+<rect width="696" height="726" fill="url(#grid)"/>
+<circle cx="276" cy="271.5" r="150" fill="#37e0ff" opacity="0.10" filter="url(#softglow)"/>
+<line x1="276" y1="271.5" x2="438.2" y2="349.6" stroke="#58a6ff" stroke-width="7.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="438.2" y2="349.6" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="316.1" y2="447" stroke="#3fb950" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="316.1" y2="447" stroke="#3fb950" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="163.8" y2="412.2" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="163.8" y2="412.2" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="96" y2="271.5" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="96" y2="271.5" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="163.8" y2="130.8" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="163.8" y2="130.8" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="316.1" y2="96" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="316.1" y2="96" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="438.2" y2="193.4" stroke="#f85149" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
+<line x1="276" y1="271.5" x2="438.2" y2="193.4" stroke="#f85149" stroke-width="2" stroke-dasharray="5,3" opacity="0.9" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="456" y2="583.3" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="456" y2="583.3" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="356.1" y2="622.5" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="356.1" y2="622.5" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="249.1" y2="630.5" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="316.1" y1="447" x2="249.1" y2="630.5" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="438.2" y1="193.4" x2="600.3" y2="115.3" stroke="#f85149" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
+<line x1="438.2" y1="193.4" x2="600.3" y2="115.3" stroke="#f85149" stroke-width="2" stroke-dasharray="5,3" opacity="0.9" stroke-linecap="round"/>
+<rect x="339.9" y="302.6" width="34.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="357.1" y="310.6" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Wife</text>
+<rect x="264.9" y="351.3" width="62.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="296.1" y="359.3" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Associate</text>
+<rect x="177.5" y="333.9" width="84.8" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="219.9" y="341.9" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Known Address</text>
+<rect x="152.0" y="263.5" width="68.0" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="186.0" y="271.5" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Registered</text>
+<rect x="194.3" y="193.2" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="219.9" y="201.2" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Account</text>
+<rect x="267.7" y="175.8" width="56.8" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="296.1" y="183.8" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Director</text>
+<rect x="334.3" y="224.4" width="45.6" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="357.1" y="232.4" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Arrest</text>
+<rect x="366.1" y="507.1" width="40.0" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="386.1" y="515.1" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Phone</text>
+<rect x="313.3" y="526.8" width="45.6" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="336.1" y="534.8" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Weapon</text>
+<rect x="254.2" y="530.8" width="56.8" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="282.6" y="538.8" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Operates</text>
+<rect x="493.6" y="146.3" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="519.3" y="154.3" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Seizure</text>
+<circle cx="276" cy="271.5" r="37.7" fill="#f78166" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="276" cy="271.5" r="36.7" fill="none" stroke="#f78166" stroke-width="1.4" opacity="0.7"/>
+<circle cx="276" cy="271.5" r="29.700000000000003" fill="#0e1626" stroke="#f78166" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="276" cy="271.5" r="29.700000000000003" fill="none" stroke="#f78166" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(257.4 252.9) scale(1.547)" fill="#f78166"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="276" y="316.2" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Eric Fox</text>
+<text x="276" y="329.2" fill="#f78166" font-size="8.5" text-anchor="middle" letter-spacing="2" font-family="ui-monospace, monospace">◆ SUBJECT</text>
+<circle cx="438.2" cy="349.6" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="438.2" cy="349.6" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="438.2" cy="349.6" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(424.4 335.9) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="438.2" y="386.6" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Jane Fox</text>
+<circle cx="316.1" cy="447" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="316.1" cy="447" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="316.1" cy="447" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(302.4 433.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="316.1" y="484" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Rick Vale</text>
+<circle cx="163.8" cy="412.2" r="30" fill="#3fb950" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="163.8" cy="412.2" r="22" fill="#0e1626" stroke="#3fb950" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="163.8" cy="412.2" r="22" fill="none" stroke="#3fb950" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(150.1 398.4) scale(1.146)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
+<text x="163.8" y="449.2" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">3260 Jay St</text>
+<circle cx="96" cy="271.5" r="30" fill="#a371f7" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="96" cy="271.5" r="22" fill="#0e1626" stroke="#a371f7" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="96" cy="271.5" r="22" fill="none" stroke="#a371f7" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(82.3 257.8) scale(1.146)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
+<text x="96" y="308.5" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Plate ABC-123</text>
+<circle cx="456" cy="583.3" r="30" fill="#40c4ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="456" cy="583.3" r="22" fill="#0e1626" stroke="#40c4ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="456" cy="583.3" r="22" fill="none" stroke="#40c4ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(442.3 569.5) scale(1.146)" fill="#40c4ff"><path fill-rule="evenodd" d="M7.5 2.5h9A1.6 1.6 0 0 1 18.1 4.1v15.8a1.6 1.6 0 0 1-1.6 1.6h-9a1.6 1.6 0 0 1-1.6-1.6V4.1A1.6 1.6 0 0 1 7.5 2.5zm1.7 1.7a.55.55 0 0 0 0 1.1h5.6a.55.55 0 0 0 0-1.1zm2.8 12.9a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z"/></g>
+<text x="456" y="620.3" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Burner 555-0142</text>
+<circle cx="356.1" cy="622.5" r="30" fill="#ff6b8a" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="356.1" cy="622.5" r="22" fill="#0e1626" stroke="#ff6b8a" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="356.1" cy="622.5" r="22" fill="none" stroke="#ff6b8a" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(342.4 608.8) scale(1.146)" fill="#ff6b8a"><path d="M3 8h13.6V6.5h4.4a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2v2h-3v-2h-3.3l-1 4.4a2.4 2.4 0 1 1-4.7-1.1L6.5 12H4a1 1 0 0 1-1-1z"/></g>
+<text x="356.1" y="659.5" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Glock 19</text>
+<circle cx="163.8" cy="130.8" r="30" fill="#ff6ec7" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="163.8" cy="130.8" r="22" fill="#0e1626" stroke="#ff6ec7" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="163.8" cy="130.8" r="22" fill="none" stroke="#ff6ec7" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(150.1 117.1) scale(1.146)" fill="#ff6ec7"><path d="M12 3 2.5 8v1.6h19V8zM4.2 11h2.1v6H4.2zm4.8 0h2.1v6H9zm4.8 0h2.1v6h-2.1zM2.5 18.6h19V21h-19z"/></g>
+<text x="163.8" y="167.8" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Account 7731</text>
+<circle cx="316.1" cy="96" r="30" fill="#c792ea" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="316.1" cy="96" r="22" fill="#0e1626" stroke="#c792ea" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="316.1" cy="96" r="22" fill="none" stroke="#c792ea" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(302.4 82.3) scale(1.146)" fill="#c792ea"><path fill-rule="evenodd" d="M4 3h9.6v18H4zm11.1 6.5h5V21h-5zM6.5 6h2v2h-2zm3.6 0h2v2h-2zm-3.6 4h2v2h-2zm3.6 0h2v2h-2zm-3.6 4h2v2h-2zm3.6 0h2v2h-2zM16.9 12h1.9v2h-1.9zm0 4h1.9v2h-1.9z"/></g>
+<text x="316.1" y="133" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Harbor Holdings</text>
+<circle cx="249.1" cy="630.5" r="30" fill="#57d99b" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="249.1" cy="630.5" r="22" fill="#0e1626" stroke="#57d99b" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="249.1" cy="630.5" r="22" fill="none" stroke="#57d99b" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(235.3 616.8) scale(1.146)" fill="#57d99b"><path d="M2.5 11 12 6l9.5 5v9.6h-5.6v-5.2h-7.8v5.2H2.5z"/></g>
+<text x="249.1" y="667.5" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Pier 42 Whse</text>
+<circle cx="438.2" cy="193.4" r="30" fill="#d29922" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="438.2" cy="193.4" r="22" fill="#0e1626" stroke="#d29922" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="438.2" cy="193.4" r="22" fill="none" stroke="#d29922" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(424.4 179.7) scale(1.146)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
+<text x="438.2" y="230.4" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Arrest 2020-01</text>
+<circle cx="600.3" cy="115.3" r="30" fill="#ff7a45" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="600.3" cy="115.3" r="22" fill="#0e1626" stroke="#ff7a45" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="600.3" cy="115.3" r="22" fill="none" stroke="#ff7a45" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(586.5 101.5) scale(1.146)" fill="#ff7a45"><path d="M6 3v18h1.9v-6.7l9.7-3.2L14.6 8l3-4z"/></g>
+<text x="600.3" y="152.3" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Seizure 2022</text>
+<line x1="696" y1="0" x2="696" y2="726" stroke="#37e0ff" stroke-opacity="0.14"/>
+<text x="714" y="22" fill="#eaf6ff" font-size="13" font-weight="800" letter-spacing="1">LEGEND</text>
+<text x="714" y="44" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">ENTITIES</text>
+<circle cx="722" cy="64" r="9" fill="#0e1626" stroke="#58a6ff" stroke-width="1.8"/>
+<g transform="translate(716.5 58.5) scale(0.458)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="740" y="68" fill="#dcebf7" font-size="11.5">Person</text>
+<circle cx="722" cy="88" r="9" fill="#0e1626" stroke="#a371f7" stroke-width="1.8"/>
+<g transform="translate(716.5 82.5) scale(0.458)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
+<text x="740" y="92" fill="#dcebf7" font-size="11.5">Vehicle</text>
+<circle cx="722" cy="112" r="9" fill="#0e1626" stroke="#ff6b8a" stroke-width="1.8"/>
+<g transform="translate(716.5 106.5) scale(0.458)" fill="#ff6b8a"><path d="M3 8h13.6V6.5h4.4a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2v2h-3v-2h-3.3l-1 4.4a2.4 2.4 0 1 1-4.7-1.1L6.5 12H4a1 1 0 0 1-1-1z"/></g>
+<text x="740" y="116" fill="#dcebf7" font-size="11.5">Weapon</text>
+<circle cx="722" cy="136" r="9" fill="#0e1626" stroke="#40c4ff" stroke-width="1.8"/>
+<g transform="translate(716.5 130.5) scale(0.458)" fill="#40c4ff"><path fill-rule="evenodd" d="M7.5 2.5h9A1.6 1.6 0 0 1 18.1 4.1v15.8a1.6 1.6 0 0 1-1.6 1.6h-9a1.6 1.6 0 0 1-1.6-1.6V4.1A1.6 1.6 0 0 1 7.5 2.5zm1.7 1.7a.55.55 0 0 0 0 1.1h5.6a.55.55 0 0 0 0-1.1zm2.8 12.9a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z"/></g>
+<text x="740" y="140" fill="#dcebf7" font-size="11.5">Phone</text>
+<circle cx="722" cy="160" r="9" fill="#0e1626" stroke="#ff6ec7" stroke-width="1.8"/>
+<g transform="translate(716.5 154.5) scale(0.458)" fill="#ff6ec7"><path d="M12 3 2.5 8v1.6h19V8zM4.2 11h2.1v6H4.2zm4.8 0h2.1v6H9zm4.8 0h2.1v6h-2.1zM2.5 18.6h19V21h-19z"/></g>
+<text x="740" y="164" fill="#dcebf7" font-size="11.5">Account</text>
+<circle cx="722" cy="184" r="9" fill="#0e1626" stroke="#c792ea" stroke-width="1.8"/>
+<g transform="translate(716.5 178.5) scale(0.458)" fill="#c792ea"><path fill-rule="evenodd" d="M4 3h9.6v18H4zm11.1 6.5h5V21h-5zM6.5 6h2v2h-2zm3.6 0h2v2h-2zm-3.6 4h2v2h-2zm3.6 0h2v2h-2zm-3.6 4h2v2h-2zm3.6 0h2v2h-2zM16.9 12h1.9v2h-1.9zm0 4h1.9v2h-1.9z"/></g>
+<text x="740" y="188" fill="#dcebf7" font-size="11.5">Organization</text>
+<circle cx="722" cy="208" r="9" fill="#0e1626" stroke="#3fb950" stroke-width="1.8"/>
+<g transform="translate(716.5 202.5) scale(0.458)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
+<text x="740" y="212" fill="#dcebf7" font-size="11.5">Location</text>
+<circle cx="722" cy="232" r="9" fill="#0e1626" stroke="#57d99b" stroke-width="1.8"/>
+<g transform="translate(716.5 226.5) scale(0.458)" fill="#57d99b"><path d="M2.5 11 12 6l9.5 5v9.6h-5.6v-5.2h-7.8v5.2H2.5z"/></g>
+<text x="740" y="236" fill="#dcebf7" font-size="11.5">Premises</text>
+<circle cx="722" cy="256" r="9" fill="#0e1626" stroke="#d29922" stroke-width="1.8"/>
+<g transform="translate(716.5 250.5) scale(0.458)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
+<text x="740" y="260" fill="#dcebf7" font-size="11.5">Rap Sheet</text>
+<circle cx="722" cy="280" r="9" fill="#0e1626" stroke="#ff7a45" stroke-width="1.8"/>
+<g transform="translate(716.5 274.5) scale(0.458)" fill="#ff7a45"><path d="M6 3v18h1.9v-6.7l9.7-3.2L14.6 8l3-4z"/></g>
+<text x="740" y="284" fill="#dcebf7" font-size="11.5">Seizure</text>
+<circle cx="722" cy="304" r="9" fill="none" stroke="#f78166" stroke-width="2"/>
+<text x="740" y="308" fill="#dcebf7" font-size="11.5">Subject</text>
+<text x="714" y="336" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">RELATIONSHIPS</text>
+<line x1="714" y1="356" x2="731" y2="356" stroke="#58a6ff" stroke-width="2.6" stroke-linecap="round"/>
+<text x="740" y="360" fill="#dcebf7" font-size="11.5">Family</text>
+<line x1="714" y1="380" x2="731" y2="380" stroke="#3fb950" stroke-width="2.6" stroke-linecap="round"/>
+<text x="740" y="384" fill="#dcebf7" font-size="11.5">Associate</text>
+<line x1="714" y1="404" x2="731" y2="404" stroke="#d29922" stroke-width="2.6" stroke-linecap="round"/>
+<text x="740" y="408" fill="#dcebf7" font-size="11.5">Address</text>
+<line x1="714" y1="428" x2="731" y2="428" stroke="#f85149" stroke-width="2.6" stroke-dasharray="5,3" stroke-linecap="round"/>
+<text x="740" y="432" fill="#dcebf7" font-size="11.5">Arrest</text>
+<line x1="714" y1="452" x2="731" y2="452" stroke="#8b949e" stroke-width="2.6" stroke-linecap="round"/>
+<text x="740" y="456" fill="#dcebf7" font-size="11.5">Other</text>
 </svg>

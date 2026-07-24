@@ -72,11 +72,16 @@ pair each charge with an NCIC code + statute citation.
   edge analogue of the POLE entity filter), and the dossier shows each connection as
   **Type · Qualifier** (e.g. "Charge tie · Co-defendant"), coloured by tie type.
 
-**P4 — Adapter alignment**
-- Extend `validatePOLEData` to accept (and lightly validate) the richer fields; add
-  a `POLE_NODE_TYPES` note mapping each type to its NIEM element
-  (person→`nc:Person`, location→`nc:Location`, vehicle→`nc:Vehicle`,
-  rap_sheet→`rap:RapSheetCycle`/`j:Arrest`, case→`j:Case`, org→`nc:Organization`).
+**P4 — Library alignment — _implemented_**
+- `data-adapter.js` exports a grouped **`POLE_TAXONOMY`** (People / Objects /
+  Locations / Events) and derives `POLE_NODE_TYPES` from it — now 11 classes
+  (person; vehicle, weapon, phone, account, organization; location, premises;
+  rap_sheet, seizure, case). `location`/`rap_sheet`/`case` kept for compatibility;
+  `validatePOLEData` accepts all of them and still rejects unknown types.
+- `pole-presets.js` gains styles + SVG icons + labels for every new class, plus
+  **`POLE_REL_QUALIFIERS`** (the relationship qualifier vocabulary from P3).
+- Exported from the barrel; covered by tests; the `pole-graph.js` example exercises
+  the full taxonomy (regenerated `examples/img/pole-graph.svg`).
 
 **P5 — Provenance / message header**
 - Carry a `table`/source per entity (adapter already has `table`), and a rap-sheet

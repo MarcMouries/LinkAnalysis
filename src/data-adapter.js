@@ -6,7 +6,16 @@
 //  the GraphJS engine's `graph.loadJSON(...)`.
 // =============================================================
 
-export const POLE_NODE_TYPES = ["person", "location", "rap_sheet", "vehicle", "case"];
+// The POLE entity model, grouped into its four categories. `location`,
+// `rap_sheet` and `case` are kept for backward compatibility alongside the
+// finer classes (address/premises, arrest/seizure/court_case can be added freely).
+export const POLE_TAXONOMY = {
+	People: ["person"],
+	Objects: ["vehicle", "weapon", "phone", "account", "organization"],
+	Locations: ["location", "premises"],
+	Events: ["rap_sheet", "seizure", "case"],
+};
+export const POLE_NODE_TYPES = Object.values(POLE_TAXONOMY).flat();
 export const POLE_EDGE_TYPES = ["family", "associate", "address", "arrest", "other"];
 
 function fullName(node) {

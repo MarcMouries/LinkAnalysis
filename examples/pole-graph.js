@@ -5,25 +5,35 @@ import { Graph, RadialLayout } from "graphjs";
 import { transformServiceNowData, applyPOLEEdgeStyles, poleLegend } from "../src/index.js";
 import { renderPOLE } from "./render-pole.js";
 
-// A small person-of-interest network in ServiceNow / POLE shape.
+// A person-of-interest network in ServiceNow / POLE shape, exercising the full
+// entity taxonomy (People · Objects · Locations · Events).
 const source = {
 	nodes: [
 		{ id: "S", type: "person", is_subject: true, first_name: "Eric", last_name: "Fox" },
 		{ id: "w", type: "person", first_name: "Jane", last_name: "Fox" },
-		{ id: "b", type: "person", first_name: "Sam", last_name: "Fox" },
 		{ id: "a", type: "person", first_name: "Rick", last_name: "Vale" },
 		{ id: "loc", type: "location", name: "3260 Jay St" },
 		{ id: "car", type: "vehicle", name: "Plate ABC-123" },
-		{ id: "rap", type: "rap_sheet", name: "2020-01-30" },
+		{ id: "ph", type: "phone", name: "Burner 555-0142" },
+		{ id: "gun", type: "weapon", name: "Glock 19" },
+		{ id: "acct", type: "account", name: "Account 7731" },
+		{ id: "org", type: "organization", name: "Harbor Holdings" },
+		{ id: "whse", type: "premises", name: "Pier 42 Whse" },
+		{ id: "rap", type: "rap_sheet", name: "Arrest 2020-01" },
+		{ id: "seiz", type: "seizure", name: "Seizure 2022" },
 	],
 	edges: [
 		{ source: "S", target: "w", type: "family", label: "Wife" },
-		{ source: "S", target: "b", type: "family", label: "Brother" },
 		{ source: "S", target: "a", type: "associate", label: "Associate" },
 		{ source: "S", target: "loc", type: "address", label: "Known Address" },
 		{ source: "S", target: "car", type: "other", label: "Registered" },
+		{ source: "S", target: "acct", type: "other", label: "Account" },
+		{ source: "S", target: "org", type: "other", label: "Director" },
 		{ source: "S", target: "rap", type: "arrest", label: "Arrest" },
-		{ source: "a", target: "loc", type: "address", label: "Address" },
+		{ source: "a", target: "ph", type: "other", label: "Phone" },
+		{ source: "a", target: "gun", type: "other", label: "Weapon" },
+		{ source: "a", target: "whse", type: "address", label: "Operates" },
+		{ source: "rap", target: "seiz", type: "arrest", label: "Seizure" },
 	],
 };
 

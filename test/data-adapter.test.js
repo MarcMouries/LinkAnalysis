@@ -1,6 +1,24 @@
 import { test, expect, describe } from "bun:test";
 import { Graph } from "../src/Graph.js";
-import { transformServiceNowData, validatePOLEData, POLE_NODE_TYPES, POLE_EDGE_TYPES } from "../src/data-adapter.js";
+import { transformServiceNowData, validatePOLEData, POLE_TAXONOMY, POLE_NODE_TYPES, POLE_EDGE_TYPES } from "../src/data-adapter.js";
+
+describe("POLE taxonomy", () => {
+	test("groups the entity classes into the four POLE categories", () => {
+		expect(Object.keys(POLE_TAXONOMY)).toEqual(["People", "Objects", "Locations", "Events"]);
+		expect(POLE_NODE_TYPES).toEqual(Object.values(POLE_TAXONOMY).flat());
+	});
+
+	test("includes the richer object / location / event classes", () => {
+		for (const t of ["weapon", "phone", "account", "organization", "premises", "seizure"]) {
+			expect(POLE_NODE_TYPES).toContain(t);
+		}
+	});
+
+	test("validatePOLEData accepts the new classes (and still rejects unknown)", () => {
+		expect(validatePOLEData({ nodes: [{ id: "g", type: "weapon" }, { id: "p", type: "phone" }, { id: "o", type: "premises" }], edges: [] }).valid).toBe(true);
+		expect(validatePOLEData({ nodes: [{ id: "x", type: "spaceship" }], edges: [] }).valid).toBe(false);
+	});
+});
 
 const validData = {
 	nodes: [

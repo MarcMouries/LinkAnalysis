@@ -56,6 +56,15 @@ describe("poleNodeStyle", () => {
 		expect(poleNodeStyle({ type: "vehicle" }).icon).toContain("path");
 		expect(poleNodeStyle({ type: "weird" }).icon).toBe(POLE_NODE_STYLES.other && poleNodeStyle({ type: "other" }).icon);
 	});
+
+	test("styles the richer POLE classes with a colour + icon", () => {
+		for (const t of ["weapon", "phone", "account", "organization", "premises", "seizure"]) {
+			const s = poleNodeStyle({ type: t });
+			expect(s.fill).toBeDefined();
+			expect(s.stroke).toBeDefined();
+			expect(s.icon).toContain("<");
+		}
+	});
 });
 
 describe("applyPOLEEdgeStyles (adapter → engine → styling)", () => {
