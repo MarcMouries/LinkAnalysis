@@ -3,9 +3,9 @@
 
 <head>
 	<title></title>
+	<script src="la-globals.js"></script>
 	<script type="text/javascript" src="../src/image_utils.js"></script>
 	<script type="text/javascript" src="../src/links_icons.js"></script>
-	<script type="text/javascript" src="../src/trigo.js"></script>
 
 	<link rel="stylesheet" href="./style.css">
 
@@ -345,7 +345,7 @@
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
 
-					if (pointInCircle(lx, ly, node)) {
+					if (pointInCircle({ x: lx, y: ly }, node)) {
 						node.isClicked = true;
 						current_node = node;
 						offset.x = lx;
@@ -384,7 +384,7 @@
 					//
 					//node.containsPoint()
 					//
-					if (pointInCircle(lx, ly, node)) {
+					if (pointInCircle({ x: lx, y: ly }, node)) {
 						//if (pointInCircle(event.clientX, event.clientY, node)) {
 						node.isBelowMouse = true;
 					} else {

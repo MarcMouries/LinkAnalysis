@@ -30,6 +30,7 @@
 		"dev": "bun build src/index.js --outfile dist/esm/index.js --format=esm --watch",
 		"test": "bun test",
 		"examples": "bun run examples/pole-graph.js > examples/img/pole-graph.svg",
+		"examples:lib": "bun build src/globals.js --outfile examples/la-globals.js --format=iife",
 		"prepublishOnly": "bun run build"
 	},
 	"repository": {
