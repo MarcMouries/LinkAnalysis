@@ -2,7 +2,14 @@
 
 ![Screenshot](docs/LinkAnalysis.png)
 
-A graph-visualization library for intelligence / link-analysis (POLE entity) networks.
+A graph-visualization library for intelligence / criminal link-analysis networks,
+built around the **POLE** entity model.
+
+> **POLE** stands for **P**eople, **O**bjects, **L**ocations, **E**vents — the four
+> core entity types used in intelligence and criminal-investigation link analysis.
+> A person of interest (a *Person*) is connected to the vehicles they use (*Objects*),
+> the addresses they frequent (*Locations*) and the incidents they are involved in
+> (*Events*), and LinkAnalysis renders those relationships as a graph.
 
 ## Status
 
@@ -23,8 +30,13 @@ import { RadialLayout } from "graphjs";        // or straight from the engine
 LinkAnalysis owns the domain layer: the data model, the POLE data adapter
 (`transformServiceNowData` / `validatePOLEData`), and (upcoming) POLE node/edge
 templates and presets. The legacy canvas renderer and `PieMenu` are still
-`<script>`-loaded by the manual harnesses under `test/` and will be rewired onto
-the GraphJS engine.
+`<script>`-loaded by the interactive demos under [`examples/`](examples/) and will be
+rewired onto the GraphJS engine.
+
+## Layout
+
+`test/` holds the automated `bun test` suite; `examples/` holds the interactive
+browser demos (see [`examples/README.md`](examples/README.md)).
 
 ## Development
 
