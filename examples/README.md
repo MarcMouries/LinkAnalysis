@@ -1,5 +1,13 @@
 # LinkAnalysis examples
 
+## Live pages (GitHub Pages)
+
+| Page | What it is |
+|------|-----------|
+| [`../command-center.html`](../command-center.html) | **Flagship** — cinematic POLE intelligence console: force graph, radial PieMenu, dossiers, WebGL grid |
+| [`tree.html`](tree.html) | Interactive tidy tree layout (Walker-style) with animated card nodes |
+| [`../index.html`](../index.html) | Landing page linking every demo |
+
 ## Headless (runnable with `bun`)
 
 | Example | What it does |

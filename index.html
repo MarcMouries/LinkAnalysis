@@ -1,34 +1,147 @@
-<html>
-  <head>
-    <title>LinkAnalysis</title>
-    <style type="text/css">
-      @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
-  
-      html,
-      body {
-         font-size: 12px;
-        font-family: 'Libre Baskerville', serif;
-      }
-  
-      canvas {
-        display: block;
-      }
-    </style>
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkAnalysis — POLE Intelligence</title>
+<meta name="description" content="POLE (People, Objects, Locations, Events) link-analysis graph library — demos and command console.">
+<style>
+  :root{
+    --bg:#070b14; --bg2:#0a1220; --ink:#c4d8e8; --dim:#7089a1; --faint:#465b72;
+    --cyan:#37e0ff; --amber:#ffab3d; --line:color-mix(in oklab,#37e0ff 18%,transparent);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:
+      radial-gradient(1100px 700px at 75% -10%,color-mix(in oklab,var(--cyan) 10%,transparent),transparent 60%),
+      radial-gradient(900px 600px at 0% 100%,color-mix(in oklab,#b072ff 8%,transparent),transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--mono);min-height:100vh;line-height:1.5;
+    background-attachment:fixed;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:46px 46px;mask-image:radial-gradient(130% 100% at 60% 0%,#000 30%,transparent 80%);opacity:.5}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:34px 24px 80px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  header b{font-family:var(--sans);font-weight:800;font-size:22px;letter-spacing:.03em;color:#eaf6ff;
+    text-shadow:0 0 24px color-mix(in oklab,var(--cyan) 45%,transparent)}
+  header .tag{color:var(--cyan);font-size:10px;letter-spacing:.34em}
+  header .spacer{flex:1}
+  header a.gh{color:var(--dim);font-size:11px;letter-spacing:.1em;text-decoration:none;border:1px solid var(--line);
+    padding:6px 11px;border-radius:4px}
+  header a.gh:hover{color:var(--cyan);border-color:var(--cyan)}
+  .lede{margin:22px 0 8px;max-width:64ch;color:var(--ink)}
+  .lede .pole{color:var(--cyan)}
+  .note{color:var(--faint);font-size:12px;max-width:64ch}
 
+  /* hero */
+  .hero{margin:30px 0 40px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative;
+    background:linear-gradient(180deg,color-mix(in oklab,#0a1424 70%,transparent),color-mix(in oklab,#070d18 80%,transparent));
+    display:grid;grid-template-columns:1.15fr 1fr;min-height:300px}
+  .hero .copy{padding:34px;display:flex;flex-direction:column;gap:16px;justify-content:center}
+  .hero h1{font-family:var(--sans);font-weight:800;font-size:30px;line-height:1.1;color:#eaf6ff;text-wrap:balance}
+  .hero p{color:var(--dim);max-width:42ch;font-size:13px}
+  .cta{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+    font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:#04121a;background:var(--cyan);
+    padding:13px 20px;border-radius:5px;box-shadow:0 0 30px color-mix(in oklab,var(--cyan) 40%,transparent);
+    transition:transform .15s, box-shadow .15s;text-transform:uppercase;font-weight:700}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 0 44px color-mix(in oklab,var(--cyan) 60%,transparent)}
+  .hero .art{position:relative;border-left:1px solid var(--line);background:#060a12}
+  .hero .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left center}
 
-  <body>
-    <h1>LinkAnalysis</h1>
-    <p>Interactive demos (many are being migrated to ES modules — see <code>examples/README.md</code>).
-       The tree-layout demo now lives in the <a href="https://github.com/MarcMouries/GraphJS">GraphJS</a> engine.</p>
-    <ul>
-      <li><a href="examples/test_MCanvas.html">MCanvas</a></li>
-      <li><a href="examples/test_Icons.html">Nodes with Icons (POLE)</a></li>
-      <li><a href="examples/test_PieMenu.html">Pie Menu</a></li>
-      <li><a href="examples/test_Graph.html">Graph</a></li>
-      <li><a href="examples/test_LinkAnalysis.html">LinkAnalysis</a></li>
-      <li><a href="examples/ascii-tree-to-json.html">ASCII Tree to JSON</a></li>
-      <li><a href="examples/test_trackmousetouch.html">Track Mouse &amp; Touch</a></li>
-    </ul>
-  </body>
+  h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);margin:34px 0 14px;
+    display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .card{display:flex;flex-direction:column;gap:9px;padding:16px;border:1px solid var(--line);border-radius:8px;
+    background:color-mix(in oklab,#0a1220 60%,transparent);text-decoration:none;color:var(--ink);
+    transition:border-color .15s,transform .15s,background .15s}
+  .card:hover{border-color:var(--cyan);transform:translateY(-3px);background:color-mix(in oklab,var(--cyan) 7%,#0a1220)}
+  .card .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card .name{font-family:var(--sans);font-weight:700;font-size:15px;color:#eaf6ff}
+  .card .desc{font-size:12px;color:var(--dim);line-height:1.45}
+  .badge{font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid currentColor}
+  .badge.live{color:var(--cyan)} .badge.tool{color:#2fe08a} .badge.wip{color:var(--amber)}
+  footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);color:var(--faint);font-size:11px;
+    display:flex;gap:20px;flex-wrap:wrap}
+  footer a{color:var(--dim);text-decoration:none} footer a:hover{color:var(--cyan)}
+  @media (max-width:720px){ .hero{grid-template-columns:1fr} .hero .art{min-height:200px;border-left:0;border-top:1px solid var(--line)} .hero .art img{position:relative} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <b>LINKANALYSIS</b><span class="tag">POLE INTELLIGENCE</span>
+    <span class="spacer"></span>
+    <a class="gh" href="https://github.com/MarcMouries/LinkAnalysis">GITHUB ↗</a>
+  </header>
+
+  <p class="lede">A graph-visualization library for intelligence / criminal link analysis, built around the
+    <span class="pole">POLE</span> entity model — <b>P</b>eople, <b>O</b>bjects, <b>L</b>ocations, <b>E</b>vents.
+    The layout engine lives in <a href="https://github.com/MarcMouries/GraphJS" style="color:var(--cyan)">GraphJS</a>;
+    LinkAnalysis is the domain layer on top.</p>
+
+  <a class="hero" href="command-center.html" style="text-decoration:none;color:inherit">
+    <div class="copy">
+      <div class="tag" style="color:var(--cyan);letter-spacing:.3em;font-size:10px">▸ FLAGSHIP CONSOLE</div>
+      <h1>POLE Intelligence Grid</h1>
+      <p>A live, cinematic link-analysis console: a force-directed person-of-interest network with a
+         radial right-click PieMenu, entity dossiers, and a tactical HUD.</p>
+      <span class="cta">Launch command center →</span>
+    </div>
+    <div class="art"><img src="examples/img/pole-graph.svg" alt="POLE network preview"></div>
+  </a>
+
+  <h2>Live demos</h2>
+  <div class="grid">
+    <a class="card" href="command-center.html">
+      <div class="top"><span class="name">Command Center</span><span class="badge live">Live</span></div>
+      <div class="desc">The flagship console — force graph, radial PieMenu, dossiers, WebGL grid.</div>
+    </a>
+    <a class="card" href="tree.html">
+      <div class="top"><span class="name">Tree Layout</span><span class="badge live">Live</span></div>
+      <div class="desc">Tidy hierarchical layout (Walker's algorithm) with animated card nodes.</div>
+    </a>
+    <a class="card" href="examples/test_PieMenu.html">
+      <div class="top"><span class="name">Pie Menu</span><span class="badge tool">Demo</span></div>
+      <div class="desc">The original radial context-menu prototype (canvas sectors).</div>
+    </a>
+    <a class="card" href="examples/test_trackmousetouch.html">
+      <div class="top"><span class="name">Mouse &amp; Touch</span><span class="badge tool">Demo</span></div>
+      <div class="desc">Pointer / touch tracking sandbox.</div>
+    </a>
+    <a class="card" href="examples/ascii-tree-to-json.html">
+      <div class="top"><span class="name">ASCII Tree → JSON</span><span class="badge tool">Tool</span></div>
+      <div class="desc">Paste an ASCII tree, get graph JSON.</div>
+    </a>
+  </div>
+
+  <h2>Legacy canvas demos · migrating to ES modules</h2>
+  <div class="grid">
+    <a class="card" href="examples/test_Icons.html">
+      <div class="top"><span class="name">Entity Icons</span><span class="badge wip">WIP</span></div>
+      <div class="desc">POLE icon set — being rewired onto the engine.</div>
+    </a>
+    <a class="card" href="examples/test_MCanvas.html">
+      <div class="top"><span class="name">MCanvas</span><span class="badge wip">WIP</span></div>
+      <div class="desc">Canvas primitives.</div>
+    </a>
+    <a class="card" href="examples/test_Graph.html">
+      <div class="top"><span class="name">Graph</span><span class="badge wip">WIP</span></div>
+      <div class="desc">Graph traversal harness.</div>
+    </a>
+    <a class="card" href="examples/test_LinkAnalysis.html">
+      <div class="top"><span class="name">LinkAnalysis (canvas)</span><span class="badge wip">WIP</span></div>
+      <div class="desc">Full canvas component — original renderer.</div>
+    </a>
+  </div>
+
+  <footer>
+    <span>Built on the <a href="https://github.com/MarcMouries/GraphJS">GraphJS</a> engine · <a href="https://www.npmjs.com/package/graphjs">graphjs on npm</a></span>
+    <span>Demo status &amp; notes: <a href="https://github.com/MarcMouries/LinkAnalysis/blob/main/examples/README.md">examples/README</a></span>
+  </footer>
+</div>
+</body>
 </html>
