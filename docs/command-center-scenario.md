@@ -163,6 +163,23 @@ cases into a single network. The interactive discovery model mirrors real
 analytical work: start from a subject, pull threads, and let the graph reveal
 the structure.
 
+## Rap sheets
+
+Persons with an arrest history carry a **rap sheet** — right-click the node →
+**⚖ Rap Sheet** (or the button in their dossier) to open a criminal-history
+printout styled after a **NIEM/NLETS III response** and the **NY DCJS** layout.
+
+Data model and vocabulary (statutes, severities, dispositions, sentences) are
+drawn from the provided source documents (`rap-sheet-sample.xml`,
+`Sample_NY_DCJS_RAP_Sheet.pdf`). Each sheet has: identification (name, aliases,
+DOB, sex/race/descriptors, SID/FBI, marks) → summary (arrests / convictions) →
+numbered **cycles** (arrest date, agency, arrest #, and per-charge statute,
+severity/class, disposition, sentence).
+
+Records on file: **Eric Fox** (2), **Rick Vale** (2), **Marcus Reed** (3),
+**Omar Diaz** (1), **Vic Sloan** (2). The other persons have no record and show
+no rap-sheet action.
+
 ## Console mechanics referenced
 
 - **Expand** (right-click node) — reveal a node's real neighbours.

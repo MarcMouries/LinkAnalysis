@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="A guided link-analysis investigation — expand entities to uncover the network and earn the hidden Fox <-> Reed connection.">
+<meta name="description" content="A guided link-analysis investigation with NLETS/NY-DCJS rap sheets.">
 </head>
 <body>
 <style>
@@ -204,6 +204,53 @@
     text-transform: uppercase; color: var(--cyan); border: 1px solid var(--cyan); padding: 8px 16px; border-radius: 5px; }
   #reveal .rv-close:hover { background: color-mix(in oklab, var(--cyan) 16%, transparent); }
 
+  /* rap sheet viewer */
+  #rapsheet { position: absolute; inset: 0; z-index: 35; display: grid; place-items: center;
+    background: color-mix(in oklab, #04060c 72%, transparent); backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity .3s; }
+  #rapsheet.show { opacity: 1; pointer-events: auto; }
+  .rs-doc { width: min(640px, 92vw); max-height: 84vh; display: flex; flex-direction: column;
+    background: #0a0f18; border: 1px solid var(--cyan); border-radius: 8px; overflow: hidden;
+    box-shadow: 0 0 60px color-mix(in oklab, var(--cyan) 30%, transparent); }
+  .rs-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--edge);
+    background: color-mix(in oklab, var(--cyan) 8%, #0a0f18); }
+  .rs-bar .rs-tag { color: var(--cyan); font-size: 11px; letter-spacing: .24em; }
+  .rs-bar #rs-name { font-family: var(--sans); font-weight: 700; color: #eaf6ff; font-size: 14px; flex: 1; }
+  .rs-bar .rs-x { cursor: pointer; font-size: 10px; letter-spacing: .12em; color: var(--ink-dim); border: 1px solid var(--edge); padding: 5px 10px; border-radius: 4px; }
+  .rs-bar .rs-x:hover { color: var(--red); border-color: var(--red); }
+  .rs-scroll { overflow-y: auto; padding: 18px 20px 22px; font-size: 12px; line-height: 1.6; }
+  .rs-scroll::-webkit-scrollbar { width: 7px; } .rs-scroll::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 4px; }
+  .rs-title { color: var(--cyan); font-size: 10px; letter-spacing: .2em; text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--edge); margin-bottom: 12px; }
+  .rs-id > div { padding: 2px 0; color: #cfe3ee; }
+  .rs-id .rs-k { color: var(--ink-faint); font-size: 9px; letter-spacing: .12em; margin-right: 7px; }
+  .rs-id > div .rs-k ~ .rs-k { margin-left: 16px; }
+  .rs-sum { display: flex; gap: 22px; flex-wrap: wrap; margin: 14px 0; padding: 10px 12px; border: 1px solid var(--edge); border-radius: 5px; background: color-mix(in oklab, var(--cyan) 5%, transparent); font-size: 10px; letter-spacing: .1em; color: var(--ink-dim); }
+  .rs-sum b { color: #eaf6ff; font-size: 14px; margin-left: 6px; } .rs-sum b.hot { color: var(--red); }
+  .rs-sec { color: var(--amber); font-size: 10px; letter-spacing: .16em; margin: 6px 0 10px; }
+  .rs-cyc { border: 1px solid var(--edge); border-radius: 6px; margin-bottom: 10px; overflow: hidden; }
+  .rs-cyc-h { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px 11px; background: color-mix(in oklab, var(--cyan) 6%, #0a0f18); border-bottom: 1px solid var(--edge); }
+  .rs-cyc-h .rs-num { color: var(--cyan); font-size: 10px; letter-spacing: .12em; }
+  .rs-cyc-h .rs-cd { color: #eaf6ff; font-variant-numeric: tabular-nums; }
+  .rs-cyc-h .rs-ca { color: var(--ink); flex: 1; }
+  .rs-cyc-h .rs-cno { color: var(--ink-dim); font-size: 10px; }
+  .rs-chg { padding: 9px 11px; border-top: 1px solid color-mix(in oklab, var(--edge) 60%, transparent); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+  .rs-chg:first-of-type { border-top: 0; }
+  .rs-sev { font-size: 9px; letter-spacing: .06em; padding: 2px 7px; border-radius: 3px; }
+  .rs-sev.fel { color: var(--red); border: 1px solid var(--red); }
+  .rs-sev.mis { color: var(--amber); border: 1px solid var(--amber); }
+  .rs-sev.oth { color: var(--ink-dim); border: 1px solid var(--edge); }
+  .rs-stat { color: #eaf6ff; font-family: var(--sans); font-size: 13px; font-weight: 600; flex: 1; min-width: 160px; }
+  .rs-disp { color: var(--ink-dim); font-size: 11px; }
+  .rs-sent { flex-basis: 100%; color: var(--amber); font-size: 10px; letter-spacing: .04em; padding-left: 46px; }
+  .rs-cnote { flex-basis: 100%; color: var(--ink-faint); font-size: 10px; padding-left: 46px; }
+  .rs-caveat { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--edge); color: var(--red); font-size: 9px; letter-spacing: .06em; line-height: 1.5; }
+  /* dossier rap-sheet button */
+  .rap-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;
+    padding: 9px 12px; border-radius: 6px; border: 1px solid color-mix(in oklab, var(--amber) 40%, transparent);
+    background: color-mix(in oklab, var(--amber) 9%, transparent); color: var(--amber); font-size: 11px; letter-spacing: .1em; }
+  .rap-btn:hover { background: color-mix(in oklab, var(--amber) 18%, transparent); }
+  .rap-btn .rap-n { color: var(--ink-dim); font-size: 9px; letter-spacing: .08em; }
+
   /* --- PieMenu --- */
   #pie { position: absolute; z-index: 20; inset: 0; pointer-events: none; }
   #pie.open { pointer-events: auto; }
@@ -286,6 +333,13 @@
   </div>
 
   <div id="pie"></div>
+
+  <div id="rapsheet">
+    <div class="rs-doc">
+      <div class="rs-bar"><span class="rs-tag">⚖ RAP SHEET</span><span id="rs-name"></span><span class="rs-x">✕ CLOSE · ESC</span></div>
+      <div id="rs-body" class="rs-scroll"></div>
+    </div>
+  </div>
 
   <div id="reveal">
     <div class="rv-tag">◈ LINK ANALYSIS · CONNECTION FOUND</div>
@@ -409,9 +463,46 @@
     ],
   };
 
+  // Sample rap sheets — structured like a NIEM/NLETS III response and the NY
+  // DCJS criminal-history layout. Vocabulary (statutes, severities, dispositions,
+  // sentences) is drawn from the provided NLETS RapSheet XML.
+  const RAP = {
+    S: { name:"FOX, ERIC J", sid:"NYSID 04821563Q", fbi:"665248LA9", dob:"1985-03-14", sex:"M", race:"White",
+      ht:`5'11"`, wt:"180", eyes:"Brown", hair:"Black", marks:["TAT L ARM"], aka:["FOX, E"], cycles:[
+      { date:"2016-06-02", agency:"HARBOR PD", no:"A-16-33412", charges:[
+        { stat:"POSSESS CONTROLLED SUBSTANCE", sev:"Felony", cls:"F/D", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
+      { date:"2020-01-30", agency:"BAY COUNTY SO", no:"20-00841", charges:[
+        { stat:"BURGLARY", sev:"Felony", cls:"F/C", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL" },
+        { stat:"POSSESS CONTROLLED SUBSTANCE", sev:"Felony", cls:"F/D", disp:"CONVICTED-JAIL", sent:"—" } ]} ]},
+    rick: { name:"VALE, RICHARD", sid:"NYSID 03110778R", fbi:"551903KB2", dob:"1988-11-02", sex:"M", race:"White",
+      ht:`6'00"`, wt:"195", eyes:"Hazel", hair:"Brown", marks:[], aka:["VALE, RICK"], cycles:[
+      { date:"2018-09-11", agency:"HARBOR PD", no:"18-22104", charges:[
+        { stat:"TRESPASS:CLOSED LANDS", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
+      { date:"2020-01-30", agency:"BAY COUNTY SO", no:"20-00842", charges:[
+        { stat:"ROBBERY", sev:"Felony", cls:"F/B", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: FOX, ERIC" } ]} ]},
+    marcus: { name:"REED, MARCUS A", sid:"NYSID 02997410M", fbi:"774100MC5", dob:"1979-07-22", sex:"M", race:"Black",
+      ht:`6'02"`, wt:"210", eyes:"Brown", hair:"Black", marks:["SC L CHEEK"], aka:["REED, M"], cycles:[
+      { date:"2011-03-20", agency:"METRO PD", no:"11-40188", charges:[
+        { stat:"ROBBERY", sev:"Felony", cls:"F/B", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
+      { date:"2019-07-14", agency:"STATE POLICE - MARINE", no:"19-77213", charges:[
+        { stat:"POSSESS NARC CONTROL SUBSTANCE", sev:"Felony", cls:"F/B", disp:"CONVICTED COMMITTED TO PRISON", sent:"010 YEARS PRISON", note:"CO-DEF: DIAZ, OMAR" } ]},
+      { date:"2022-05-09", agency:"BAY COUNTY SO", no:"22-51188", charges:[
+        { stat:"MISCELLANEOUS OFFENSE", sev:"Felony", cls:"F/—", disp:"PROS REL-DET ONLY-LACK OF SUFF EVID", sent:"—", note:"PIER 42 SEIZURE" } ]} ]},
+    omar: { name:"DIAZ, OMAR", sid:"NYSID 05230991O", fbi:"660412OD1", dob:"1990-02-17", sex:"M", race:"White",
+      ht:`5'09"`, wt:"170", eyes:"Brown", hair:"Black", marks:[], aka:[], cycles:[
+      { date:"2019-07-14", agency:"STATE POLICE - MARINE", no:"19-77214", charges:[
+        { stat:"POSSESS NARC CONTROL SUBSTANCE", sev:"Felony", cls:"F/B", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: REED, MARCUS" } ]} ]},
+    vic: { name:"SLOAN, VICTOR", sid:"NYSID 01887346V", fbi:"448820VS7", dob:"1968-12-01", sex:"M", race:"White",
+      ht:`5'10"`, wt:"200", eyes:"Blue", hair:"Gray", marks:["TAT R ARM"], aka:["SLOAN, VIC"], cycles:[
+      { date:"2004-08-19", agency:"METRO PD", no:"04-11902", charges:[
+        { stat:"MISCELLANEOUS OFFENSE", sev:"Misdemeanor", cls:"M/B", disp:"DISCHARGED", sent:"—" } ]},
+      { date:"2021-11-03", agency:"CITY PD - FRAUD UNIT", no:"21-90551", charges:[
+        { stat:"MISCELLANEOUS OFFENSE", sev:"Felony", cls:"F/—", disp:"REL/DET ONLY/ADMISS EVIDENCE INSUFF", sent:"—", note:"STRUCTURING / SUSP. LAUNDERING" } ]} ]},
+  };
+
   // ---------- model ----------
   const nodes = RAW.nodes.map(n => ({ ...n, x:0, y:0, vx:0, vy:0, fx:null, fy:null,
-    r:(n.subject?24:15), deg:0, flagged:false, hidden:false, discovered:false }));
+    r:(n.subject?24:15), deg:0, flagged:false, hidden:false, discovered:false, rapSheet: RAP[n.id] || null }));
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
   const links = RAW.edges.map(e => {
     const st = REL[e.type] || REL.other;
@@ -656,6 +747,12 @@
     { icon:"⟿", label:"Trace",   fn:n=>{ tracePath(n); } },
     { icon:n=>n.fx!=null&&!n.subject?"⊙":"⊗", label:n=>n.pinned?"Unpin":"Pin", fn:n=>{ togglePin(n); } },
   ];
+  // Add a "Rap Sheet" action only for persons who have one.
+  function nodeActions(n){
+    const a = NODE_ACTIONS.slice();
+    if (n.rapSheet) a.splice(2, 0, { icon:"⚖", label:"Rap Sheet", fn:x=>openRapSheet(x) });
+    return a;
+  }
   const CANVAS_ACTIONS = [
     { icon:"◉", label:"Uncover all", fn:()=>{ uncoverAll(); } },
     { icon:"↻", label:"Re-layout",fn:()=>{ reheat(1); pushFeed("FORCE ENGINE RE-SPOOLED"); } },
@@ -666,7 +763,7 @@
   ];
   function openPie(x,y,node){
     pie.open=true; pie.node=node||null; pieEl.classList.add("open");
-    const acts = node ? NODE_ACTIONS : CANVAS_ACTIONS;
+    const acts = node ? nodeActions(node) : CANVAS_ACTIONS;
     const R0=34, R1=88, n=acts.length, gap=0.045;
     const size=(R1+22)*2, cxp=size/2, cyp=size/2;
     let svg=`<svg width="${size}" height="${size}" style="left:${x-cxp}px;top:${y-cyp}px">`;
@@ -704,7 +801,7 @@
   }
   function closePie(){ pie.open=false; pieEl.classList.remove("open"); pieEl.innerHTML=""; }
   window.addEventListener("click", e=>{ if(pie.open && !e.target.closest("#pie")) closePie(); });
-  window.addEventListener("keydown", e=>{ if(e.key==="Escape") closePie(); });
+  window.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closePie(); closeRapSheet(); } });
   function shortName(s){ return s.length>12? s.slice(0,11)+"…": s; }
 
   // ---------- actions ----------
@@ -753,6 +850,40 @@
   function resetAll(){
     location.reload();
   }
+  // Rap sheet viewer (NLETS III / NY DCJS style printout).
+  function openRapSheet(n){
+    const r=n.rapSheet; if(!r) return;
+    const arrests=r.cycles.length;
+    const convictions=r.cycles.reduce((s,c)=>s+c.charges.filter(ch=>/CONVICTED/.test(ch.disp)).length,0);
+    const chargeRow=ch=>`<div class="rs-chg">`+
+      `<span class="rs-sev ${ch.sev==='Felony'?'fel':ch.sev==='Misdemeanor'?'mis':'oth'}">${ch.sev==='Felony'?'FEL':ch.sev==='Misdemeanor'?'MIS':'OTH'}${ch.cls?' '+ch.cls:''}</span>`+
+      `<span class="rs-stat">${ch.stat}</span>`+
+      `<span class="rs-disp">${ch.disp}</span>`+
+      `<span class="rs-sent">${ch.sent||'—'}</span>`+
+      (ch.note?`<span class="rs-cnote">▸ ${ch.note}</span>`:'')+`</div>`;
+    const cycles=r.cycles.map((c,i)=>`<div class="rs-cyc">`+
+      `<div class="rs-cyc-h"><span class="rs-num">CYCLE ${String(i+1).padStart(2,'0')}</span>`+
+      `<span class="rs-cd">${c.date}</span><span class="rs-ca">${c.agency}</span><span class="rs-cno">ARR# ${c.no}</span></div>`+
+      c.charges.map(chargeRow).join('')+`</div>`).join('');
+    document.getElementById("rs-name").textContent=r.name;
+    document.getElementById("rs-body").innerHTML=
+      `<div class="rs-title">CRIMINAL HISTORY RECORD — NLETS / III MULTI-STATE RESPONSE</div>`+
+      `<div class="rs-id">`+
+        `<div><span class="rs-k">NAME</span>${r.name}</div>`+
+        `<div><span class="rs-k">SID</span>${r.sid}<span class="rs-k">FBI</span>${r.fbi}</div>`+
+        `<div><span class="rs-k">DOB</span>${r.dob}<span class="rs-k">SEX</span>${r.sex}<span class="rs-k">RACE</span>${r.race}</div>`+
+        `<div><span class="rs-k">HT</span>${r.ht}<span class="rs-k">WT</span>${r.wt}<span class="rs-k">EYE</span>${r.eyes}<span class="rs-k">HAIR</span>${r.hair}</div>`+
+        (r.aka.length?`<div><span class="rs-k">AKA</span>${r.aka.join('  ·  ')}</div>`:'')+
+        (r.marks.length?`<div><span class="rs-k">MARKS</span>${r.marks.join(', ')}</div>`:'')+
+      `</div>`+
+      `<div class="rs-sum"><span>ARRESTS <b>${arrests}</b></span><span>CONVICTIONS <b>${convictions}</b></span><span>STATUS <b class="hot">ACTIVE</b></span></div>`+
+      `<div class="rs-sec">CRIMINAL HISTORY · CHARGE / DISPOSITION / SENTENCE</div>`+
+      cycles+
+      `<div class="rs-caveat">RESTRICTED — DO NOT USE FOR EMPLOYMENT, LICENSING, PLACEMENT OR CERTIFICATION PURPOSES. CRIMINAL HISTORY RECORD INFORMATION IS FOR CRIMINAL JUSTICE USE ONLY.</div>`;
+    document.getElementById("rapsheet").classList.add("show");
+    pushFeed("RAP SHEET ▸ "+n.name+" ("+arrests+" arrests)");
+  }
+  function closeRapSheet(){ const e=document.getElementById("rapsheet"); if(e) e.classList.remove("show"); }
 
   // ---------- HUD ----------
   const filtersEl=document.getElementById("filters");
@@ -795,6 +926,7 @@
         <div><div class="d-name">${n.name}</div><div class="d-sub">${n.subject?"◆ PRIMARY SUBJECT":TYPE[n.type]?.label}${n.shared?` · <span style="color:#37e0ff">⊗ SHARED ×${n.sharedBy}</span>`:""}</div></div>
       </div>
       ${n.shared?`<div style="border:1px solid color-mix(in oklab,#37e0ff 34%,transparent);border-radius:6px;padding:9px 11px;background:color-mix(in oklab,#37e0ff 8%,transparent)"><span class="label" style="color:#37e0ff">⊗ Cross-referenced</span><div style="font-family:var(--sans);font-size:12px;margin-top:4px;color:#cfe3ee">Ties <b>${n.sharedBy}</b> separate persons — a bridge between otherwise-unconnected parties.</div></div>`:""}
+      ${n.rapSheet?`<div class="rap-btn" data-rap="${n.id}"><span>⚖ VIEW RAP SHEET</span><span class="rap-n">${n.rapSheet.cycles.length} ARRESTS</span></div>`:""}
       <div class="fields">
         <div class="field"><div class="k">Entity ID</div><div class="v val">${n.id.toUpperCase()}</div></div>
         <div class="field"><div class="k">Class</div><div class="v">${TYPE[n.type]?.label}</div></div>
@@ -810,6 +942,7 @@
     `;
     requestAnimationFrame(()=>{ const f=dossierBody.querySelectorAll(".fill"); if(f[0])f[0].style.width=cent+"%"; if(f[1])f[1].style.width=threat+"%"; });
     dossierBody.querySelectorAll(".conn").forEach(c=>c.onclick=()=>select(c.dataset.id));
+    const rb=dossierBody.querySelector(".rap-btn"); if(rb) rb.onclick=()=>openRapSheet(byId[rb.dataset.rap]);
   }
   function refreshStats(){ document.getElementById("stat-nodes").textContent=nodes.filter(n=>!n.hidden).length; document.getElementById("stat-links").textContent=links.length; }
 
@@ -820,6 +953,7 @@
     "Objective: prove or rule out a link to M.REED",
     "▸ right-click an entity → EXPAND to uncover its links",
     "Dashed ring = shared (cross-referenced) resource",
+    "⚖ persons with a record expose a RAP SHEET action",
   ];
   const tkRun=document.getElementById("tk-run");
   function renderFeed(){ const items=FEED.concat(FEED); tkRun.innerHTML=items.map(f=>`<span><b>▸</b> ${f}</span>`).join(""); }
@@ -898,6 +1032,8 @@
   // ---------- init ----------
   const rvClose=document.querySelector("#reveal .rv-close");
   if (rvClose) rvClose.onclick=()=>document.getElementById("reveal").classList.remove("show");
+  const rsx=document.querySelector("#rapsheet .rs-x"); if (rsx) rsx.onclick=closeRapSheet;
+  const rsRoot=document.getElementById("rapsheet"); if (rsRoot) rsRoot.addEventListener("click", e=>{ if(e.target===rsRoot) closeRapSheet(); });
   window.addEventListener("resize", ()=>{ resize(); });
   resize(); initDiscovery(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
 })();
