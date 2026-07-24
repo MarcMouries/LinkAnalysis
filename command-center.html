@@ -68,12 +68,6 @@
     position: absolute; inset: 0; z-index: 3; pointer-events: none;
     box-shadow: inset 0 0 240px 40px rgba(0,0,0,.85), inset 0 0 60px rgba(0,0,0,.6);
   }
-  #sweep {
-    position: absolute; left: 0; right: 0; height: 240px; z-index: 3; pointer-events: none;
-    background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--cyan) 4%, transparent), transparent);
-    animation: sweep 22s linear infinite; opacity: .6;
-  }
-  @keyframes sweep { 0% { top: -240px; } 100% { top: 100%; } }
 
   /* --- HUD frame --- */
   .hud { position: absolute; z-index: 5; }
@@ -212,7 +206,7 @@
 
   @media (max-width: 1080px) { #leftrail, #dossier { display: none; } }
   @media (prefers-reduced-motion: reduce) {
-    #sweep, #ticker .tk-run, .led .dot { animation: none !important; }
+    #ticker .tk-run, .led .dot { animation: none !important; }
     #pie .grp { transition: opacity .1s; }
   }
 </style>
@@ -222,7 +216,6 @@
   <canvas id="bg-webgl"></canvas>
   <canvas id="graph"></canvas>
   <div id="scan"></div>
-  <div id="sweep"></div>
   <div id="vignette"></div>
 
   <div class="bracket tl"></div><div class="bracket tr"></div>
@@ -772,17 +765,16 @@
     let gl; try{ gl=c.getContext("webgl")||c.getContext("experimental-webgl"); }catch(e){}
     if(!gl){ c.style.display="none"; return; }
     const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}`;
-    const fs=`precision highp float;uniform vec2 R;uniform float T;
+    const fs=`precision highp float;uniform vec2 R;
       void main(){
         vec2 uv=(gl_FragCoord.xy-0.5*R)/R.y;
         vec2 gf=abs(fract(uv*7.0)-0.5);
-        float grid=smoothstep(0.05,0.0,min(gf.x,gf.y))*0.32;
+        float grid=smoothstep(0.05,0.0,min(gf.x,gf.y))*0.30;
         float d=length(uv);
-        float glow=exp(-d*2.2)*0.34;
-        float drift=0.72+0.28*sin(uv.y*2.6 - T*0.14);
+        float glow=exp(-d*2.2)*0.32;
         float vig=smoothstep(1.28,0.15,d);
         vec3 cyan=vec3(0.22,0.85,1.0);
-        vec3 col=cyan*(grid*drift+glow)*vig + vec3(0.014,0.038,0.072)*vig;
+        vec3 col=cyan*(grid+glow)*vig + vec3(0.014,0.038,0.072)*vig;
         gl_FragColor=vec4(col,1.0);
       }`;
     function sh(t,s){ const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o);
@@ -795,11 +787,11 @@
     const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
     const loc=gl.getAttribLocation(prog,"p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-    const uR=gl.getUniformLocation(prog,"R"), uT=gl.getUniformLocation(prog,"T");
-    glResize=()=>{ c.width=Math.floor(W*Math.min(DPR,1.5)); c.height=Math.floor(H*Math.min(DPR,1.5)); gl.viewport(0,0,c.width,c.height); };
+    const uR=gl.getUniformLocation(prog,"R");
+    // Static backdrop: render once, and again on resize. No animation.
+    glResize=()=>{ c.width=Math.floor(W*Math.min(DPR,1.5)); c.height=Math.floor(H*Math.min(DPR,1.5));
+      gl.viewport(0,0,c.width,c.height); gl.uniform2f(uR,c.width,c.height); gl.drawArrays(gl.TRIANGLES,0,6); };
     glResize();
-    const t0=performance.now();
-    (function loop(){ gl.uniform2f(uR,c.width,c.height); gl.uniform1f(uT,(performance.now()-t0)/1000); gl.drawArrays(gl.TRIANGLES,0,6); requestAnimationFrame(loop); })();
   })();
 
   // ---------- boot ----------
