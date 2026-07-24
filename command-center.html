@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="Link-analysis console — betweenness brokers, isolation cut-point test, guided reveal and rap sheets.">
+<meta name="description" content="Link-analysis console with NIEM/NLETS-grounded rap sheets, betweenness brokers and isolation test.">
 </head>
 <body>
 <style>
@@ -251,6 +251,10 @@
   .rs-disp { color: var(--ink-dim); font-size: 11px; }
   .rs-sent { flex-basis: 100%; color: var(--amber); font-size: 10px; letter-spacing: .04em; padding-left: 46px; }
   .rs-cnote { flex-basis: 100%; color: var(--ink-faint); font-size: 10px; padding-left: 46px; }
+  .rs-code { flex-basis: 100%; color: var(--cyan); font-size: 10px; letter-spacing: .04em; padding-left: 46px; font-variant-numeric: tabular-nums; }
+  .rs-cmeta { padding: 6px 11px; font-size: 10px; color: var(--ink-dim); background: rgba(0,0,0,.18); border-bottom: 1px solid color-mix(in oklab, var(--edge) 55%, transparent); }
+  .rs-cmeta .rs-k { color: var(--ink-faint); font-size: 9px; letter-spacing: .1em; margin-right: 6px; }
+  .rs-cmeta .rs-k ~ .rs-k { margin-left: 14px; }
   .rs-caveat { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--edge); color: var(--red); font-size: 9px; letter-spacing: .06em; line-height: 1.5; }
   /* dossier rap-sheet button */
   .rap-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;
@@ -296,6 +300,9 @@
   .rs-doc.paper .rs-disp { color: #5b5f66; }
   .rs-doc.paper .rs-sent { color: #7a1f1f; }
   .rs-doc.paper .rs-cnote { color: #8a836f; }
+  .rs-doc.paper .rs-code { color: #7a1f1f; }
+  .rs-doc.paper .rs-cmeta { background: #efece0; color: #5b5f66; border-bottom-color: #d7d2c4; }
+  .rs-doc.paper .rs-cmeta .rs-k { color: #8a836f; }
   .rs-doc.paper .rs-caveat { color: #7a1f1f; border-top-color: #b9b3a2; }
 
   /* --- PieMenu --- */
@@ -516,37 +523,42 @@
   // DCJS criminal-history layout. Vocabulary (statutes, severities, dispositions,
   // sentences) is drawn from the provided NLETS RapSheet XML.
   const RAP = {
-    S: { name:"FOX, ERIC J", sid:"NYSID 04821563Q", fbi:"665248LA9", dob:"1985-03-14", sex:"M", race:"White",
-      ht:`5'11"`, wt:"180", eyes:"Brown", hair:"Black", marks:["TAT L ARM"], aka:["FOX, E"], cycles:[
-      { date:"2016-06-02", agency:"HARBOR PD", no:"A-16-33412", charges:[
-        { stat:"POSSESS CONTROLLED SUBSTANCE", sev:"Felony", cls:"F/D", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
-      { date:"2020-01-30", agency:"BAY COUNTY SO", no:"20-00841", charges:[
-        { stat:"BURGLARY", sev:"Felony", cls:"F/C", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL" },
-        { stat:"POSSESS CONTROLLED SUBSTANCE", sev:"Felony", cls:"F/D", disp:"CONVICTED-JAIL", sent:"—" } ]} ]},
-    rick: { name:"VALE, RICHARD", sid:"NYSID 03110778R", fbi:"551903KB2", dob:"1988-11-02", sex:"M", race:"White",
-      ht:`6'00"`, wt:"195", eyes:"Hazel", hair:"Brown", marks:[], aka:["VALE, RICK"], cycles:[
-      { date:"2018-09-11", agency:"HARBOR PD", no:"18-22104", charges:[
-        { stat:"TRESPASS:CLOSED LANDS", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
-      { date:"2020-01-30", agency:"BAY COUNTY SO", no:"20-00842", charges:[
-        { stat:"ROBBERY", sev:"Felony", cls:"F/B", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: FOX, ERIC" } ]} ]},
-    marcus: { name:"REED, MARCUS A", sid:"NYSID 02997410M", fbi:"774100MC5", dob:"1979-07-22", sex:"M", race:"Black",
-      ht:`6'02"`, wt:"210", eyes:"Brown", hair:"Black", marks:["SC L CHEEK"], aka:["REED, M"], cycles:[
-      { date:"2011-03-20", agency:"METRO PD", no:"11-40188", charges:[
-        { stat:"ROBBERY", sev:"Felony", cls:"F/B", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
-      { date:"2019-07-14", agency:"STATE POLICE - MARINE", no:"19-77213", charges:[
-        { stat:"POSSESS NARC CONTROL SUBSTANCE", sev:"Felony", cls:"F/B", disp:"CONVICTED COMMITTED TO PRISON", sent:"010 YEARS PRISON", note:"CO-DEF: DIAZ, OMAR" } ]},
-      { date:"2022-05-09", agency:"BAY COUNTY SO", no:"22-51188", charges:[
-        { stat:"MISCELLANEOUS OFFENSE", sev:"Felony", cls:"F/—", disp:"PROS REL-DET ONLY-LACK OF SUFF EVID", sent:"—", note:"PIER 42 SEIZURE" } ]} ]},
-    omar: { name:"DIAZ, OMAR", sid:"NYSID 05230991O", fbi:"660412OD1", dob:"1990-02-17", sex:"M", race:"White",
-      ht:`5'09"`, wt:"170", eyes:"Brown", hair:"Black", marks:[], aka:[], cycles:[
-      { date:"2019-07-14", agency:"STATE POLICE - MARINE", no:"19-77214", charges:[
-        { stat:"POSSESS NARC CONTROL SUBSTANCE", sev:"Felony", cls:"F/B", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: REED, MARCUS" } ]} ]},
-    vic: { name:"SLOAN, VICTOR", sid:"NYSID 01887346V", fbi:"448820VS7", dob:"1968-12-01", sex:"M", race:"White",
-      ht:`5'10"`, wt:"200", eyes:"Blue", hair:"Gray", marks:["TAT R ARM"], aka:["SLOAN, VIC"], cycles:[
-      { date:"2004-08-19", agency:"METRO PD", no:"04-11902", charges:[
-        { stat:"MISCELLANEOUS OFFENSE", sev:"Misdemeanor", cls:"M/B", disp:"DISCHARGED", sent:"—" } ]},
-      { date:"2021-11-03", agency:"CITY PD - FRAUD UNIT", no:"21-90551", charges:[
-        { stat:"MISCELLANEOUS OFFENSE", sev:"Felony", cls:"F/—", disp:"REL/DET ONLY/ADMISS EVIDENCE INSUFF", sent:"—", note:"STRUCTURING / SUSP. LAUNDERING" } ]} ]},
+    S: { name:"FOX, ERIC J", sid:"NYSID 04821563Q", fbi:"665248LA9", ucn:"09114872", dcn:"7F31KQ2A", purpose:"C",
+      dob:"1985-03-14", pob:"NEW YORK", sex:"M", race:"White", ht:`5'11"`, wt:"180", eyes:"Brown", hair:"Black",
+      marks:["TAT L ARM"], aka:["FOX, E"], cycles:[
+      { date:"2016-06-02", agency:"HARBOR PD", ori:"NY0521300", no:"A-16-33412", court:"CRIM CT — HARBOR", docket:"16CR-2211", dispDate:"2016-09-14", charges:[
+        { ncic:"3562", stat:"MARIJUANA - POSSESS", statute:"PL 221.10", sev:"Misdemeanor", cls:"M/A", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
+      { date:"2020-01-30", agency:"BAY COUNTY SO", ori:"NY0510000", no:"20-00841", court:"SUP CT — BAY CO", docket:"IND-20-0417", dispDate:"2020-06-02", charges:[
+        { ncic:"2202", stat:"BURGLARY - FORCED ENTRY, RESID", statute:"PL 140.25", sev:"Felony", cls:"F/C", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL" },
+        { ncic:"2305", stat:"LARCENY - FROM AUTO", statute:"PL 155.30", sev:"Felony", cls:"F/E", disp:"CONVICTED-JAIL", sent:"CONCURRENT" } ]} ]},
+    rick: { name:"VALE, RICHARD", sid:"NYSID 03110778R", fbi:"551903KB2", ucn:"08823190", dcn:"7F31KQ2B", purpose:"C",
+      dob:"1988-11-02", pob:"BROOKLYN NY", sex:"M", race:"White", ht:`6'00"`, wt:"195", eyes:"Hazel", hair:"Brown",
+      marks:[], aka:["VALE, RICK"], cycles:[
+      { date:"2018-09-11", agency:"HARBOR PD", ori:"NY0521300", no:"18-22104", court:"CRIM CT — HARBOR", docket:"18CR-0994", dispDate:"2018-11-02", charges:[
+        { ncic:"2305", stat:"LARCENY - FROM AUTO", statute:"PL 155.25", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
+      { date:"2020-01-30", agency:"BAY COUNTY SO", ori:"NY0510000", no:"20-00842", court:"SUP CT — BAY CO", docket:"IND-20-0418", dispDate:"2020-06-02", charges:[
+        { ncic:"1204", stat:"ROBBERY - STREET", statute:"PL 160.10", sev:"Felony", cls:"F/C", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: FOX, ERIC" } ]} ]},
+    marcus: { name:"REED, MARCUS A", sid:"NYSID 02997410M", fbi:"774100MC5", ucn:"07740155", dcn:"7F31KQ2C", purpose:"C",
+      dob:"1979-07-22", pob:"NEWARK NJ", sex:"M", race:"Black", ht:`6'02"`, wt:"210", eyes:"Brown", hair:"Black",
+      marks:["SC L CHEEK"], aka:["REED, M"], cycles:[
+      { date:"2011-03-20", agency:"METRO PD", ori:"NY0303000", no:"11-40188", court:"SUP CT — METRO", docket:"IND-11-1330", dispDate:"2011-08-19", charges:[
+        { ncic:"1204", stat:"ROBBERY - ARMED", statute:"PL 160.15", sev:"Felony", cls:"F/B", disp:"CONVICTED-PROBATION", sent:"003 YEARS PROBATION" } ]},
+      { date:"2019-07-14", agency:"STATE POLICE - MARINE", ori:"NYNSP0400", no:"19-77213", court:"SUP CT — STATE", docket:"IND-19-2201", dispDate:"2019-12-10", charges:[
+        { ncic:"3530", stat:"COCAINE - SELL", statute:"PL 220.39", sev:"Felony", cls:"F/B", disp:"CONVICTED COMMITTED TO PRISON", sent:"010 YEARS PRISON", note:"CO-DEF: DIAZ, OMAR" } ]},
+      { date:"2022-05-09", agency:"BAY COUNTY SO", ori:"NY0510000", no:"22-51188", court:"—", docket:"—", dispDate:"2022-05-11", charges:[
+        { ncic:"1500", stat:"WEAPON - POSSESS", statute:"PL 265.03", sev:"Felony", cls:"F/C", disp:"PROS REL-DET ONLY-LACK OF SUFF EVID", sent:"—", note:"PIER 42 SEIZURE" } ]} ]},
+    omar: { name:"DIAZ, OMAR", sid:"NYSID 05230991O", fbi:"660412OD1", ucn:"06604123", dcn:"7F31KQ2D", purpose:"C",
+      dob:"1990-02-17", pob:"NEW YORK", sex:"M", race:"White", ht:`5'09"`, wt:"170", eyes:"Brown", hair:"Black",
+      marks:[], aka:[], cycles:[
+      { date:"2019-07-14", agency:"STATE POLICE - MARINE", ori:"NYNSP0400", no:"19-77214", court:"SUP CT — STATE", docket:"IND-19-2202", dispDate:"2019-12-10", charges:[
+        { ncic:"3530", stat:"COCAINE - SELL", statute:"PL 220.39", sev:"Felony", cls:"F/B", disp:"CONVICTED-JAIL", sent:"365 DAYS JAIL", note:"CO-DEF: REED, MARCUS" } ]} ]},
+    vic: { name:"SLOAN, VICTOR", sid:"NYSID 01887346V", fbi:"448820VS7", ucn:"04488207", dcn:"7F31KQ2E", purpose:"C",
+      dob:"1968-12-01", pob:"YONKERS NY", sex:"M", race:"White", ht:`5'10"`, wt:"200", eyes:"Blue", hair:"Gray",
+      marks:["TAT R ARM"], aka:["SLOAN, VIC"], cycles:[
+      { date:"2004-08-19", agency:"METRO PD", ori:"NY0303000", no:"04-11902", court:"CRIM CT — METRO", docket:"04CR-3120", dispDate:"2004-10-01", charges:[
+        { ncic:"1000", stat:"FORGERY", statute:"PL 170.05", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
+      { date:"2021-11-03", agency:"CITY PD - FRAUD UNIT", ori:"NY0301500", no:"21-90551", court:"—", docket:"—", dispDate:"2021-11-30", charges:[
+        { ncic:"2600", stat:"MONEY LAUNDERING", statute:"PL 470.10", sev:"Felony", cls:"F/C", disp:"REL/DET ONLY/ADMISS EVIDENCE INSUFF", sent:"—", note:"STRUCTURING / SUSP. LAUNDERING" } ]} ]},
   };
 
   // ---------- model ----------
@@ -976,22 +988,25 @@
       `<span class="rs-sev ${ch.sev==='Felony'?'fel':ch.sev==='Misdemeanor'?'mis':'oth'}">${ch.sev==='Felony'?'FEL':ch.sev==='Misdemeanor'?'MIS':'OTH'}${ch.cls?' '+ch.cls:''}</span>`+
       `<span class="rs-stat">${ch.stat}</span>`+
       `<span class="rs-disp">${ch.disp}</span>`+
+      `<span class="rs-code">NCIC ${ch.ncic||'—'}${ch.statute?'  ·  '+ch.statute:''}</span>`+
       `<span class="rs-sent">${ch.sent||'—'}</span>`+
       (ch.note?`<span class="rs-cnote">▸ ${ch.note}</span>`:'')+`</div>`;
     const cycles=r.cycles.map((c,i)=>`<div class="rs-cyc">`+
       `<div class="rs-cyc-h"><span class="rs-num">CYCLE ${String(i+1).padStart(2,'0')}</span>`+
       `<span class="rs-cd">${c.date}</span><span class="rs-ca">${c.agency}</span><span class="rs-cno">ARR# ${c.no}</span></div>`+
+      `<div class="rs-cmeta"><span class="rs-k">ORI</span>${c.ori||'—'}<span class="rs-k">COURT</span>${c.court||'—'}<span class="rs-k">DOCKET</span>${c.docket||'—'}<span class="rs-k">DISP</span>${c.dispDate||'—'}</div>`+
       c.charges.map(chargeRow).join('')+`</div>`).join('');
     document.getElementById("rs-name").textContent=r.name;
     document.getElementById("rs-body").innerHTML=
       `<div class="rs-title">CRIMINAL HISTORY RECORD — NLETS / III MULTI-STATE RESPONSE</div>`+
       `<div class="rs-id">`+
         `<div><span class="rs-k">NAME</span>${r.name}</div>`+
-        `<div><span class="rs-k">SID</span>${r.sid}<span class="rs-k">FBI</span>${r.fbi}</div>`+
-        `<div><span class="rs-k">DOB</span>${r.dob}<span class="rs-k">SEX</span>${r.sex}<span class="rs-k">RACE</span>${r.race}</div>`+
+        `<div><span class="rs-k">SID</span>${r.sid}<span class="rs-k">FBI</span>${r.fbi}<span class="rs-k">UCN</span>${r.ucn||'—'}</div>`+
+        `<div><span class="rs-k">DOB</span>${r.dob}<span class="rs-k">POB</span>${r.pob||'—'}<span class="rs-k">SEX</span>${r.sex}<span class="rs-k">RACE</span>${r.race}</div>`+
         `<div><span class="rs-k">HT</span>${r.ht}<span class="rs-k">WT</span>${r.wt}<span class="rs-k">EYE</span>${r.eyes}<span class="rs-k">HAIR</span>${r.hair}</div>`+
         (r.aka.length?`<div><span class="rs-k">AKA</span>${r.aka.join('  ·  ')}</div>`:'')+
         (r.marks.length?`<div><span class="rs-k">MARKS</span>${r.marks.join(', ')}</div>`:'')+
+        `<div><span class="rs-k">DCN</span>${r.dcn||'—'}<span class="rs-k">PURPOSE</span>${r.purpose||'C'}<span class="rs-k">III</span>MULTI-STATE</div>`+
       `</div>`+
       `<div class="rs-sum"><span>ARRESTS <b>${arrests}</b></span><span>CONVICTIONS <b>${convictions}</b></span><span>STATUS <b class="hot">ACTIVE</b></span></div>`+
       `<div class="rs-sec">CRIMINAL HISTORY · CHARGE / DISPOSITION / SENTENCE</div>`+
