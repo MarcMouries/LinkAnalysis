@@ -48,6 +48,17 @@ export const POLE_EDGE_LABELS = {
 	other: "Other",
 };
 
+// Entity glyphs as SVG inner markup on a 24x24 grid, filled with `currentColor`.
+// (fill-rule:evenodd where a shape needs a hole, e.g. handcuffs / briefcase handle.)
+export const POLE_NODE_ICONS = {
+	person: `<circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/>`,
+	location: `<path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/>`,
+	vehicle: `<path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/>`,
+	rap_sheet: `<g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/>`,
+	case: `<path fill-rule="evenodd" d="M9.2 6V5.2A2.2 2.2 0 0 1 11.4 3h1.2a2.2 2.2 0 0 1 2.2 2.2V6H18a2.2 2.2 0 0 1 2.2 2.2V17A2.2 2.2 0 0 1 18 19.2H6A2.2 2.2 0 0 1 3.8 17V8.2A2.2 2.2 0 0 1 6 6zm1.9 0h3.8V5.2a.4.4 0 0 0-.4-.4h-3a.4.4 0 0 0-.4.4z"/>`,
+	other: `<circle cx="12" cy="12" r="4.4"/>`,
+};
+
 // Read a `type` from either a flat object (adapter output) or a GraphJS
 // node/link where the payload sits under `.data`.
 function typeOf(entity) {
@@ -69,8 +80,8 @@ export function poleEdgeStyle(link) {
  */
 export function poleNodeStyle(node) {
 	const type = typeOf(node);
-	const base = POLE_NODE_STYLES[type] || POLE_NODE_STYLES.other;
-	return isSubject(node) ? { ...base, ...POLE_SUBJECT_STYLE, subject: true } : { ...base };
+	const base = { ...(POLE_NODE_STYLES[type] || POLE_NODE_STYLES.other), icon: POLE_NODE_ICONS[type] || POLE_NODE_ICONS.other };
+	return isSubject(node) ? { ...base, ...POLE_SUBJECT_STYLE, subject: true } : base;
 }
 
 /**

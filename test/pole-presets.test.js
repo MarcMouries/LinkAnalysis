@@ -50,6 +50,12 @@ describe("poleNodeStyle", () => {
 	test("non-subject nodes carry no subject emphasis", () => {
 		expect(poleNodeStyle({ type: "person" }).subject).toBeUndefined();
 	});
+
+	test("includes an SVG icon for the entity type", () => {
+		expect(poleNodeStyle({ type: "person" }).icon).toContain("<");
+		expect(poleNodeStyle({ type: "vehicle" }).icon).toContain("path");
+		expect(poleNodeStyle({ type: "weird" }).icon).toBe(POLE_NODE_STYLES.other && poleNodeStyle({ type: "other" }).icon);
+	});
 });
 
 describe("applyPOLEEdgeStyles (adapter → engine → styling)", () => {

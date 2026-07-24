@@ -33,7 +33,7 @@ const graphData = transformServiceNowData(source);
 // Engine: load + lay out with the subject at the center.
 const graph = new Graph();
 graph.loadJSON(graphData);
-new RadialLayout(graph, { centerNode: "S", ringSpacing: 150, center: { x: 0, y: 0 } }).run();
+new RadialLayout(graph, { centerNode: "S", ringSpacing: 180, center: { x: 0, y: 0 } }).run();
 
 // Domain: colour the edges by relationship type (writes Link metadata).
 applyPOLEEdgeStyles(graph);

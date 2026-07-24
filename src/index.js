@@ -27,6 +27,7 @@ export {
 	POLE_SUBJECT_STYLE,
 	POLE_NODE_LABELS,
 	POLE_EDGE_LABELS,
+	POLE_NODE_ICONS,
 } from "./pole-presets.js";
 
 export const version = "1.0.0";

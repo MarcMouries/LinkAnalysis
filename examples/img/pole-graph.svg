@@ -1,55 +1,106 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="610" height="480" viewBox="0 0 610 480" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
-<rect width="610" height="480" rx="12" fill="#0a0e14"/>
-<line x1="219.9" y1="240.0" x2="349.8" y2="315.0" stroke="#58a6ff" stroke-width="2.5" opacity="0.85"/>
-<text x="284.9" y="277.5" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Wife</text>
-<line x1="219.9" y1="240.0" x2="219.9" y2="390.0" stroke="#58a6ff" stroke-width="2.5" opacity="0.85"/>
-<text x="219.9" y="315.0" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Brother</text>
-<line x1="219.9" y1="240.0" x2="90.0" y2="315.0" stroke="#3fb950" stroke-width="2" opacity="0.85"/>
-<text x="154.9" y="277.5" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Associate</text>
-<line x1="219.9" y1="240.0" x2="90.0" y2="165.0" stroke="#d29922" stroke-width="1.5" opacity="0.85"/>
-<text x="154.9" y="202.5" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Known Address</text>
-<line x1="219.9" y1="240.0" x2="219.9" y2="90.0" stroke="#8b949e" stroke-width="1.5" opacity="0.85"/>
-<text x="219.9" y="165.0" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Registered</text>
-<line x1="219.9" y1="240.0" x2="349.8" y2="165.0" stroke="#f85149" stroke-width="2" stroke-dasharray="5,3" opacity="0.85"/>
-<text x="284.9" y="202.5" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Arrest</text>
-<line x1="90.0" y1="315.0" x2="90.0" y2="165.0" stroke="#d29922" stroke-width="1.5" opacity="0.85"/>
-<text x="90.0" y="240.0" fill="#adbac7" font-size="9.5" text-anchor="middle" dy="-3">Address</text>
-<circle cx="219.9" cy="240.0" r="29.400000000000002" fill="none" stroke="#f78166" stroke-width="2" opacity="0.4"/>
-<circle cx="219.9" cy="240.0" r="23.400000000000002" fill="#1f6feb" stroke="#f78166" stroke-width="2"/>
-<text x="219.9" y="240.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="37.400000000000006">Eric Fox</text>
-<circle cx="349.8" cy="315.0" r="18" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
-<text x="349.8" y="315.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">Jane Fox</text>
-<circle cx="219.9" cy="390.0" r="18" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
-<text x="219.9" y="390.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">Sam Fox</text>
-<circle cx="90.0" cy="315.0" r="18" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
-<text x="90.0" y="315.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">Rick Vale</text>
-<circle cx="90.0" cy="165.0" r="18" fill="#238636" stroke="#3fb950" stroke-width="2"/>
-<text x="90.0" y="165.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">3260 Jay St</text>
-<circle cx="219.9" cy="90.0" r="18" fill="#8957e5" stroke="#a371f7" stroke-width="2"/>
-<text x="219.9" y="90.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">Plate ABC-123</text>
-<circle cx="349.8" cy="165.0" r="18" fill="#9e6a03" stroke="#d29922" stroke-width="2"/>
-<text x="349.8" y="165.0" fill="#e6edf3" font-size="11" text-anchor="middle" dy="32">2020-01-30</text>
-<text x="456" y="20" fill="#e6edf3" font-size="13" font-weight="700">Legend</text>
-<text x="456" y="40" fill="#768390" font-size="10" letter-spacing="0.5" font-weight="600">ENTITIES</text>
-<circle cx="463" cy="58" r="7" fill="#1f6feb" stroke="#0d1117" stroke-width="1.5"/>
-<text x="478" y="62" fill="#e6edf3" font-size="11">Person</text>
-<circle cx="463" cy="80" r="7" fill="#238636" stroke="#0d1117" stroke-width="1.5"/>
-<text x="478" y="84" fill="#e6edf3" font-size="11">Location</text>
-<circle cx="463" cy="102" r="7" fill="#9e6a03" stroke="#0d1117" stroke-width="1.5"/>
-<text x="478" y="106" fill="#e6edf3" font-size="11">Rap Sheet</text>
-<circle cx="463" cy="124" r="7" fill="#8957e5" stroke="#0d1117" stroke-width="1.5"/>
-<text x="478" y="128" fill="#e6edf3" font-size="11">Vehicle</text>
-<circle cx="463" cy="146" r="7" fill="none" stroke="#f78166" stroke-width="2"/>
-<text x="478" y="150" fill="#e6edf3" font-size="11">Subject</text>
-<text x="456" y="174" fill="#768390" font-size="10" letter-spacing="0.5" font-weight="600">RELATIONSHIPS</text>
-<line x1="456" y1="192" x2="472" y2="192" stroke="#58a6ff" stroke-width="2.5"/>
-<text x="478" y="196" fill="#e6edf3" font-size="11">Family</text>
-<line x1="456" y1="214" x2="472" y2="214" stroke="#3fb950" stroke-width="2.5"/>
-<text x="478" y="218" fill="#e6edf3" font-size="11">Associate</text>
-<line x1="456" y1="236" x2="472" y2="236" stroke="#d29922" stroke-width="2.5"/>
-<text x="478" y="240" fill="#e6edf3" font-size="11">Address</text>
-<line x1="456" y1="258" x2="472" y2="258" stroke="#f85149" stroke-width="2.5" stroke-dasharray="5,3"/>
-<text x="478" y="262" fill="#e6edf3" font-size="11">Arrest</text>
-<line x1="456" y1="280" x2="472" y2="280" stroke="#8b949e" stroke-width="2.5"/>
-<text x="478" y="284" fill="#e6edf3" font-size="11">Other</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="684" height="552" viewBox="0 0 684 552" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+<defs>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softglow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="9"/></filter>
+    <radialGradient id="vign" cx="36.8%" cy="50.0%" r="75%">
+      <stop offset="0%" stop-color="#0f1830"/><stop offset="55%" stop-color="#0a0e17"/><stop offset="100%" stop-color="#05070e"/></radialGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" fill="none" stroke="#37e0ff" stroke-opacity="0.06" stroke-width="1"/></pattern>
+  </defs>
+<rect width="684" height="552" rx="14" fill="url(#vign)"/>
+<rect width="504" height="552" fill="url(#grid)"/>
+<circle cx="251.9" cy="276" r="150" fill="#37e0ff" opacity="0.10" filter="url(#softglow)"/>
+<line x1="251.9" y1="276" x2="407.8" y2="366" stroke="#58a6ff" stroke-width="7.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="407.8" y2="366" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="251.9" y2="456" stroke="#58a6ff" stroke-width="7.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="251.9" y2="456" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="96" y2="366" stroke="#3fb950" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="96" y2="366" stroke="#3fb950" stroke-width="2" opacity="0.9" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="96" y2="186" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="96" y2="186" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="251.9" y2="96" stroke="#8b949e" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="251.9" y2="96" stroke="#8b949e" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="407.8" y2="186" stroke="#f85149" stroke-width="6" opacity="0.13" stroke-linecap="round"/>
+<line x1="251.9" y1="276" x2="407.8" y2="186" stroke="#f85149" stroke-width="2" stroke-dasharray="5,3" opacity="0.9" stroke-linecap="round"/>
+<line x1="96" y1="366" x2="96" y2="186" stroke="#d29922" stroke-width="4.5" opacity="0.13" stroke-linecap="round"/>
+<line x1="96" y1="366" x2="96" y2="186" stroke="#d29922" stroke-width="1.5" opacity="0.9" stroke-linecap="round"/>
+<rect x="312.7" y="313.0" width="34.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="329.9" y="321.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Wife</text>
+<rect x="226.3" y="358.0" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="251.9" y="366.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Brother</text>
+<rect x="142.8" y="313.0" width="62.4" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="173.9" y="321.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Associate</text>
+<rect x="131.5" y="223.0" width="84.8" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="173.9" y="231.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Known Address</text>
+<rect x="217.9" y="178.0" width="68.0" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="251.9" y="186.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Registered</text>
+<rect x="307.1" y="223.0" width="45.6" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="329.9" y="231.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Arrest</text>
+<rect x="70.4" y="268.0" width="51.2" height="15" rx="7.5" fill="#0a0e17" opacity="0.82"/>
+<text x="96.0" y="276.0" fill="#9fc6dd" font-size="9.5" text-anchor="middle" dominant-baseline="central" font-family="ui-monospace, monospace">Address</text>
+<circle cx="251.9" cy="276" r="37.7" fill="#f78166" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="251.9" cy="276" r="36.7" fill="none" stroke="#f78166" stroke-width="1.4" opacity="0.7"/>
+<circle cx="251.9" cy="276" r="29.700000000000003" fill="#0e1626" stroke="#f78166" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="251.9" cy="276" r="29.700000000000003" fill="none" stroke="#f78166" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(233.3 257.4) scale(1.547)" fill="#f78166"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="251.9" y="320.7" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Eric Fox</text>
+<text x="251.9" y="333.7" fill="#f78166" font-size="8.5" text-anchor="middle" letter-spacing="2" font-family="ui-monospace, monospace">◆ SUBJECT</text>
+<circle cx="407.8" cy="366" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="407.8" cy="366" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="407.8" cy="366" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(394.1 352.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="407.8" y="403" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Jane Fox</text>
+<circle cx="251.9" cy="456" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="251.9" cy="456" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="251.9" cy="456" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(238.2 442.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="251.9" y="493" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Sam Fox</text>
+<circle cx="96" cy="366" r="30" fill="#58a6ff" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="96" cy="366" r="22" fill="#0e1626" stroke="#58a6ff" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="96" cy="366" r="22" fill="none" stroke="#58a6ff" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(82.3 352.3) scale(1.146)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="96" y="403" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Rick Vale</text>
+<circle cx="96" cy="186" r="30" fill="#3fb950" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="96" cy="186" r="22" fill="#0e1626" stroke="#3fb950" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="96" cy="186" r="22" fill="none" stroke="#3fb950" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(82.3 172.3) scale(1.146)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
+<text x="96" y="223" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">3260 Jay St</text>
+<circle cx="251.9" cy="96" r="30" fill="#a371f7" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="251.9" cy="96" r="22" fill="#0e1626" stroke="#a371f7" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="251.9" cy="96" r="22" fill="none" stroke="#a371f7" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(238.2 82.3) scale(1.146)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
+<text x="251.9" y="133" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">Plate ABC-123</text>
+<circle cx="407.8" cy="186" r="30" fill="#d29922" opacity="0.12" filter="url(#softglow)"/>
+<circle cx="407.8" cy="186" r="22" fill="#0e1626" stroke="#d29922" stroke-width="2.4"/>
+<g filter="url(#glow)"><circle cx="407.8" cy="186" r="22" fill="none" stroke="#d29922" stroke-width="2.4" opacity="0.85"/></g>
+<g transform="translate(394.1 172.3) scale(1.146)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
+<text x="407.8" y="223" fill="#dcebf7" font-size="12" text-anchor="middle" font-weight="600">2020-01-30</text>
+<line x1="504" y1="0" x2="504" y2="552" stroke="#37e0ff" stroke-opacity="0.14"/>
+<text x="522" y="22" fill="#eaf6ff" font-size="13" font-weight="800" letter-spacing="1">LEGEND</text>
+<text x="522" y="44" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">ENTITIES</text>
+<circle cx="530" cy="64" r="9" fill="#0e1626" stroke="#58a6ff" stroke-width="1.8"/>
+<g transform="translate(524.5 58.5) scale(0.458)" fill="#58a6ff"><circle cx="12" cy="8.4" r="4"/><path d="M4.6 20.4c0-4.2 3.3-6.8 7.4-6.8s7.4 2.6 7.4 6.8z"/></g>
+<text x="548" y="68" fill="#dcebf7" font-size="11.5">Person</text>
+<circle cx="530" cy="88" r="9" fill="#0e1626" stroke="#3fb950" stroke-width="1.8"/>
+<g transform="translate(524.5 82.5) scale(0.458)" fill="#3fb950"><path d="M12 3 2.8 11.2H5.6V20.4h4.4V15.2h3.9v5.2h4.4V11.2h2.8z"/></g>
+<text x="548" y="92" fill="#dcebf7" font-size="11.5">Location</text>
+<circle cx="530" cy="112" r="9" fill="#0e1626" stroke="#d29922" stroke-width="1.8"/>
+<g transform="translate(524.5 106.5) scale(0.458)" fill="#d29922"><g fill-rule="evenodd"><path d="M7.4 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/><path d="M16.6 8.6a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4zm0 2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z"/></g><rect x="9.4" y="7.2" width="5.2" height="2.3" rx="1.15"/></g>
+<text x="548" y="116" fill="#dcebf7" font-size="11.5">Rap Sheet</text>
+<circle cx="530" cy="136" r="9" fill="#0e1626" stroke="#a371f7" stroke-width="1.8"/>
+<g transform="translate(524.5 130.5) scale(0.458)" fill="#a371f7"><path d="M2.8 14.4v-1l1.6-4.3A2.4 2.4 0 0 1 6.7 7.5h1.5l1.4-2A2.2 2.2 0 0 1 11.4 4.6h1.9a2.2 2.2 0 0 1 1.8.9l1.5 2h1.5a2.4 2.4 0 0 1 2.3 1.6l1.5 4.3v1a.9.9 0 0 1-.9.9h-1.2a2.5 2.5 0 0 1-5 0H10a2.5 2.5 0 0 1-5 0H3.7a.9.9 0 0 1-.9-.9z"/></g>
+<text x="548" y="140" fill="#dcebf7" font-size="11.5">Vehicle</text>
+<circle cx="530" cy="160" r="9" fill="none" stroke="#f78166" stroke-width="2"/>
+<text x="548" y="164" fill="#dcebf7" font-size="11.5">Subject</text>
+<text x="522" y="192" fill="#768390" font-size="10" letter-spacing="1.5" font-weight="700" font-family="ui-monospace, monospace">RELATIONSHIPS</text>
+<line x1="522" y1="212" x2="539" y2="212" stroke="#58a6ff" stroke-width="2.6" stroke-linecap="round"/>
+<text x="548" y="216" fill="#dcebf7" font-size="11.5">Family</text>
+<line x1="522" y1="236" x2="539" y2="236" stroke="#3fb950" stroke-width="2.6" stroke-linecap="round"/>
+<text x="548" y="240" fill="#dcebf7" font-size="11.5">Associate</text>
+<line x1="522" y1="260" x2="539" y2="260" stroke="#d29922" stroke-width="2.6" stroke-linecap="round"/>
+<text x="548" y="264" fill="#dcebf7" font-size="11.5">Address</text>
+<line x1="522" y1="284" x2="539" y2="284" stroke="#f85149" stroke-width="2.6" stroke-dasharray="5,3" stroke-linecap="round"/>
+<text x="548" y="288" fill="#dcebf7" font-size="11.5">Arrest</text>
+<line x1="522" y1="308" x2="539" y2="308" stroke="#8b949e" stroke-width="2.6" stroke-linecap="round"/>
+<text x="548" y="312" fill="#dcebf7" font-size="11.5">Other</text>
 </svg>
