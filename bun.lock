@@ -5,11 +5,11 @@
     "": {
       "name": "link-analysis",
       "dependencies": {
-        "graphjs": "^0.0.5",
+        "graphjs": "^0.0.6",
       },
     },
   },
   "packages": {
-    "graphjs": ["graphjs@0.0.5", "", {}, "sha512-QFl/VsOXCSpKrDqNcbwwTb2PDLzuYWoaXUoU3FuXM9ciSGb8Dw7xyBySMuKqZjpLGLOKtSdJTgL9Peil5d6ldw=="],
+    "graphjs": ["graphjs@0.0.6", "", {}, "sha512-zcYhkcAur/YbkI/mHtlmPd+xwTjXP3DDW32qrc/YZ4YzzBkoHVf/+DUsiPDHmXqvduKLpXCrvmhiNq6wCVBvEg=="],
   }
 }

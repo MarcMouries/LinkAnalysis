@@ -51,7 +51,7 @@
 	},
 	"homepage": "https://github.com/MarcMouries/LinkAnalysis#readme",
 	"dependencies": {
-		"graphjs": "file:../GraphJS"
+		"graphjs": "^0.0.6"
 	},
 	"devDependencies": {}
 }
