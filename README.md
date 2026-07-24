@@ -11,17 +11,20 @@ The data model (`Graph`, `Node`, `Link`) and the geometry helpers (`trigo`) are
 now ES modules with a test suite.
 
 **Layout algorithms live in the [GraphJS](https://github.com/MarcMouries/GraphJS)
-engine, not here.** LinkAnalysis depends on GraphJS and consumes its
-`ForceDirected`, `RadialLayout` and `TreeLayout`:
+engine, not here.** LinkAnalysis depends on `graphjs` (published on npm) and
+re-exports its `ForceDirected`, `RadialLayout` and `TreeLayout`, so you can import
+them from either package:
 
 ```javascript
-import { RadialLayout, ForceDirected } from "graphjs";
+import { RadialLayout } from "link-analysis"; // re-exported from the engine
+import { RadialLayout } from "graphjs";        // or straight from the engine
 ```
 
-LinkAnalysis owns the domain layer: the data model, the POLE data adapter, and
-(upcoming) POLE node/edge templates and presets. The legacy canvas renderer and
-`PieMenu` are still `<script>`-loaded by the manual harnesses under `test/` and
-will be rewired onto the GraphJS engine.
+LinkAnalysis owns the domain layer: the data model, the POLE data adapter
+(`transformServiceNowData` / `validatePOLEData`), and (upcoming) POLE node/edge
+templates and presets. The legacy canvas renderer and `PieMenu` are still
+`<script>`-loaded by the manual harnesses under `test/` and will be rewired onto
+the GraphJS engine.
 
 ## Development
 
@@ -46,19 +49,21 @@ they are not committed.
 ## Usage
 
 ```javascript
-import { Graph } from "link-analysis";
-import { RadialLayout } from "graphjs";
+import { transformServiceNowData } from "link-analysis";
+import { Graph, RadialLayout } from "graphjs";
 
-const graph = new Graph();
-graph.loadJSON({
-  nodes: [{ id: "subject" }, { id: "a" }, { id: "b" }],
-  links: [
-    { source: "subject", target: "a" },
-    { source: "subject", target: "b" },
+// Domain layer: validate + normalise ServiceNow / POLE data.
+const graphData = transformServiceNowData({
+  nodes: [
+    { id: "1", type: "person", is_subject: true, first_name: "Eric", last_name: "Fox" },
+    { id: "2", type: "location", name: "3260 Jay St, Santa Clara, CA" },
   ],
+  edges: [{ source: "1", target: "2", label: "Known Address", type: "address" }],
 });
 
-// The layout algorithm comes from the GraphJS engine.
-new RadialLayout(graph, { centerNode: "subject", center: { x: 400, y: 300 } }).run();
+// Engine: load it and lay it out.
+const graph = new Graph();
+graph.loadJSON(graphData);
+new RadialLayout(graph, { centerNode: "1", center: { x: 400, y: 300 } }).run();
 // each node now has x / y coordinates
 ```

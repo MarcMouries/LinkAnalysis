@@ -1,12 +1,13 @@
 // =============================================================
 //  link-analysis — public API (ES module barrel)
 // -------------------------------------------------------------
-//  Layout algorithms (ForceDirected, RadialLayout, TreeLayout) live in the
-//  GraphJS engine and are consumed from there, e.g.
-//      import { RadialLayout, ForceDirected } from "graphjs";
-//  LinkAnalysis owns the domain layer: the data model, geometry helpers and
-//  (upcoming) POLE templates, presets and the ServiceNow data adapter.
+//  LinkAnalysis owns the domain layer (data model, geometry helpers, POLE
+//  data adapter). Layout algorithms live in the GraphJS engine and are
+//  re-exported here for convenience, so consumers can write either
+//      import { RadialLayout } from "link-analysis";   // re-exported
+//      import { RadialLayout } from "graphjs";          // straight from the engine
 // =============================================================
+export { ForceDirected, RadialLayout, TreeLayout } from "graphjs";
 export { Graph, Node, Link } from "./Graph.js";
 export { NONE, pi } from "./Constants.js";
 export * from "./trigo.js";

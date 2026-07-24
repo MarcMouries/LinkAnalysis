@@ -23,8 +23,8 @@
 	],
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build:esm": "bun build src/index.js --outfile dist/esm/index.js --format=esm",
-		"build:cjs": "bun build src/index.js --outfile dist/cjs/index.cjs --format=cjs",
+		"build:esm": "bun build src/index.js --outfile dist/esm/index.js --format=esm --external graphjs",
+		"build:cjs": "bun build src/index.js --outfile dist/cjs/index.cjs --format=cjs --external graphjs",
 		"build:iife": "bun build src/iife.js --outfile dist/umd/link-analysis.min.js --format=iife --minify",
 		"build": "bun run clean && bun run build:esm && bun run build:cjs && bun run build:iife",
 		"dev": "bun build src/index.js --outfile dist/esm/index.js --format=esm --watch",
