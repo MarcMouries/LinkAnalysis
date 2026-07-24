@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="Link-analysis console with betweenness broker analysis, POLE-grouped filters, guided reveal and rap sheets.">
+<meta name="description" content="Link-analysis console — betweenness brokers, isolation cut-point test, guided reveal and rap sheets.">
 </head>
 <body>
 <style>
@@ -582,6 +582,7 @@
   // ---------- investigation state ----------
   let pinnedPath = null;   // Set of ids to spotlight (trace / reveal)
   let revealed = false;    // has the analyst proven the Fox <-> Reed link
+  let isolate = null;      // { id, severed:Set } — cut-point / isolation test
   function updateVisibility(){ for (const n of nodes) n.hidden = !(n.discovered && active[n.type]); }
   function initDiscovery(){
     byId.S.discovered = true; // start with only the subject — the analyst expands outward
@@ -678,7 +679,7 @@
     if (interaction.drag && !interaction.drag.subject){ interaction.drag.fx=null; interaction.drag.fy=null; }
     if (!interaction.moved && interaction.down!==undefined && e.button===0){
       const n=nodeAt(e.clientX,e.clientY);
-      if (n) select(n.id); else if (pie.open===false){ select(null); pinnedPath=null; }
+      if (n) select(n.id); else if (pie.open===false){ select(null); pinnedPath=null; isolate=null; }
     }
     interaction.drag=null; interaction.down=null;
   });
@@ -774,6 +775,22 @@
       ctx.fillText(n.name, n.x, n.y+r+6); ctx.shadowBlur=0;
     }
     ctx.globalAlpha=1;
+
+    // isolation-test overlay: ✕ the removed node, red-ring what it severs
+    if (isolate){
+      for (const n of nodes){ if(n.hidden) continue;
+        if (n.id===isolate.id){
+          ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle="#ff4d5e"; ctx.lineWidth=2; ctx.globalAlpha=0.95; ctx.shadowBlur=14; ctx.shadowColor="#ff4d5e";
+          ctx.beginPath(); ctx.arc(n.x,n.y,n.r+6,0,7); ctx.stroke();
+          const d=n.r*0.66; ctx.setLineDash([]); ctx.beginPath();
+          ctx.moveTo(n.x-d,n.y-d); ctx.lineTo(n.x+d,n.y+d); ctx.moveTo(n.x+d,n.y-d); ctx.lineTo(n.x-d,n.y+d); ctx.stroke();
+          ctx.restore();
+        } else if (isolate.severed.has(n.id)){
+          ctx.save(); ctx.strokeStyle="#ff4d5e"; ctx.lineWidth=2; ctx.globalAlpha=0.9; ctx.shadowBlur=16; ctx.shadowColor="#ff4d5e";
+          ctx.beginPath(); ctx.arc(n.x,n.y,n.r+7,0,7); ctx.stroke(); ctx.restore();
+        }
+      }
+    }
   }
   function initials(name){ return name.split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase().slice(0,2); }
 
@@ -791,7 +808,7 @@
   const NODE_ACTIONS = [
     { icon:"◎", label:"Focus",   fn:n=>{ select(n.id); } },
     { icon:"✦", label:"Expand",  fn:n=>{ expandNode(n); } },
-    { icon:"▤", label:"Dossier", fn:n=>{ select(n.id); } },
+    { icon:"⊘", label:"Isolate", fn:n=>{ isolateTest(n); } },
     { icon:"⛒", label:n=>n.flagged?"Unflag":"Flag", danger:true, fn:n=>{ n.flagged=!n.flagged; renderRoster(); renderDossier(); pushFeed((n.flagged?"FLAGGED ":"CLEARED ")+n.name); } },
     { icon:"⟿", label:"Trace",   fn:n=>{ tracePath(n); } },
     { icon:n=>n.fx!=null&&!n.subject?"⊙":"⊗", label:n=>n.pinned?"Unpin":"Pin", fn:n=>{ togglePin(n); } },
@@ -851,13 +868,14 @@
   }
   function closePie(){ pie.open=false; pieEl.classList.remove("open"); pieEl.innerHTML=""; }
   window.addEventListener("click", e=>{ if(pie.open && !e.target.closest("#pie")) closePie(); });
-  window.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closePie(); closeRapSheet(); } });
+  window.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closePie(); closeRapSheet(); isolate=null; pinnedPath=null; } });
   function shortName(s){ return s.length>12? s.slice(0,11)+"…": s; }
 
   // ---------- actions ----------
   function togglePin(n){ if(n.subject)return; n.pinned=!n.pinned; if(n.pinned){n.fx=n.x;n.fy=n.y;} else {n.fx=null;n.fy=null; reheat(0.5);} renderDossier(); pushFeed((n.pinned?"PINNED ":"RELEASED ")+n.name); }
   function tracePath(n){
     if(!n.discovered){ pushFeed("UNDISCOVERED ▸ "+n.name); return; }
+    isolate=null;
     const prev={S:null}, q=["S"];
     while(q.length){ const id=q.shift(); for(const m of neighbors(id)){ if(byId[m].discovered && prev[m]===undefined){ prev[m]=id; q.push(m);} } }
     if(prev[n.id]===undefined){ pushFeed("NO DISCOVERED PATH ▸ "+n.name); return; }
@@ -867,7 +885,7 @@
   }
   // Reveal a node's real neighbours — the core investigative action.
   function expandNode(n){
-    n.discovered = true;
+    n.discovered = true; isolate=null;
     const nbs = links.filter(l=>l.source.id===n.id||l.target.id===n.id).map(l=> l.source.id===n.id?l.target:l.source);
     const newly = [];
     for(const m of nbs){ if(!m.discovered){ m.discovered=true; m.x=n.x+(Math.random()*90-45); m.y=n.y+(Math.random()*90-45); m.vx=0; m.vy=0; newly.push(m); } }
@@ -878,7 +896,7 @@
     } else pushFeed("EXPAND ▸ "+n.name+" — no new links");
     checkConnection();
   }
-  function uncoverAll(){ nodes.forEach(n=>n.discovered=true); updateVisibility(); computeBetweenness(); reheat(1); refreshStats(); renderRoster(); renderObjective(); pushFeed("FULL NETWORK UNCOVERED"); checkConnection(); }
+  function uncoverAll(){ isolate=null; nodes.forEach(n=>n.discovered=true); updateVisibility(); computeBetweenness(); reheat(1); refreshStats(); renderRoster(); renderObjective(); pushFeed("FULL NETWORK UNCOVERED"); checkConnection(); }
   // Has the analyst's expansions produced a discovered path Fox -> Reed?
   function checkConnection(){
     if(revealed || !byId.marcus.discovered) return;
@@ -886,7 +904,7 @@
     while(q.length){ const id=q.shift(); for(const m of neighbors(id)){ if(byId[m].discovered && prev[m]===undefined){ prev[m]=id; q.push(m);} } }
     if(prev.marcus===undefined) return;
     let cur="marcus", p=[]; while(cur!=null){ p.unshift(cur); cur=prev[cur]; }
-    revealed=true; pinnedPath=new Set(p);
+    revealed=true; pinnedPath=new Set(p); isolate=null;
     if(byId.vic.discovered) byId.vic.flagged=true;
     const chain=p.map(id=>byId[id].name).join("  →  ");
     const bridges=p.slice(1,-1).map(id=>byId[id].name);
@@ -914,7 +932,24 @@
     let mx=0; ids.forEach(id=>{ bc[id]/=2; if(bc[id]>mx)mx=bc[id]; }); // undirected: halve
     nodes.forEach(n=>{ n.btw = (n.discovered && mx>0) ? bc[n.id]/mx : 0; });
   }
+  // Isolation test: remove a node and see what fractures off the subject —
+  // proves whether that entity is the critical link holding the network together.
+  function isolateTest(n){
+    if(!n.discovered) return;
+    pinnedPath=null;
+    const startId = byId.S.discovered && byId.S.id!==n.id ? "S" : (nodes.find(x=>x.discovered && x.id!==n.id)||{}).id;
+    const reach=new Set();
+    if(startId){ reach.add(startId); const q=[startId];
+      while(q.length){ const id=q.shift(); for(const m of neighbors(id)){ if(m!==n.id && byId[m].discovered && !reach.has(m)){ reach.add(m); q.push(m);} } } }
+    const severed=new Set(nodes.filter(x=>x.discovered && x.id!==n.id && !reach.has(x.id)).map(x=>x.id));
+    isolate={ id:n.id, severed };
+    select(n.id);
+    if(severed.size===0){ pushFeed("⊘ ISOLATION ▸ "+n.name+" is not a cut-point — network holds"); return; }
+    pushFeed("⊘ ISOLATION ▸ removing "+n.name+" severs "+severed.size+" entit"+(severed.size===1?"y":"ies")+" from the subject");
+    if(byId.marcus.discovered && severed.has("marcus")) pushFeed("◈ CRITICAL LINK ▸ "+n.name+" is the sole discovered bridge Fox → Reed");
+  }
   function analyzeBrokers(){
+    isolate=null;
     computeBetweenness();
     const ranked = nodes.filter(n=>n.discovered && n.btw>0.05).sort((a,b)=>b.btw-a.btw);
     if(!ranked.length){ pushFeed("BROKER SCAN ▸ network too small — expand more entities"); return; }
@@ -1064,6 +1099,7 @@
     "Dashed ring = shared (cross-referenced) resource",
     "⚖ persons with a record expose a RAP SHEET action",
     "⌖ right-click the grid → BROKERS to find key intermediaries",
+    "⊘ right-click a node → ISOLATE to test if it's the critical link",
   ];
   const tkRun=document.getElementById("tk-run");
   function renderFeed(){ const items=FEED.concat(FEED); tkRun.innerHTML=items.map(f=>`<span><b>▸</b> ${f}</span>`).join(""); }
