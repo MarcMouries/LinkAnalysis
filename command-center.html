@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="Link-analysis console with NIEM/NLETS-grounded rap sheets, betweenness brokers and isolation test.">
+<meta name="description" content="Link-analysis console — full POLE taxonomy, structured identifiers, NIEM/NLETS rap sheets with real NCIC codes.">
 </head>
 <body>
 <style>
@@ -158,6 +158,10 @@
   .conn .cline { width: 16px; height: 2px; border-radius: 2px; }
   .conn .cn { flex: 1; font-family: var(--sans); font-size: 12px; color: #dcebf7; }
   .conn .crel { font-size: 9px; letter-spacing: .1em; color: var(--ink-dim); text-transform: uppercase; }
+  .idblk { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 5px; background: color-mix(in oklab, var(--cyan) 4%, transparent); }
+  .idrow { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .idrow .idk { color: var(--ink-faint); letter-spacing: .06em; text-transform: uppercase; font-size: 9px; white-space: nowrap; }
+  .idrow .idv { color: var(--ink); font-family: var(--sans); font-size: 11.5px; text-align: right; }
   .idle { color: var(--ink-faint); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; text-align: center; margin: auto; line-height: 2; }
 
   /* bottom ticker */
@@ -425,11 +429,16 @@
   // ---------- POLE data ----------
   const TYPE = {
     person:   { color: "#3aa0ff", label: "Person" },
-    location: { color: "#2fe08a", label: "Location" },
     vehicle:  { color: "#b072ff", label: "Vehicle" },
-    rap_sheet:{ color: "#ffab3d", label: "Record" },
-    case:     { color: "#7c8aa5", label: "Case" },
-    org:      { color: "#ff6ec7", label: "Org / Acct" },
+    weapon:   { color: "#ff6b8a", label: "Weapon" },
+    phone:    { color: "#40c4ff", label: "Phone" },
+    account:  { color: "#ff6ec7", label: "Account" },
+    org:      { color: "#c792ea", label: "Organization" },
+    address:  { color: "#2fe08a", label: "Address" },
+    premises: { color: "#57d99b", label: "Premises" },
+    arrest:   { color: "#ffab3d", label: "Arrest" },
+    seizure:  { color: "#ff7a45", label: "Seizure" },
+    courtcase:{ color: "#7c8aa5", label: "Court Case" },
   };
   const REL = {
     family:    { color: "#3aa0ff", width: 2.4, dash: null,   label: "Family" },
@@ -455,23 +464,26 @@
       { id:"priya", type:"person",   name:"Priya Nair",  rel:"Crew · Reed" },
       { id:"karen", type:"person",   name:"Karen Webb",  rel:"Counsel" },
       { id:"neil",  type:"person",   name:"Neil Dunn",   rel:"Informant" },
-      { id:"home",  type:"location", name:"3260 Jay St", rel:"Residence" },
-      { id:"nova",  type:"location", name:"Nova Motel",  rel:"Meet point" },
-      { id:"pier",  type:"location", name:"Pier 42 Whse",rel:"Operations" },
-      { id:"harbor",type:"location", name:"88 Harbor Rd",rel:"Residence" },
-      { id:"yard",  type:"location", name:"Rust Yard",   rel:"Meet point" },
-      { id:"store", type:"location", name:"Bay Storage 14",rel:"Storage" },
-      { id:"club",  type:"location", name:"The Blue Room",rel:"Frequented" },
-      { id:"car",   type:"vehicle",  name:"Plate ABC-123",rel:"Registered" },
-      { id:"boat",  type:"vehicle",  name:"MV Kingfisher",rel:"Registered" },
-      { id:"van",   type:"vehicle",  name:"Van XJ-7741", rel:"Shared use" },
-      { id:"ar20",  type:"rap_sheet",name:"Arrest 2020-01", rel:"Charge" },
-      { id:"ar19",  type:"rap_sheet",name:"Arrest 2019-07", rel:"Charge" },
-      { id:"bk21",  type:"rap_sheet",name:"Booking 2021", rel:"Charge" },
-      { id:"sz22",  type:"rap_sheet",name:"Seizure 2022", rel:"Event" },
-      { id:"case",  type:"case",     name:"Case #4471",  rel:"Primary" },
-      { id:"hh",    type:"org",      name:"Harbor Holdings",rel:"Shell co." },
-      { id:"acct",  type:"org",      name:"Account 7731",rel:"Financial" },
+      { id:"car",   type:"vehicle",  name:"Plate ABC-123", rel:"Registered", info:{ Plate:"ABC-123 (NY)", VIN:"1FMHK8F8XLGA22417", Year:"2018", "Make/Model":"Ford Explorer" } },
+      { id:"boat",  type:"vehicle",  name:"MV Kingfisher", rel:"Registered", info:{ Reg:"NY-2231-BX", Make:"Bayliner 32", Berth:"Pier 42" } },
+      { id:"van",   type:"vehicle",  name:"Van XJ-7741", rel:"Shared use", info:{ Plate:"XJ-7741 (NY)", VIN:"1GCWGAFP4M1240087", Year:"2021", "Make/Model":"Chevrolet Express" } },
+      { id:"wpn1",  type:"weapon",   name:"Glock 19", rel:"Seized", info:{ Type:"Pistol · 9mm", Serial:"BXK447", Recovered:"Pier 42 · 2022" } },
+      { id:"ph1",   type:"phone",    name:"Burner 555-0142", rel:"Prepaid", info:{ MSISDN:"+1 555-0142", Carrier:"Prepaid", IMEI:"3591-2204-7781" } },
+      { id:"ph2",   type:"phone",    name:"Burner 555-0199", rel:"Prepaid", info:{ MSISDN:"+1 555-0199", Carrier:"Prepaid", IMEI:"3557-9910-2043" } },
+      { id:"acct",  type:"account",  name:"Account 7731", rel:"Financial", info:{ "Acct #":"•••• 7731", Bank:"Coastal Trust", Routing:"021000021", Signatory:"V. Sloan" } },
+      { id:"hh",    type:"org",      name:"Harbor Holdings", rel:"Shell co.", info:{ Form:"LLC (DE)", EIN:"84-2210049", "Reg. Agent":"V. Sloan" } },
+      { id:"home",  type:"address",  name:"3260 Jay St", rel:"Residence", info:{ Street:"3260 Jay St", City:"Yonkers", State:"NY", ZIP:"10704" } },
+      { id:"nova",  type:"address",  name:"Nova Motel", rel:"Meet point", info:{ Street:"14 Route 9", City:"Peekskill", State:"NY", ZIP:"10566" } },
+      { id:"harbor",type:"address",  name:"88 Harbor Rd", rel:"Residence", info:{ Street:"88 Harbor Rd", City:"New Rochelle", State:"NY", ZIP:"10805" } },
+      { id:"store", type:"address",  name:"Bay Storage 14", rel:"Storage", info:{ Street:"Unit 14 · 900 Bay Ave", City:"Yonkers", State:"NY", ZIP:"10701" } },
+      { id:"pier",  type:"premises", name:"Pier 42 Whse", rel:"Operations", info:{ Type:"Warehouse", Street:"Pier 42 · Harbor Dist", City:"Yonkers", State:"NY" } },
+      { id:"yard",  type:"premises", name:"Rust Yard", rel:"Meet point", info:{ Type:"Scrap yard", Street:"210 Rail Ave", City:"Mount Vernon", State:"NY" } },
+      { id:"club",  type:"premises", name:"The Blue Room", rel:"Frequented", info:{ Type:"Nightclub", Street:"55 Main St", City:"Yonkers", State:"NY" } },
+      { id:"ar20",  type:"arrest",   name:"Arrest 2020-01", rel:"Charge", info:{ Date:"2020-01-30", Agency:"Bay County SO", "Arr #":"20-00841" } },
+      { id:"ar19",  type:"arrest",   name:"Arrest 2019-07", rel:"Charge", info:{ Date:"2019-07-14", Agency:"State Police – Marine", "Arr #":"19-77213" } },
+      { id:"bk21",  type:"arrest",   name:"Booking 2021", rel:"Charge", info:{ Date:"2021-11-03", Agency:"City PD – Fraud", "Arr #":"21-90551" } },
+      { id:"sz22",  type:"seizure",  name:"Seizure 2022", rel:"Event", info:{ Date:"2022-05-09", Location:"Pier 42", Items:"Weapon · currency" } },
+      { id:"case",  type:"courtcase",name:"Case #4471", rel:"Primary", info:{ Docket:"IND-20-0417", Court:"Sup Ct – Bay Co", Status:"Open" } },
     ],
     edges: [
       { s:"S", t:"jane", type:"family",    label:"Wife" },
@@ -516,6 +528,10 @@
       { s:"marcus",t:"club",type:"address", label:"Frequents" },
       { s:"priya",t:"club",type:"address",  label:"Frequents" },
       { s:"neil",t:"omar", type:"associate",label:"Informant" },
+      { s:"marcus",t:"wpn1",type:"other",   label:"Owner" },
+      { s:"sz22",t:"wpn1", type:"other",    label:"Recovered" },
+      { s:"rick",t:"ph1",  type:"other",    label:"Phone" },
+      { s:"omar",t:"ph2",  type:"other",    label:"Phone" },
     ],
   };
 
@@ -546,7 +562,7 @@
       { date:"2019-07-14", agency:"STATE POLICE - MARINE", ori:"NYNSP0400", no:"19-77213", court:"SUP CT — STATE", docket:"IND-19-2201", dispDate:"2019-12-10", charges:[
         { ncic:"3530", stat:"COCAINE - SELL", statute:"PL 220.39", sev:"Felony", cls:"F/B", disp:"CONVICTED COMMITTED TO PRISON", sent:"010 YEARS PRISON", note:"CO-DEF: DIAZ, OMAR" } ]},
       { date:"2022-05-09", agency:"BAY COUNTY SO", ori:"NY0510000", no:"22-51188", court:"—", docket:"—", dispDate:"2022-05-11", charges:[
-        { ncic:"1500", stat:"WEAPON - POSSESS", statute:"PL 265.03", sev:"Felony", cls:"F/C", disp:"PROS REL-DET ONLY-LACK OF SUFF EVID", sent:"—", note:"PIER 42 SEIZURE" } ]} ]},
+        { ncic:"5212", stat:"WEAPON - POSSESSION", statute:"PL 265.03", sev:"Felony", cls:"F/C", disp:"PROS REL-DET ONLY-LACK OF SUFF EVID", sent:"—", note:"PIER 42 SEIZURE" } ]} ]},
     omar: { name:"DIAZ, OMAR", sid:"NYSID 05230991O", fbi:"660412OD1", ucn:"06604123", dcn:"7F31KQ2D", purpose:"C",
       dob:"1990-02-17", pob:"NEW YORK", sex:"M", race:"White", ht:`5'09"`, wt:"170", eyes:"Brown", hair:"Black",
       marks:[], aka:[], cycles:[
@@ -556,9 +572,9 @@
       dob:"1968-12-01", pob:"YONKERS NY", sex:"M", race:"White", ht:`5'10"`, wt:"200", eyes:"Blue", hair:"Gray",
       marks:["TAT R ARM"], aka:["SLOAN, VIC"], cycles:[
       { date:"2004-08-19", agency:"METRO PD", ori:"NY0303000", no:"04-11902", court:"CRIM CT — METRO", docket:"04CR-3120", dispDate:"2004-10-01", charges:[
-        { ncic:"1000", stat:"FORGERY", statute:"PL 170.05", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
+        { ncic:"2589", stat:"FORGERY", statute:"PL 170.05", sev:"Misdemeanor", cls:"M/A", disp:"DISCHARGED", sent:"—" } ]},
       { date:"2021-11-03", agency:"CITY PD - FRAUD UNIT", ori:"NY0301500", no:"21-90551", court:"—", docket:"—", dispDate:"2021-11-30", charges:[
-        { ncic:"2600", stat:"MONEY LAUNDERING", statute:"PL 470.10", sev:"Felony", cls:"F/C", disp:"REL/DET ONLY/ADMISS EVIDENCE INSUFF", sent:"—", note:"STRUCTURING / SUSP. LAUNDERING" } ]} ]},
+        { ncic:"6300", stat:"MONEY LAUNDERING", statute:"PL 470.10", sev:"Felony", cls:"F/C", disp:"REL/DET ONLY/ADMISS EVIDENCE INSUFF", sent:"—", note:"STRUCTURING / SUSP. LAUNDERING" } ]} ]},
   };
 
   // ---------- model ----------
@@ -1026,13 +1042,13 @@
 
   // ---------- HUD ----------
   const filtersEl=document.getElementById("filters");
-  const active = { person:true, location:true, vehicle:true, rap_sheet:true, case:true, org:true };
+  const active = Object.fromEntries(Object.keys(TYPE).map(t=>[t,true]));
   // POLE taxonomy: People, Objects, Locations, Events — each grouping its classes.
   const POLE = [
     { label:"People",    types:["person"] },
-    { label:"Objects",   types:["vehicle","org"] },
-    { label:"Locations", types:["location"] },
-    { label:"Events",    types:["rap_sheet","case"] },
+    { label:"Objects",   types:["vehicle","weapon","phone","account","org"] },
+    { label:"Locations", types:["address","premises"] },
+    { label:"Events",    types:["arrest","seizure","courtcase"] },
   ];
   function renderFilters(){
     filtersEl.innerHTML="";
@@ -1072,7 +1088,9 @@
     if (!n){ dossierBody.innerHTML=`<div class="idle">Awaiting selection<br>▸ select an entity</div>`; return; }
     const col=TYPE[n.type]?.color||"#7c8aa5";
     const cent=Math.round((n.deg/Math.max(maxDeg,1))*100);
-    const threat=Math.min(100, (n.flagged?70:20)+n.deg*7+(n.type==="rap_sheet"?25:0));
+    const threat=Math.min(100, (n.flagged?70:20)+n.deg*7+((n.type==="arrest"||n.type==="seizure")?25:0));
+    const ident={ ...(n.info||{}) };
+    if (n.rapSheet){ ident.SID=n.rapSheet.sid; ident.FBI=n.rapSheet.fbi; ident.DOB=n.rapSheet.dob; }
     const conns=links.filter(l=>l.source.id===n.id||l.target.id===n.id).map(l=>{
       const o=l.source.id===n.id?l.target:l.source; return {o,l};
     });
@@ -1089,6 +1107,8 @@
         <div class="field"><div class="k">Relationship</div><div class="v">${n.rel||"—"}</div></div>
         <div class="field"><div class="k">Status</div><div class="v" style="color:${n.flagged?"#ff4d5e":"#2fe08a"}">${n.flagged?"FLAGGED":"CLEAR"}</div></div>
       </div>
+      ${Object.keys(ident).length?`<div class="label" style="margin-top:2px">Identifiers</div>
+      <div class="idblk">${Object.entries(ident).map(([k,v])=>`<div class="idrow"><span class="idk">${k}</span><span class="idv">${v}</span></div>`).join("")}</div>`:""}
       <div class="meter"><div class="mrow"><span class="label">Centrality</span><span class="label val">${cent}%</span></div>
         <div class="bar"><div class="fill" style="background:linear-gradient(90deg,#37e0ff,#3aa0ff)"></div></div></div>
       <div class="meter"><div class="mrow"><span class="label">Threat Index</span><span class="label val">${threat}</span></div>

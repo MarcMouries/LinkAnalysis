@@ -42,11 +42,24 @@ pair each charge with an NCIC code + statute citation.
 - Identification: add `ucn`, `dcn`, `purpose`, `pob` (birthplace).
 - Render all of it in the rap-sheet viewer (both Console and Document modes).
 
-**P2 — Node identifiers**
-- person: `sid`, `fbi`, `dob` on node data (link node ↔ rap sheet).
-- location: structured `{ street, city, state, zip }`.
-- vehicle: `{ plate, plateState, vin, year, make, model }`.
-- org/account: `{ acct, ein }`.
+**P2 — Node identifiers — _implemented_**
+- Every object/location node carries a structured `info` block, shown as an
+  **Identifiers** panel in the dossier: vehicle `{plate, VIN, year, make/model}`,
+  weapon `{type, serial}`, phone `{MSISDN, IMEI, carrier}`, account `{acct#, bank,
+  routing}`, organization `{form, EIN, agent}`, address `{street, city, state, ZIP}`,
+  premises `{type, street, city}`, events `{date, agency, arr#}`, case `{docket, court}`.
+- Person nodes link to their rap sheet — their `SID / FBI / DOB` show in the dossier.
+
+**P-taxonomy — richer POLE classes — _implemented_**
+- The graph and the "Entity Classes" rail are now grouped by the POLE model with
+  multiple sub-classes each: **People** (Person); **Objects** (Vehicle, Weapon,
+  Phone, Account, Organization); **Locations** (Address, Premises); **Events**
+  (Arrest, Seizure, Court Case). Added weapon/phone entities so each class is populated.
+
+**P-codes — real NCIC charge codes — _implemented_**
+- All charges use verified NCIC offense codes (see
+  [`ncic-offense-codes.md`](ncic-offense-codes.md)); corrected the earlier guesses —
+  weapons → **5212** (52xx), forgery → **2589** (25xx), money-laundering → **6300** (63xx).
 
 **P3 — Relationship vocabulary**
 - Edge sub-qualifiers: family→{spouse, sibling, parent, child}; associate→{known-associate, co-defendant}; other→{registered-owner, frequents, named-in}. Display the qualifier on the edge label / dossier.
