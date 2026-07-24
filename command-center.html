@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="A cinematic tactical link-analysis console — force-directed POLE graph with a radial right-click pie-menu.">
+<meta name="description" content="A cinematic tactical link-analysis console — a two-crew POI network where link analysis exposes hidden bridges.">
 </head>
 <body>
 <style>
@@ -69,11 +69,11 @@
     box-shadow: inset 0 0 240px 40px rgba(0,0,0,.85), inset 0 0 60px rgba(0,0,0,.6);
   }
   #sweep {
-    position: absolute; left: 0; right: 0; height: 180px; z-index: 3; pointer-events: none;
-    background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--cyan) 9%, transparent), transparent);
-    animation: sweep 7s linear infinite;
+    position: absolute; left: 0; right: 0; height: 240px; z-index: 3; pointer-events: none;
+    background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--cyan) 4%, transparent), transparent);
+    animation: sweep 22s linear infinite; opacity: .6;
   }
-  @keyframes sweep { 0% { top: -180px; } 100% { top: 100%; } }
+  @keyframes sweep { 0% { top: -240px; } 100% { top: 100%; } }
 
   /* --- HUD frame --- */
   .hud { position: absolute; z-index: 5; }
@@ -282,8 +282,9 @@
     person:   { color: "#3aa0ff", label: "Person" },
     location: { color: "#2fe08a", label: "Location" },
     vehicle:  { color: "#b072ff", label: "Vehicle" },
-    rap_sheet:{ color: "#ffab3d", label: "Rap Sheet" },
+    rap_sheet:{ color: "#ffab3d", label: "Record" },
     case:     { color: "#7c8aa5", label: "Case" },
+    org:      { color: "#ff6ec7", label: "Org / Acct" },
   };
   const REL = {
     family:    { color: "#3aa0ff", width: 2.4, dash: null,   label: "Family" },
@@ -292,46 +293,90 @@
     arrest:    { color: "#ff4d5e", width: 2.0, dash: [6,5],  label: "Arrest" },
     other:     { color: "#56708f", width: 1.6, dash: [2,4],  label: "Other" },
   };
+  // A two-crew network that looks like two separate cases until link analysis
+  // exposes the bridges: a shared motel, a shared van, one shared lawyer, and a
+  // broker (Vic Sloan) routing money through a shell — connecting Eric ↔ Marcus.
   const RAW = {
     nodes: [
-      { id:"S",  type:"person",   subject:true, name:"Eric Fox",     rel:"Subject" },
-      { id:"w",  type:"person",   name:"Jane Fox",    rel:"Spouse" },
-      { id:"b",  type:"person",   name:"Sam Fox",     rel:"Sibling" },
-      { id:"a1", type:"person",   name:"Rick Vale",   rel:"Associate" },
-      { id:"a2", type:"person",   name:"Marcus Reed", rel:"Associate" },
-      { id:"a3", type:"person",   name:"Dana Cole",   rel:"Associate" },
-      { id:"l1", type:"location", name:"3260 Jay St", rel:"Residence" },
-      { id:"l2", type:"location", name:"Pier 42 Whse",rel:"Frequented" },
-      { id:"l3", type:"location", name:"Nova Motel",  rel:"Sighted" },
-      { id:"v1", type:"vehicle",  name:"Plate ABC-123",rel:"Registered" },
-      { id:"v2", type:"vehicle",  name:"MV Kingfisher",rel:"Registered" },
-      { id:"r1", type:"rap_sheet",name:"Arrest 2020-01-30", rel:"On record" },
-      { id:"r2", type:"rap_sheet",name:"Booking 2019", rel:"On record" },
-      { id:"c1", type:"case",     name:"Case #4471",  rel:"Primary" },
+      { id:"S",     type:"person",   subject:true, name:"Eric Fox",   rel:"Subject" },
+      { id:"jane",  type:"person",   name:"Jane Fox",    rel:"Spouse" },
+      { id:"sam",   type:"person",   name:"Sam Fox",     rel:"Sibling" },
+      { id:"rick",  type:"person",   name:"Rick Vale",   rel:"Crew · Fox" },
+      { id:"dana",  type:"person",   name:"Dana Cole",   rel:"Crew · Fox" },
+      { id:"leo",   type:"person",   name:"Leo Marsh",   rel:"Crew · Fox" },
+      { id:"vic",   type:"person",   name:"Vic Sloan",   rel:"Broker" },
+      { id:"marcus",type:"person",   name:"Marcus Reed", rel:"POI · 2nd crew" },
+      { id:"omar",  type:"person",   name:"Omar Diaz",   rel:"Crew · Reed" },
+      { id:"priya", type:"person",   name:"Priya Nair",  rel:"Crew · Reed" },
+      { id:"karen", type:"person",   name:"Karen Webb",  rel:"Counsel" },
+      { id:"neil",  type:"person",   name:"Neil Dunn",   rel:"Informant" },
+      { id:"home",  type:"location", name:"3260 Jay St", rel:"Residence" },
+      { id:"nova",  type:"location", name:"Nova Motel",  rel:"Meet point" },
+      { id:"pier",  type:"location", name:"Pier 42 Whse",rel:"Operations" },
+      { id:"harbor",type:"location", name:"88 Harbor Rd",rel:"Residence" },
+      { id:"yard",  type:"location", name:"Rust Yard",   rel:"Meet point" },
+      { id:"store", type:"location", name:"Bay Storage 14",rel:"Storage" },
+      { id:"club",  type:"location", name:"The Blue Room",rel:"Frequented" },
+      { id:"car",   type:"vehicle",  name:"Plate ABC-123",rel:"Registered" },
+      { id:"boat",  type:"vehicle",  name:"MV Kingfisher",rel:"Registered" },
+      { id:"van",   type:"vehicle",  name:"Van XJ-7741", rel:"Shared use" },
+      { id:"ar20",  type:"rap_sheet",name:"Arrest 2020-01", rel:"Charge" },
+      { id:"ar19",  type:"rap_sheet",name:"Arrest 2019-07", rel:"Charge" },
+      { id:"bk21",  type:"rap_sheet",name:"Booking 2021", rel:"Charge" },
+      { id:"sz22",  type:"rap_sheet",name:"Seizure 2022", rel:"Event" },
+      { id:"case",  type:"case",     name:"Case #4471",  rel:"Primary" },
+      { id:"hh",    type:"org",      name:"Harbor Holdings",rel:"Shell co." },
+      { id:"acct",  type:"org",      name:"Account 7731",rel:"Financial" },
     ],
     edges: [
-      { s:"S", t:"w",  type:"family",    label:"Wife" },
-      { s:"S", t:"b",  type:"family",    label:"Brother" },
-      { s:"S", t:"a1", type:"associate", label:"Known assoc." },
-      { s:"S", t:"a2", type:"associate", label:"Known assoc." },
-      { s:"S", t:"l1", type:"address",   label:"Home" },
-      { s:"S", t:"v1", type:"other",     label:"Vehicle" },
-      { s:"S", t:"r1", type:"arrest",    label:"Arrest" },
-      { s:"S", t:"c1", type:"other",     label:"Case" },
-      { s:"a1",t:"l3", type:"address",   label:"Stays at" },
-      { s:"a1",t:"a3", type:"associate", label:"Contact" },
-      { s:"a2",t:"l2", type:"address",   label:"Operates" },
-      { s:"a2",t:"v2", type:"other",     label:"Vehicle" },
-      { s:"a2",t:"r2", type:"arrest",    label:"Arrest" },
-      { s:"b", t:"l1", type:"address",   label:"Lived at" },
-      { s:"a3",t:"c1", type:"other",     label:"Named in" },
-      { s:"a2",t:"c1", type:"other",     label:"Named in" },
+      { s:"S", t:"jane", type:"family",    label:"Wife" },
+      { s:"S", t:"sam",  type:"family",    label:"Brother" },
+      { s:"sam",t:"home",type:"address",   label:"Lived at" },
+      { s:"S", t:"rick", type:"associate", label:"Crew" },
+      { s:"S", t:"dana", type:"associate", label:"Crew" },
+      { s:"S", t:"leo",  type:"associate", label:"Crew" },
+      { s:"rick",t:"dana",type:"associate",label:"Contact" },
+      { s:"leo",t:"yard",type:"address",   label:"Meets at" },
+      { s:"S", t:"home", type:"address",   label:"Home" },
+      { s:"S", t:"car",  type:"other",     label:"Vehicle" },
+      { s:"S", t:"ar20", type:"arrest",    label:"Arrest" },
+      { s:"rick",t:"ar20",type:"arrest",   label:"Co-defendant" },
+      { s:"S", t:"case", type:"other",     label:"Named in" },
+      { s:"S", t:"yard", type:"address",   label:"Meets at" },
+      { s:"rick",t:"nova",type:"address",  label:"Stays at" },
+      { s:"omar",t:"nova",type:"address",  label:"Stays at" },
+      { s:"rick",t:"van", type:"other",    label:"Uses" },
+      { s:"omar",t:"van", type:"other",    label:"Uses" },
+      { s:"van",t:"store",type:"address",  label:"Stored" },
+      { s:"karen",t:"S",  type:"associate",label:"Counsel" },
+      { s:"karen",t:"marcus",type:"associate",label:"Counsel" },
+      { s:"vic",t:"yard", type:"address",  label:"Seen at" },
+      { s:"vic",t:"rick", type:"associate",label:"Payments" },
+      { s:"vic",t:"marcus",type:"associate",label:"Handler" },
+      { s:"vic",t:"hh",   type:"other",    label:"Director" },
+      { s:"marcus",t:"hh",type:"other",    label:"Director" },
+      { s:"vic",t:"harbor",type:"address", label:"Residence" },
+      { s:"vic",t:"bk21", type:"arrest",   label:"Booking" },
+      { s:"vic",t:"acct", type:"other",    label:"Controls" },
+      { s:"vic",t:"club", type:"address",  label:"Frequents" },
+      { s:"hh", t:"acct", type:"other",    label:"Funds" },
+      { s:"acct",t:"case",type:"other",    label:"Flagged in" },
+      { s:"marcus",t:"omar",type:"associate",label:"Crew" },
+      { s:"marcus",t:"priya",type:"associate",label:"Crew" },
+      { s:"marcus",t:"pier",type:"address", label:"Operates" },
+      { s:"marcus",t:"boat",type:"other",   label:"Vehicle" },
+      { s:"marcus",t:"ar19",type:"arrest",  label:"Arrest" },
+      { s:"omar",t:"ar19", type:"arrest",   label:"Co-defendant" },
+      { s:"marcus",t:"sz22",type:"arrest",  label:"Seizure" },
+      { s:"marcus",t:"club",type:"address", label:"Frequents" },
+      { s:"priya",t:"club",type:"address",  label:"Frequents" },
+      { s:"neil",t:"omar", type:"associate",label:"Informant" },
     ],
   };
 
   // ---------- model ----------
   const nodes = RAW.nodes.map(n => ({ ...n, x:0, y:0, vx:0, vy:0, fx:null, fy:null,
-    r:(n.subject?26:17), deg:0, flagged:false, hidden:false }));
+    r:(n.subject?24:15), deg:0, flagged:false, hidden:false }));
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
   const links = RAW.edges.map(e => {
     const st = REL[e.type] || REL.other;
@@ -340,6 +385,19 @@
   });
   links.forEach(l => { l.source.deg++; l.target.deg++; });
   const maxDeg = Math.max(...nodes.map(n => n.deg));
+
+  // Analytical pass: a non-person entity linked to 2+ distinct people is a
+  // cross-referenced ("shared") resource — the raw material of link analysis.
+  const personIds = new Set(nodes.filter(n => n.type === "person").map(n => n.id));
+  for (const n of nodes) {
+    const people = new Set();
+    for (const l of links) {
+      if (l.source.id === n.id && personIds.has(l.target.id)) people.add(l.target.id);
+      if (l.target.id === n.id && personIds.has(l.source.id)) people.add(l.source.id);
+    }
+    n.sharedBy = people.size;
+    n.shared = n.type !== "person" && people.size >= 2;
+  }
   const neighbors = id => {
     const s = new Set();
     for (const l of links) { if (l.source.id===id) s.add(l.target.id); if (l.target.id===id) s.add(l.source.id); }
@@ -514,6 +572,9 @@
       ctx.fillStyle=col; ctx.shadowBlur=faded?0:18; ctx.shadowColor=col; ctx.fill();
       ctx.shadowBlur=0;
       ctx.lineWidth=2; ctx.strokeStyle="rgba(4,7,13,.9)"; ctx.stroke();
+      // cross-referenced (shared) resource marker
+      if (n.shared){ ctx.setLineDash([2.5,3]); ctx.globalAlpha=faded?0.14:0.6; ctx.beginPath(); ctx.arc(n.x,n.y,r+5,0,7);
+        ctx.strokeStyle="#9fd8ff"; ctx.lineWidth=1; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=faded?0.18:1; }
       // monogram
       ctx.fillStyle="#04070d"; ctx.font=(n.subject?"bold 15px ":"bold 12px ")+"var(--sans), sans-serif";
       ctx.textAlign="center"; ctx.textBaseline="middle";
@@ -663,8 +724,9 @@
     dossierBody.innerHTML=`
       <div class="d-top">
         <div id="avatar" style="background:${col}">${initials(n.name)}</div>
-        <div><div class="d-name">${n.name}</div><div class="d-sub">${n.subject?"◆ PRIMARY SUBJECT":TYPE[n.type]?.label}</div></div>
+        <div><div class="d-name">${n.name}</div><div class="d-sub">${n.subject?"◆ PRIMARY SUBJECT":TYPE[n.type]?.label}${n.shared?` · <span style="color:#37e0ff">⊗ SHARED ×${n.sharedBy}</span>`:""}</div></div>
       </div>
+      ${n.shared?`<div style="border:1px solid color-mix(in oklab,#37e0ff 34%,transparent);border-radius:6px;padding:9px 11px;background:color-mix(in oklab,#37e0ff 8%,transparent)"><span class="label" style="color:#37e0ff">⊗ Cross-referenced</span><div style="font-family:var(--sans);font-size:12px;margin-top:4px;color:#cfe3ee">Ties <b>${n.sharedBy}</b> separate persons — a bridge between otherwise-unconnected parties.</div></div>`:""}
       <div class="fields">
         <div class="field"><div class="k">Entity ID</div><div class="v val">${n.id.toUpperCase()}</div></div>
         <div class="field"><div class="k">Class</div><div class="v">${TYPE[n.type]?.label}</div></div>
@@ -684,7 +746,14 @@
   function refreshStats(){ document.getElementById("stat-nodes").textContent=nodes.filter(n=>!n.hidden).length; document.getElementById("stat-links").textContent=links.length; }
 
   // live feed
-  const FEED=["POLE grid synchronized","Cross-reference: 3 shared addresses","Vehicle MV Kingfisher flagged by port authority","Associate Marcus Reed — 2 prior arrests","Pattern match: Pier 42 ↔ Nova Motel","Financial trace pending warrant"];
+  const FEED = (() => {
+    const f = ["LINK ▸ E.Fox ↔ M.Reed — no direct tie; bridged by shared entities"];
+    nodes.filter(n => n.shared).sort((a,b)=>b.sharedBy-a.sharedBy).slice(0,6)
+      .forEach(n => f.push("CROSS-REF ▸ " + n.name + " — shared by " + n.sharedBy + " persons"));
+    f.push("COUNSEL ▸ K.Webb represents both Fox and Reed");
+    f.push("SHELL ▸ Harbor Holdings → Account 7731 → Case #4471");
+    return f;
+  })();
   const tkRun=document.getElementById("tk-run");
   function renderFeed(){ const items=FEED.concat(FEED); tkRun.innerHTML=items.map(f=>`<span><b>▸</b> ${f}</span>`).join(""); }
   function pushFeed(msg){ FEED.unshift(msg); if(FEED.length>10)FEED.pop(); renderFeed(); }
@@ -706,19 +775,14 @@
     const fs=`precision highp float;uniform vec2 R;uniform float T;
       void main(){
         vec2 uv=(gl_FragCoord.xy-0.5*R)/R.y;
-        float g=0.0;
-        vec2 gv=uv*7.0;
-        vec2 gf=abs(fract(gv)-0.5);
-        float line=min(gf.x,gf.y);
-        g+=smoothstep(0.06,0.0,line)*0.5;
+        vec2 gf=abs(fract(uv*7.0)-0.5);
+        float grid=smoothstep(0.05,0.0,min(gf.x,gf.y))*0.32;
         float d=length(uv);
-        float scan=sin(d*26.0 - T*2.2);
-        float ring=smoothstep(0.9,1.0,scan)*smoothstep(0.9,0.2,d);
-        float glow=exp(-d*2.3)*0.5;
-        float vig=smoothstep(1.2,0.2,d);
+        float glow=exp(-d*2.2)*0.34;
+        float drift=0.72+0.28*sin(uv.y*2.6 - T*0.14);
+        float vig=smoothstep(1.28,0.15,d);
         vec3 cyan=vec3(0.22,0.85,1.0);
-        vec3 col=cyan*(g*0.5+ring*0.7+glow)*vig;
-        col+=vec3(0.02,0.05,0.09)*vig;
+        vec3 col=cyan*(grid*drift+glow)*vig + vec3(0.014,0.038,0.072)*vig;
         gl_FragColor=vec4(col,1.0);
       }`;
     function sh(t,s){ const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o);
@@ -752,5 +816,6 @@
   resize(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); frame(); boot();
 })();
 </script>
+
 </body>
 </html>
