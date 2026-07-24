@@ -22,6 +22,8 @@ export {
 	poleNodeStyle,
 	poleEdgeStyle,
 	applyPOLEEdgeStyles,
+	poleRingOf,
+	POLE_REL_RINGS,
 	poleLegend,
 	POLE_NODE_STYLES,
 	POLE_EDGE_STYLES,

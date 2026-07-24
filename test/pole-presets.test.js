@@ -4,9 +4,12 @@ import {
 	poleNodeStyle,
 	poleEdgeStyle,
 	applyPOLEEdgeStyles,
+	poleRingOf,
+	POLE_REL_RINGS,
 	POLE_EDGE_STYLES,
 	POLE_NODE_STYLES,
 } from "../src/pole-presets.js";
+import { RadialLayout } from "graphjs";
 import { transformServiceNowData } from "../src/data-adapter.js";
 
 describe("poleEdgeStyle", () => {
@@ -64,6 +67,39 @@ describe("poleNodeStyle", () => {
 			expect(s.stroke).toBeDefined();
 			expect(s.icon).toContain("<");
 		}
+	});
+});
+
+describe("poleRingOf (POLE radial preset)", () => {
+	test("maps a relationship type to its ring", () => {
+		expect(poleRingOf({}, { link: { type: "family" }, depth: 9 })).toBe(POLE_REL_RINGS.family);
+		expect(poleRingOf({}, { link: { type: "arrest" }, depth: 9 })).toBe(POLE_REL_RINGS.arrest);
+	});
+
+	test("reads the type from a GraphJS link payload (.data.type)", () => {
+		expect(poleRingOf({}, { link: { data: { type: "associate" } }, depth: 9 })).toBe(POLE_REL_RINGS.associate);
+	});
+
+	test("falls back to BFS depth for unknown / missing link types", () => {
+		expect(poleRingOf({}, { link: { type: "mystery" }, depth: 4 })).toBe(4);
+		expect(poleRingOf({}, { link: null, depth: 2 })).toBe(2);
+	});
+
+	test("drives RadialLayout: kin and arrests land on their preset rings", () => {
+		const g = new Graph();
+		g.loadJSON({
+			nodes: [{ id: "S", is_subject: true }, { id: "w" }, { id: "rap" }],
+			links: [
+				{ source: "S", target: "w", type: "family" },
+				{ source: "S", target: "rap", type: "arrest" },
+			],
+		});
+		const center = { x: 0, y: 0 };
+		const ringSpacing = 100;
+		new RadialLayout(g, { centerNode: "S", ringSpacing, center, ringOf: poleRingOf }).run();
+		const r = (id) => Math.hypot(g.getNode(id).x, g.getNode(id).y);
+		expect(Math.abs(r("w") - POLE_REL_RINGS.family * ringSpacing)).toBeLessThan(1e-6);
+		expect(Math.abs(r("rap") - POLE_REL_RINGS.arrest * ringSpacing)).toBeLessThan(1e-6);
 	});
 });
 

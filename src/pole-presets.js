@@ -108,6 +108,27 @@ export function poleEdgeStyle(link) {
 }
 
 /**
+ * POLE radial preset: which ring each relationship type sits on (closest kin
+ * innermost). Kept in `POLE_EDGE_TYPES` order.
+ */
+export const POLE_REL_RINGS = { family: 1, associate: 2, address: 3, arrest: 4, other: 5 };
+
+/**
+ * A `ringOf` hook for GraphJS `RadialLayout`: places a node on the ring for the
+ * relationship (link) that reached it, so a subject's kin/associates/addresses/
+ * arrests land on distinct rings regardless of hop count. Falls back to the
+ * layout's BFS depth when the link has no known POLE type.
+ *
+ *   new RadialLayout(graph, { centerNode: "S", ringSpacing: 120, ringOf: poleRingOf })
+ */
+export function poleRingOf(node, info = {}) {
+	const link = info.link;
+	const type = link ? (link.type ?? link.data?.type) : undefined;
+	if (type != null && type in POLE_REL_RINGS) return POLE_REL_RINGS[type];
+	return info.depth;
+}
+
+/**
  * Resolve the node style for a node (falls back to "other"). Subject nodes get
  * the subject emphasis merged in (larger, glow, distinct stroke).
  */
