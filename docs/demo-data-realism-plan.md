@@ -61,8 +61,16 @@ pair each charge with an NCIC code + statute citation.
   [`ncic-offense-codes.md`](ncic-offense-codes.md)); corrected the earlier guesses —
   weapons → **5212** (52xx), forgery → **2589** (25xx), money-laundering → **6300** (63xx).
 
-**P3 — Relationship vocabulary**
-- Edge sub-qualifiers: family→{spouse, sibling, parent, child}; associate→{known-associate, co-defendant}; other→{registered-owner, frequents, named-in}. Display the qualifier on the edge label / dossier.
+**P3 — Relationship vocabulary — _implemented_**
+- Controlled vocabulary documented in [`relationship-vocabulary.md`](relationship-vocabulary.md):
+  5 relationship types (Family, Associate, Located at, Charge tie, Other) each with
+  finer qualifiers (Spouse/Sibling, Co-defendant/Handler/Counsel, Residence/Frequents,
+  Registered-owner…), mapped to NIEM `nc:*Association`.
+- Relationship type labels are named distinctly from the entity classes (Located at ≠
+  Address, Charge tie ≠ Arrest) to avoid duplicate-looking filters.
+- The console gains a **Relationships** filter rail (toggle each tie type on/off — the
+  edge analogue of the POLE entity filter), and the dossier shows each connection as
+  **Type · Qualifier** (e.g. "Charge tie · Co-defendant"), coloured by tie type.
 
 **P4 — Adapter alignment**
 - Extend `validatePOLEData` to accept (and lightly validate) the richer fields; add

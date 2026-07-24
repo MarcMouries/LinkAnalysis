@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="Link-analysis console — full POLE taxonomy, structured identifiers, NIEM/NLETS rap sheets with real NCIC codes.">
+<meta name="description" content="Link-analysis console with POLE + relationship filters, structured identifiers and NIEM/NLETS rap sheets.">
 </head>
 <body>
 <style>
@@ -111,6 +111,7 @@
   .filter:hover { background: color-mix(in oklab, var(--cyan) 8%, transparent); border-color: var(--edge); }
   .filter[aria-pressed="false"] { opacity: .38; }
   .filter .sw { width: 11px; height: 11px; border-radius: 3px; box-shadow: 0 0 10px currentColor; }
+  .filter .rw { width: 16px; height: 0; flex: none; }
   .filter .fname { flex: 1; font-size: 11px; letter-spacing: .08em; color: var(--ink); }
   .filter .fc { font-size: 11px; color: var(--ink-dim); }
   .pole-grp { display: flex; flex-direction: column; gap: 3px; }
@@ -375,6 +376,8 @@
   <aside id="leftrail" class="hud panel">
     <div class="rail-h"><span class="label">Entity Classes</span><span class="label">POLE</span></div>
     <div class="filters" id="filters"></div>
+    <div class="rail-h" style="margin-top:2px"><span class="label">Relationships</span><span class="label">Ties</span></div>
+    <div class="filters" id="rel-filters"></div>
     <div class="rail-h" style="margin-top:4px"><span class="label">Roster</span><span class="label" id="roster-count">0</span></div>
     <div class="roster" id="roster"></div>
   </aside>
@@ -443,8 +446,8 @@
   const REL = {
     family:    { color: "#3aa0ff", width: 2.4, dash: null,   label: "Family" },
     associate: { color: "#2fe08a", width: 2.0, dash: null,   label: "Associate" },
-    address:   { color: "#ffab3d", width: 1.8, dash: null,   label: "Address" },
-    arrest:    { color: "#ff4d5e", width: 2.0, dash: [6,5],  label: "Arrest" },
+    address:   { color: "#ffab3d", width: 1.8, dash: null,   label: "Located at" },
+    arrest:    { color: "#ff4d5e", width: 2.0, dash: [6,5],  label: "Charge tie" },
     other:     { color: "#56708f", width: 1.6, dash: [2,4],  label: "Other" },
   };
   // A two-crew network that looks like two separate cases until link analysis
@@ -737,7 +740,7 @@
     // links
     ctx.lineCap="round";
     for (const l of links) {
-      if (l.source.hidden || l.target.hidden) continue;
+      if (l.source.hidden || l.target.hidden || !relActive[l.type]) continue;
       const on = linkOn(l);
       const faded = (path||focus) && !on;
       ctx.globalAlpha = faded ? 0.07 : 0.9;
@@ -762,7 +765,7 @@
     // link labels (focused node, or the spotlighted path)
     if (focus || path){
       ctx.font="9px ui-monospace, monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
-      for (const l of links){ if(!linkOn(l))continue; if(l.source.hidden||l.target.hidden)continue;
+      for (const l of links){ if(!linkOn(l))continue; if(l.source.hidden||l.target.hidden||!relActive[l.type])continue;
         const mx=(l.source.x+l.target.x)/2, my=(l.source.y+l.target.y)/2;
         ctx.fillStyle="rgba(5,9,16,.85)"; const w=ctx.measureText(l.label).width+10;
         ctx.fillRect(mx-w/2,my-8,w,15); ctx.fillStyle="#9fc6dd"; ctx.fillText(l.label,mx,my); }
@@ -1070,6 +1073,21 @@
       filtersEl.appendChild(grp);
     }
   }
+  // Relationship (edge) filters — toggle tie types on/off.
+  const relActive = Object.fromEntries(Object.keys(REL).map(t=>[t,true]));
+  const relFiltersEl = document.getElementById("rel-filters");
+  function renderRelFilters(){
+    if(!relFiltersEl) return;
+    relFiltersEl.innerHTML="";
+    for (const [t,meta] of Object.entries(REL)){
+      const count=links.filter(l=>l.type===t).length;
+      const d=document.createElement("div"); d.className="filter"; d.setAttribute("aria-pressed", relActive[t]);
+      const line=`border-bottom:2px ${meta.dash?'dashed':'solid'} ${meta.color}`;
+      d.innerHTML=`<span class="rw" style="${line}"></span><span class="fname">${meta.label}</span><span class="fc val">${count}</span>`;
+      d.onclick=()=>{ relActive[t]=!relActive[t]; renderRelFilters(); };
+      relFiltersEl.appendChild(d);
+    }
+  }
   const rosterEl=document.getElementById("roster");
   function renderRoster(){
     rosterEl.innerHTML="";
@@ -1116,7 +1134,7 @@
       <div class="meter"><div class="mrow"><span class="label">Broker · betweenness</span><span class="label val">${Math.round((n.btw||0)*100)}</span></div>
         <div class="bar"><div class="fill" style="background:linear-gradient(90deg,#b072ff,#ff6ec7)"></div></div></div>
       <div class="label" style="margin-top:2px">Connections · ${conns.length}</div>
-      <div class="conns">${conns.map(c=>`<div class="conn" data-id="${c.o.id}"><span class="cline" style="background:${c.l.color}"></span><span class="cn">${c.o.name}</span><span class="crel">${c.l.label}</span></div>`).join("")}</div>
+      <div class="conns">${conns.map(c=>`<div class="conn" data-id="${c.o.id}"><span class="cline" style="background:${c.l.color}"></span><span class="cn">${c.o.name}</span><span class="crel"><b style="color:${c.l.color}">${REL[c.l.type]?.label||c.l.type}</b> · ${c.l.label}</span></div>`).join("")}</div>
     `;
     const btwPct=Math.round((n.btw||0)*100);
     requestAnimationFrame(()=>{ const f=dossierBody.querySelectorAll(".fill"); if(f[0])f[0].style.width=cent+"%"; if(f[1])f[1].style.width=threat+"%"; if(f[2])f[2].style.width=btwPct+"%"; });
@@ -1217,7 +1235,7 @@
   const rsRoot=document.getElementById("rapsheet"); if (rsRoot) rsRoot.addEventListener("click", e=>{ if(e.target===rsRoot) closeRapSheet(); });
   document.querySelectorAll("#rapsheet .rs-view button").forEach(b=> b.onclick=()=>{ rapView=b.dataset.v; applyRapView(); });
   window.addEventListener("resize", ()=>{ resize(); });
-  resize(); initDiscovery(); computeBetweenness(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
+  resize(); initDiscovery(); computeBetweenness(); renderFilters(); renderRelFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
 })();
 </script>
 
