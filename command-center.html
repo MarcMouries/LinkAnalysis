@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="Link-analysis console with POLE-grouped filters, guided reveal, and rap sheets in two views.">
+<meta name="description" content="Link-analysis console with betweenness broker analysis, POLE-grouped filters, guided reveal and rap sheets.">
 </head>
 <body>
 <style>
@@ -551,7 +551,7 @@
 
   // ---------- model ----------
   const nodes = RAW.nodes.map(n => ({ ...n, x:0, y:0, vx:0, vy:0, fx:null, fy:null,
-    r:(n.subject?24:15), deg:0, flagged:false, hidden:false, discovered:false, rapSheet: RAP[n.id] || null }));
+    r:(n.subject?24:15), deg:0, flagged:false, hidden:false, discovered:false, btw:0, rapSheet: RAP[n.id] || null }));
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
   const links = RAW.edges.map(e => {
     const st = REL[e.type] || REL.other;
@@ -804,6 +804,7 @@
   }
   const CANVAS_ACTIONS = [
     { icon:"◉", label:"Uncover all", fn:()=>{ uncoverAll(); } },
+    { icon:"⌖", label:"Brokers", fn:()=>{ analyzeBrokers(); } },
     { icon:"↻", label:"Re-layout",fn:()=>{ reheat(1); pushFeed("FORCE ENGINE RE-SPOOLED"); } },
     { icon:"◈", label:mode==="force"?"Radial":"Force", fn:()=>{ setMode(mode==="force"?"radial":"force"); pushFeed(mode==="force"?"FORCE MODE":"RADIAL LOCK ENGAGED"); } },
     { icon:"⤢", label:"Fit",      fn:()=>{ reheat(0.8); } },
@@ -870,14 +871,14 @@
     const nbs = links.filter(l=>l.source.id===n.id||l.target.id===n.id).map(l=> l.source.id===n.id?l.target:l.source);
     const newly = [];
     for(const m of nbs){ if(!m.discovered){ m.discovered=true; m.x=n.x+(Math.random()*90-45); m.y=n.y+(Math.random()*90-45); m.vx=0; m.vy=0; newly.push(m); } }
-    updateVisibility(); reheat(1); refreshStats(); renderRoster(); renderObjective();
+    updateVisibility(); computeBetweenness(); reheat(1); refreshStats(); renderRoster(); renderObjective();
     if(newly.length){
       pushFeed("EXPAND ▸ "+n.name+" +"+newly.length+": "+newly.map(x=>x.name).slice(0,3).join(", ")+(newly.length>3?"…":""));
       newly.filter(m=>m.shared).forEach(m=>pushFeed("CROSS-REF ▸ "+m.name+" — shared by "+m.sharedBy+" persons"));
     } else pushFeed("EXPAND ▸ "+n.name+" — no new links");
     checkConnection();
   }
-  function uncoverAll(){ nodes.forEach(n=>n.discovered=true); updateVisibility(); reheat(1); refreshStats(); renderRoster(); renderObjective(); pushFeed("FULL NETWORK UNCOVERED"); checkConnection(); }
+  function uncoverAll(){ nodes.forEach(n=>n.discovered=true); updateVisibility(); computeBetweenness(); reheat(1); refreshStats(); renderRoster(); renderObjective(); pushFeed("FULL NETWORK UNCOVERED"); checkConnection(); }
   // Has the analyst's expansions produced a discovered path Fox -> Reed?
   function checkConnection(){
     if(revealed || !byId.marcus.discovered) return;
@@ -892,6 +893,38 @@
     renderObjective(); renderRoster(); renderDossier();
     pushFeed("◈ LINK PROVEN ▸ E.Fox ↔ M.Reed — "+(p.length-1)+" hops");
     showReveal(p.length-1, chain, bridges);
+  }
+  // Betweenness centrality over the discovered subgraph (Brandes) — surfaces
+  // brokers/gatekeepers: the entities the most shortest paths run through.
+  function computeBetweenness(){
+    const V = nodes.filter(n=>n.discovered);
+    const ids = V.map(n=>n.id); const idset=new Set(ids);
+    const adj={}; ids.forEach(id=>adj[id]=[]);
+    for(const l of links){ const a=l.source.id,b=l.target.id; if(idset.has(a)&&idset.has(b)){ adj[a].push(b); adj[b].push(a);} }
+    const bc={}; ids.forEach(id=>bc[id]=0);
+    for(const s of ids){
+      const S=[],P={},sig={},dist={};
+      ids.forEach(id=>{P[id]=[];sig[id]=0;dist[id]=-1;});
+      sig[s]=1;dist[s]=0;const Q=[s];
+      while(Q.length){ const v=Q.shift(); S.push(v);
+        for(const w of adj[v]){ if(dist[w]<0){dist[w]=dist[v]+1;Q.push(w);} if(dist[w]===dist[v]+1){sig[w]+=sig[v];P[w].push(v);} } }
+      const delta={}; ids.forEach(id=>delta[id]=0);
+      while(S.length){ const w=S.pop(); for(const v of P[w]) delta[v]+=(sig[v]/sig[w])*(1+delta[w]); if(w!==s) bc[w]+=delta[w]; }
+    }
+    let mx=0; ids.forEach(id=>{ bc[id]/=2; if(bc[id]>mx)mx=bc[id]; }); // undirected: halve
+    nodes.forEach(n=>{ n.btw = (n.discovered && mx>0) ? bc[n.id]/mx : 0; });
+  }
+  function analyzeBrokers(){
+    computeBetweenness();
+    const ranked = nodes.filter(n=>n.discovered && n.btw>0.05).sort((a,b)=>b.btw-a.btw);
+    if(!ranked.length){ pushFeed("BROKER SCAN ▸ network too small — expand more entities"); return; }
+    // Spotlight the most central figure that isn't the known subject.
+    const focusNode = ranked.find(n=>!n.subject) || ranked[0];
+    pinnedPath = new Set([focusNode.id, ...[...neighbors(focusNode.id)].filter(id=>byId[id].discovered)]);
+    renderDossier(); renderRoster();
+    pushFeed("⌖ KEY PLAYERS (betweenness) ▸ " + ranked.slice(0,3).map(n=>n.name+" "+n.btw.toFixed(2)).join("  ·  "));
+    pushFeed("⌖ FOCUS ▸ "+focusNode.name+" bridges "+(pinnedPath.size-1)+" discovered entities");
+    select(focusNode.id);
   }
   function exportPNG(){
     try{ const a=document.createElement("a"); a.download="linkanalysis-"+Date.now()+".png"; a.href=canvas.toDataURL("image/png"); a.click(); pushFeed("FRAME EXPORTED"); }catch(_){ pushFeed("EXPORT BLOCKED"); }
@@ -1010,10 +1043,13 @@
         <div class="bar"><div class="fill" style="background:linear-gradient(90deg,#37e0ff,#3aa0ff)"></div></div></div>
       <div class="meter"><div class="mrow"><span class="label">Threat Index</span><span class="label val">${threat}</span></div>
         <div class="bar"><div class="fill" style="background:linear-gradient(90deg,#ffab3d,#ff4d5e)"></div></div></div>
+      <div class="meter"><div class="mrow"><span class="label">Broker · betweenness</span><span class="label val">${Math.round((n.btw||0)*100)}</span></div>
+        <div class="bar"><div class="fill" style="background:linear-gradient(90deg,#b072ff,#ff6ec7)"></div></div></div>
       <div class="label" style="margin-top:2px">Connections · ${conns.length}</div>
       <div class="conns">${conns.map(c=>`<div class="conn" data-id="${c.o.id}"><span class="cline" style="background:${c.l.color}"></span><span class="cn">${c.o.name}</span><span class="crel">${c.l.label}</span></div>`).join("")}</div>
     `;
-    requestAnimationFrame(()=>{ const f=dossierBody.querySelectorAll(".fill"); if(f[0])f[0].style.width=cent+"%"; if(f[1])f[1].style.width=threat+"%"; });
+    const btwPct=Math.round((n.btw||0)*100);
+    requestAnimationFrame(()=>{ const f=dossierBody.querySelectorAll(".fill"); if(f[0])f[0].style.width=cent+"%"; if(f[1])f[1].style.width=threat+"%"; if(f[2])f[2].style.width=btwPct+"%"; });
     dossierBody.querySelectorAll(".conn").forEach(c=>c.onclick=()=>select(c.dataset.id));
     const rb=dossierBody.querySelector(".rap-btn"); if(rb) rb.onclick=()=>openRapSheet(byId[rb.dataset.rap]);
   }
@@ -1027,6 +1063,7 @@
     "▸ right-click an entity → EXPAND to uncover its links",
     "Dashed ring = shared (cross-referenced) resource",
     "⚖ persons with a record expose a RAP SHEET action",
+    "⌖ right-click the grid → BROKERS to find key intermediaries",
   ];
   const tkRun=document.getElementById("tk-run");
   function renderFeed(){ const items=FEED.concat(FEED); tkRun.innerHTML=items.map(f=>`<span><b>▸</b> ${f}</span>`).join(""); }
@@ -1109,7 +1146,7 @@
   const rsRoot=document.getElementById("rapsheet"); if (rsRoot) rsRoot.addEventListener("click", e=>{ if(e.target===rsRoot) closeRapSheet(); });
   document.querySelectorAll("#rapsheet .rs-view button").forEach(b=> b.onclick=()=>{ rapView=b.dataset.v; applyRapView(); });
   window.addEventListener("resize", ()=>{ resize(); });
-  resize(); initDiscovery(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
+  resize(); initDiscovery(); computeBetweenness(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
 })();
 </script>
 
