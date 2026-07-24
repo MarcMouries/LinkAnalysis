@@ -29,6 +29,7 @@
 		"build": "bun run clean && bun run build:esm && bun run build:cjs && bun run build:iife",
 		"dev": "bun build src/index.js --outfile dist/esm/index.js --format=esm --watch",
 		"test": "bun test",
+		"examples": "bun run examples/pole-graph.js > examples/img/pole-graph.svg",
 		"prepublishOnly": "bun run build"
 	},
 	"repository": {

@@ -17,5 +17,13 @@ export {
 	POLE_NODE_TYPES,
 	POLE_EDGE_TYPES,
 } from "./data-adapter.js";
+export {
+	poleNodeStyle,
+	poleEdgeStyle,
+	applyPOLEEdgeStyles,
+	POLE_NODE_STYLES,
+	POLE_EDGE_STYLES,
+	POLE_SUBJECT_STYLE,
+} from "./pole-presets.js";
 
 export const version = "1.0.0";

@@ -1,5 +1,13 @@
 # LinkAnalysis examples
 
+## Headless (runnable with `bun`)
+
+| Example | What it does |
+|---------|--------------|
+| [`pole-graph.js`](pole-graph.js) | Full domain stack — ServiceNow data → engine graph → radial layout → POLE styling → SVG (`render-pole.js` is the renderer). Run: `bun run examples/pole-graph.js > examples/img/pole-graph.svg` |
+
+## Browser demos
+
 Interactive, browser-based demos (open the `.html` files via a local static
 server). These are **manual demos**, not automated tests — the `bun test` suite
 lives in [`../test/`](../test/).

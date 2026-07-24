@@ -79,3 +79,15 @@ graph.loadJSON(graphData);
 new RadialLayout(graph, { centerNode: "1", center: { x: 400, y: 300 } }).run();
 // each node now has x / y coordinates
 ```
+
+## Example
+
+[`examples/pole-graph.js`](examples/pole-graph.js) runs the whole domain stack —
+ServiceNow data → engine graph → radial layout → **POLE styling** — and renders an SVG.
+Nodes are coloured by entity type, the subject is enlarged with a glow ring, and edges are
+coloured (and dashed for arrests) by relationship type:
+
+<img src="examples/img/pole-graph.svg" width="420" alt="POLE person-of-interest network">
+
+The styling comes from the POLE presets (`poleNodeStyle`, `poleEdgeStyle`,
+`applyPOLEEdgeStyles`). Regenerate the image with `bun run examples`.
