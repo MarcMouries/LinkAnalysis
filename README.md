@@ -89,5 +89,6 @@ coloured (and dashed for arrests) by relationship type:
 
 <img src="examples/img/pole-graph.svg" width="420" alt="POLE person-of-interest network">
 
-The styling comes from the POLE presets (`poleNodeStyle`, `poleEdgeStyle`,
-`applyPOLEEdgeStyles`). Regenerate the image with `bun run examples`.
+The styling and the legend come from the POLE presets (`poleNodeStyle`, `poleEdgeStyle`,
+`applyPOLEEdgeStyles`, `poleLegend`) — the legend lists only the entity and relationship
+types present in the graph. Regenerate the image with `bun run examples`.

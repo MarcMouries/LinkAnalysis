@@ -2,7 +2,7 @@
 // POLE styling → SVG.
 //   bun run examples/pole-graph.js > examples/img/pole-graph.svg
 import { Graph, RadialLayout } from "graphjs";
-import { transformServiceNowData, applyPOLEEdgeStyles } from "../src/index.js";
+import { transformServiceNowData, applyPOLEEdgeStyles, poleLegend } from "../src/index.js";
 import { renderPOLE } from "./render-pole.js";
 
 // A small person-of-interest network in ServiceNow / POLE shape.
@@ -38,4 +38,5 @@ new RadialLayout(graph, { centerNode: "S", ringSpacing: 150, center: { x: 0, y: 
 // Domain: colour the edges by relationship type (writes Link metadata).
 applyPOLEEdgeStyles(graph);
 
-process.stdout.write(renderPOLE(graph) + "\n");
+// Domain: a legend derived from the entity/relationship types in this graph.
+process.stdout.write(renderPOLE(graph, { legend: poleLegend({ graph }) }) + "\n");

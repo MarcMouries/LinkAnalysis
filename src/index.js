@@ -21,9 +21,12 @@ export {
 	poleNodeStyle,
 	poleEdgeStyle,
 	applyPOLEEdgeStyles,
+	poleLegend,
 	POLE_NODE_STYLES,
 	POLE_EDGE_STYLES,
 	POLE_SUBJECT_STYLE,
+	POLE_NODE_LABELS,
+	POLE_EDGE_LABELS,
 } from "./pole-presets.js";
 
 export const version = "1.0.0";

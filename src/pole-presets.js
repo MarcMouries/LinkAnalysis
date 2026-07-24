@@ -31,6 +31,23 @@ export const POLE_NODE_STYLES = {
 // Extra emphasis applied to the investigation's subject node.
 export const POLE_SUBJECT_STYLE = { sizeMultiplier: 1.3, glow: true, stroke: "#f78166" };
 
+// Human-readable labels for the legend.
+export const POLE_NODE_LABELS = {
+	person: "Person",
+	location: "Location",
+	rap_sheet: "Rap Sheet",
+	vehicle: "Vehicle",
+	case: "Case",
+	other: "Other",
+};
+export const POLE_EDGE_LABELS = {
+	family: "Family",
+	associate: "Associate",
+	address: "Address",
+	arrest: "Arrest",
+	other: "Other",
+};
+
 // Read a `type` from either a flat object (adapter output) or a GraphJS
 // node/link where the payload sits under `.data`.
 function typeOf(entity) {
@@ -69,4 +86,46 @@ export function applyPOLEEdgeStyles(graph) {
 		link.dashArray = style.dashArray;
 	}
 	return graph;
+}
+
+// Return the entity/relationship types present in a graph, in canonical order.
+function presentTypes(entities, styleMap) {
+	const seen = new Set((entities || []).map(typeOf));
+	return Object.keys(styleMap).filter((t) => seen.has(t));
+}
+
+/**
+ * Build a legend from the POLE presets. Pass a `graph` to include only the
+ * entity/relationship types actually present (plus a Subject entry when the
+ * graph has one); otherwise every known type is listed.
+ *
+ * @returns {{ nodes: Array, edges: Array, subject: object|null }}
+ */
+export function poleLegend(options = {}) {
+	const { graph } = options;
+	let nodeTypes = options.nodeTypes;
+	let edgeTypes = options.edgeTypes;
+	let hasSubject = false;
+
+	if (graph) {
+		const nodes = graph.getNodes ? graph.getNodes() : [];
+		const links = graph.linkList || (graph.getLinks && graph.getLinks()) || [];
+		nodeTypes = nodeTypes || presentTypes(nodes, POLE_NODE_STYLES);
+		edgeTypes = edgeTypes || presentTypes(links, POLE_EDGE_STYLES);
+		hasSubject = nodes.some(isSubject);
+	}
+	nodeTypes = nodeTypes || Object.keys(POLE_NODE_STYLES);
+	edgeTypes = edgeTypes || Object.keys(POLE_EDGE_STYLES);
+
+	return {
+		nodes: nodeTypes.map((type) => {
+			const style = POLE_NODE_STYLES[type] || POLE_NODE_STYLES.other;
+			return { type, label: POLE_NODE_LABELS[type] || type, color: style.fill, shape: style.shape };
+		}),
+		edges: edgeTypes.map((type) => {
+			const style = POLE_EDGE_STYLES[type] || POLE_EDGE_STYLES.other;
+			return { type, label: POLE_EDGE_LABELS[type] || type, color: style.color, dashArray: style.dashArray };
+		}),
+		subject: hasSubject ? { label: "Subject", stroke: POLE_SUBJECT_STYLE.stroke } : null,
+	};
 }
