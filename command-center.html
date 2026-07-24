@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="A cinematic tactical link-analysis console — a two-crew POI network where link analysis exposes hidden bridges.">
+<meta name="description" content="A guided link-analysis investigation — expand entities to uncover the network and earn the hidden Fox <-> Reed connection.">
 </head>
 <body>
 <style>
@@ -176,6 +176,34 @@
     border: 1px solid var(--edge); pointer-events: none; transition: opacity .5s; }
   #hint b { color: var(--cyan); }
 
+  /* objective tracker */
+  #objective { top: 80px; left: 50%; transform: translateX(-50%); z-index: 6; padding: 11px 15px; border-radius: 6px;
+    min-width: 340px; display: flex; flex-direction: column; gap: 8px; }
+  #objective .obj-head { display: flex; align-items: center; gap: 9px; }
+  #objective .obj-head b { font-family: var(--sans); font-weight: 700; font-size: 12px; color: #eaf6ff; }
+  #objective .obj-head .g { color: var(--cyan); font-size: 10px; letter-spacing: .2em; white-space: nowrap; }
+  #objective #obj-body { display: flex; gap: 18px; flex-wrap: wrap; }
+  .obj-row { display: flex; align-items: center; gap: 8px; }
+  .obj-k { color: var(--ink-dim); letter-spacing: .06em; text-transform: uppercase; font-size: 9px; }
+  .obj-v { color: var(--ink); font-size: 11px; }
+
+  /* reveal banner */
+  #reveal { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.9); z-index: 30;
+    width: min(560px, 88vw); padding: 26px 30px; border-radius: 12px; text-align: center; opacity: 0; pointer-events: none;
+    background: color-mix(in oklab, #08131f 92%, transparent); border: 1px solid var(--cyan);
+    box-shadow: 0 0 70px color-mix(in oklab, var(--cyan) 40%, transparent), inset 0 1px 0 color-mix(in oklab, var(--cyan) 30%, transparent);
+    backdrop-filter: blur(12px); transition: opacity .5s, transform .5s; }
+  #reveal.show { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+  #reveal .rv-tag { color: var(--cyan); font-size: 10px; letter-spacing: .3em; }
+  #reveal h2 { font-family: var(--sans); font-weight: 800; font-size: 23px; color: #eaf6ff; margin: 9px 0 6px;
+    text-shadow: 0 0 26px color-mix(in oklab, var(--cyan) 50%, transparent); }
+  #reveal #rv-hops { color: var(--amber); font-size: 12px; letter-spacing: .1em; }
+  #reveal #rv-chain { margin: 15px 0 7px; font-size: 12.5px; color: #cfe3ee; font-family: var(--sans); line-height: 1.7; }
+  #reveal #rv-bridges { font-size: 11px; color: var(--ink-dim); letter-spacing: .04em; }
+  #reveal .rv-close { margin-top: 18px; display: inline-block; cursor: pointer; font-size: 9.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--cyan); border: 1px solid var(--cyan); padding: 8px 16px; border-radius: 5px; }
+  #reveal .rv-close:hover { background: color-mix(in oklab, var(--cyan) 16%, transparent); }
+
   /* --- PieMenu --- */
   #pie { position: absolute; z-index: 20; inset: 0; pointer-events: none; }
   #pie.open { pointer-events: auto; }
@@ -234,6 +262,11 @@
     <div id="clock" class="val">--:--:--</div>
   </div>
 
+  <div id="objective" class="hud panel">
+    <div class="obj-head"><span class="g">◎ OBJECTIVE</span><b>Prove a link · Eric Fox ⟷ Marcus Reed</b></div>
+    <div id="obj-body"></div>
+  </div>
+
   <aside id="leftrail" class="hud panel">
     <div class="rail-h"><span class="label">Entity Classes</span><span class="label">POLE</span></div>
     <div class="filters" id="filters"></div>
@@ -245,7 +278,7 @@
     <div id="dossier-body"><div class="idle">Awaiting selection<br>▸ select an entity</div></div>
   </aside>
 
-  <div id="hint" class="hud"><b>Right-click</b> a node or the grid for actions · drag to move · hover to trace</div>
+  <div id="hint" class="hud"><b>Right-click → Expand</b> to uncover links · goal: connect <b>Eric Fox</b> to <b>Marcus Reed</b></div>
 
   <div id="ticker" class="hud panel">
     <span class="tk-label">▸ LIVE FEED</span>
@@ -253,6 +286,15 @@
   </div>
 
   <div id="pie"></div>
+
+  <div id="reveal">
+    <div class="rv-tag">◈ LINK ANALYSIS · CONNECTION FOUND</div>
+    <h2>Fox ↔ Reed — Established</h2>
+    <div id="rv-hops"></div>
+    <div id="rv-chain"></div>
+    <div id="rv-bridges"></div>
+    <span class="rv-close">Dismiss · click grid to reset</span>
+  </div>
 
   <div id="boot">
     <div class="bootbox">
@@ -369,7 +411,7 @@
 
   // ---------- model ----------
   const nodes = RAW.nodes.map(n => ({ ...n, x:0, y:0, vx:0, vy:0, fx:null, fy:null,
-    r:(n.subject?24:15), deg:0, flagged:false, hidden:false }));
+    r:(n.subject?24:15), deg:0, flagged:false, hidden:false, discovered:false }));
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
   const links = RAW.edges.map(e => {
     const st = REL[e.type] || REL.other;
@@ -396,6 +438,15 @@
     for (const l of links) { if (l.source.id===id) s.add(l.target.id); if (l.target.id===id) s.add(l.source.id); }
     return s;
   };
+
+  // ---------- investigation state ----------
+  let pinnedPath = null;   // Set of ids to spotlight (trace / reveal)
+  let revealed = false;    // has the analyst proven the Fox <-> Reed link
+  function updateVisibility(){ for (const n of nodes) n.hidden = !(n.discovered && active[n.type]); }
+  function initDiscovery(){
+    byId.S.discovered = true; // start with only the subject — the analyst expands outward
+    updateVisibility();
+  }
 
   // ---------- canvas / view ----------
   const canvas = document.getElementById("graph");
@@ -487,7 +538,7 @@
     if (interaction.drag && !interaction.drag.subject){ interaction.drag.fx=null; interaction.drag.fy=null; }
     if (!interaction.moved && interaction.down!==undefined && e.button===0){
       const n=nodeAt(e.clientX,e.clientY);
-      if (n) select(n.id); else if (pie.open===false) select(null);
+      if (n) select(n.id); else if (pie.open===false){ select(null); pinnedPath=null; }
     }
     interaction.drag=null; interaction.down=null;
   });
@@ -506,28 +557,31 @@
   function draw() {
     ctx.clearRect(0,0,W,H);
     const sel=interaction.sel, hov=interaction.hover;
-    const focus = hov ? hov.id : sel;
+    const path = pinnedPath;
+    const focus = path ? null : (hov ? hov.id : sel);
     const nb = focus ? neighbors(focus) : null;
-    const dim = id => focus ? !(id===focus || (nb && nb.has(id))) : false;
+    const inPath = id => !!(path && path.has(id));
+    const dim = id => path ? !inPath(id) : (focus ? !(id===focus || (nb && nb.has(id))) : false);
+    const linkOn = l => path ? (inPath(l.source.id) && inPath(l.target.id)) : (focus && (l.source.id===focus||l.target.id===focus));
     const t = performance.now()/1000;
 
     // links
     ctx.lineCap="round";
     for (const l of links) {
       if (l.source.hidden || l.target.hidden) continue;
-      const active = focus && (l.source.id===focus||l.target.id===focus);
-      const faded = focus && !active;
-      ctx.globalAlpha = faded ? 0.08 : 0.9;
+      const on = linkOn(l);
+      const faded = (path||focus) && !on;
+      ctx.globalAlpha = faded ? 0.07 : 0.9;
       ctx.strokeStyle = l.color;
-      ctx.lineWidth = l.width * (active?1.7:1);
-      ctx.shadowBlur = active ? 16 : 0; ctx.shadowColor = l.color;
+      ctx.lineWidth = l.width * (on?2:1);
+      ctx.shadowBlur = on ? 16 : 0; ctx.shadowColor = l.color;
       ctx.beginPath();
       if (l.dash) ctx.setLineDash(l.dash.map(v=>v));
       else ctx.setLineDash([]);
       ctx.lineDashOffset = RM ? 0 : -((t*26 + l.phase) % 1000);
       ctx.moveTo(l.source.x,l.source.y); ctx.lineTo(l.target.x,l.target.y); ctx.stroke();
-      // moving data pip on active links
-      if (active && !RM){
+      // moving data pip on active/path links
+      if (on && !RM){
         const p=((t*0.35 + l.phase)%1);
         const mx=l.source.x+(l.target.x-l.source.x)*p, my=l.source.y+(l.target.y-l.source.y)*p;
         ctx.setLineDash([]); ctx.globalAlpha=0.95; ctx.fillStyle="#eaffff"; ctx.shadowBlur=10; ctx.shadowColor=l.color;
@@ -536,10 +590,10 @@
     }
     ctx.setLineDash([]); ctx.shadowBlur=0; ctx.globalAlpha=1;
 
-    // link labels for focused
-    if (focus){
+    // link labels (focused node, or the spotlighted path)
+    if (focus || path){
       ctx.font="9px ui-monospace, monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
-      for (const l of links){ if(l.source.id!==focus&&l.target.id!==focus)continue; if(l.source.hidden||l.target.hidden)continue;
+      for (const l of links){ if(!linkOn(l))continue; if(l.source.hidden||l.target.hidden)continue;
         const mx=(l.source.x+l.target.x)/2, my=(l.source.y+l.target.y)/2;
         ctx.fillStyle="rgba(5,9,16,.85)"; const w=ctx.measureText(l.label).width+10;
         ctx.fillRect(mx-w/2,my-8,w,15); ctx.fillStyle="#9fc6dd"; ctx.fillText(l.label,mx,my); }
@@ -596,14 +650,14 @@
   const pie = { open:false, node:null };
   const NODE_ACTIONS = [
     { icon:"◎", label:"Focus",   fn:n=>{ select(n.id); } },
-    { icon:"✦", label:"Expand",  fn:n=>{ addLinked(n); } },
+    { icon:"✦", label:"Expand",  fn:n=>{ expandNode(n); } },
     { icon:"▤", label:"Dossier", fn:n=>{ select(n.id); } },
     { icon:"⛒", label:n=>n.flagged?"Unflag":"Flag", danger:true, fn:n=>{ n.flagged=!n.flagged; renderRoster(); renderDossier(); pushFeed((n.flagged?"FLAGGED ":"CLEARED ")+n.name); } },
     { icon:"⟿", label:"Trace",   fn:n=>{ tracePath(n); } },
     { icon:n=>n.fx!=null&&!n.subject?"⊙":"⊗", label:n=>n.pinned?"Unpin":"Pin", fn:n=>{ togglePin(n); } },
   ];
   const CANVAS_ACTIONS = [
-    { icon:"＋", label:"Add",     fn:()=>{ addEntity(); } },
+    { icon:"◉", label:"Uncover all", fn:()=>{ uncoverAll(); } },
     { icon:"↻", label:"Re-layout",fn:()=>{ reheat(1); pushFeed("FORCE ENGINE RE-SPOOLED"); } },
     { icon:"◈", label:mode==="force"?"Radial":"Force", fn:()=>{ setMode(mode==="force"?"radial":"force"); pushFeed(mode==="force"?"FORCE MODE":"RADIAL LOCK ENGAGED"); } },
     { icon:"⤢", label:"Fit",      fn:()=>{ reheat(0.8); } },
@@ -656,22 +710,43 @@
   // ---------- actions ----------
   function togglePin(n){ if(n.subject)return; n.pinned=!n.pinned; if(n.pinned){n.fx=n.x;n.fy=n.y;} else {n.fx=null;n.fy=null; reheat(0.5);} renderDossier(); pushFeed((n.pinned?"PINNED ":"RELEASED ")+n.name); }
   function tracePath(n){
-    const prev={S:null}, q=["S"]; while(q.length){ const id=q.shift(); for(const nb of neighbors(id)) if(prev[nb]===undefined){ prev[nb]=id; q.push(nb);} }
-    let cur=n.id, path=new Set(); while(cur!=null){ path.add(cur); cur=prev[cur]; }
-    nodes.forEach(x=>x.hidden = !path.has(x.id));
-    select(n.id); pushFeed("TRACE ▸ "+n.name+" → SUBJECT ("+path.size+" hops)");
-    setTimeout(()=>{ nodes.forEach(x=>x.hidden=false); },2600);
+    if(!n.discovered){ pushFeed("UNDISCOVERED ▸ "+n.name); return; }
+    const prev={S:null}, q=["S"];
+    while(q.length){ const id=q.shift(); for(const m of neighbors(id)){ if(byId[m].discovered && prev[m]===undefined){ prev[m]=id; q.push(m);} } }
+    if(prev[n.id]===undefined){ pushFeed("NO DISCOVERED PATH ▸ "+n.name); return; }
+    let cur=n.id, p=new Set(); while(cur!=null){ p.add(cur); cur=prev[cur]; }
+    pinnedPath=p; select(n.id); pushFeed("TRACE ▸ "+n.name+" → SUBJECT ("+(p.size-1)+" hops)");
+    if(!revealed) setTimeout(()=>{ if(!revealed && pinnedPath && pinnedPath.has(n.id)) pinnedPath=null; }, 3400);
   }
-  let addCount=0;
-  function addLinked(n){
-    const t=["person","location","vehicle","rap_sheet"][addCount%4];
-    const id="x"+(addCount++), nn={ id, type:t, name:(["Contact","Safe House","Burner","Note"][addCount%4])+" "+id.toUpperCase(),
-      rel:"Discovered", x:n.x+(Math.random()*80-40), y:n.y+(Math.random()*80-40), vx:0,vy:0,fx:null,fy:null,r:16,deg:0,flagged:false,hidden:false };
-    nodes.push(nn); byId[id]=nn;
-    const st=REL.associate; links.push({source:n,target:nn,type:"associate",label:"Uncovered",color:st.color,width:st.width,dash:st.dash,phase:Math.random()*100});
-    n.deg++; nn.deg++; reheat(1); refreshStats(); renderRoster(); pushFeed("NEW LINK ▸ "+nn.name);
+  // Reveal a node's real neighbours — the core investigative action.
+  function expandNode(n){
+    n.discovered = true;
+    const nbs = links.filter(l=>l.source.id===n.id||l.target.id===n.id).map(l=> l.source.id===n.id?l.target:l.source);
+    const newly = [];
+    for(const m of nbs){ if(!m.discovered){ m.discovered=true; m.x=n.x+(Math.random()*90-45); m.y=n.y+(Math.random()*90-45); m.vx=0; m.vy=0; newly.push(m); } }
+    updateVisibility(); reheat(1); refreshStats(); renderRoster(); renderObjective();
+    if(newly.length){
+      pushFeed("EXPAND ▸ "+n.name+" +"+newly.length+": "+newly.map(x=>x.name).slice(0,3).join(", ")+(newly.length>3?"…":""));
+      newly.filter(m=>m.shared).forEach(m=>pushFeed("CROSS-REF ▸ "+m.name+" — shared by "+m.sharedBy+" persons"));
+    } else pushFeed("EXPAND ▸ "+n.name+" — no new links");
+    checkConnection();
   }
-  function addEntity(){ addLinked(byId[interaction.sel]||byId.S); }
+  function uncoverAll(){ nodes.forEach(n=>n.discovered=true); updateVisibility(); reheat(1); refreshStats(); renderRoster(); renderObjective(); pushFeed("FULL NETWORK UNCOVERED"); checkConnection(); }
+  // Has the analyst's expansions produced a discovered path Fox -> Reed?
+  function checkConnection(){
+    if(revealed || !byId.marcus.discovered) return;
+    const prev={S:null}, q=["S"];
+    while(q.length){ const id=q.shift(); for(const m of neighbors(id)){ if(byId[m].discovered && prev[m]===undefined){ prev[m]=id; q.push(m);} } }
+    if(prev.marcus===undefined) return;
+    let cur="marcus", p=[]; while(cur!=null){ p.unshift(cur); cur=prev[cur]; }
+    revealed=true; pinnedPath=new Set(p);
+    if(byId.vic.discovered) byId.vic.flagged=true;
+    const chain=p.map(id=>byId[id].name).join("  →  ");
+    const bridges=p.slice(1,-1).map(id=>byId[id].name);
+    renderObjective(); renderRoster(); renderDossier();
+    pushFeed("◈ LINK PROVEN ▸ E.Fox ↔ M.Reed — "+(p.length-1)+" hops");
+    showReveal(p.length-1, chain, bridges);
+  }
   function exportPNG(){
     try{ const a=document.createElement("a"); a.download="linkanalysis-"+Date.now()+".png"; a.href=canvas.toDataURL("image/png"); a.click(); pushFeed("FRAME EXPORTED"); }catch(_){ pushFeed("EXPORT BLOCKED"); }
   }
@@ -688,7 +763,7 @@
       const count=nodes.filter(n=>n.type===t).length;
       const d=document.createElement("div"); d.className="filter"; d.setAttribute("aria-pressed", active[t]);
       d.innerHTML=`<span class="sw" style="background:${meta.color};color:${meta.color}"></span><span class="fname">${meta.label}</span><span class="fc val">${count}</span>`;
-      d.onclick=()=>{ active[t]=!active[t]; d.setAttribute("aria-pressed",active[t]); nodes.forEach(n=>{ if(n.type===t) n.hidden=!active[t]; }); reheat(0.3); renderRoster(); };
+      d.onclick=()=>{ active[t]=!active[t]; d.setAttribute("aria-pressed",active[t]); updateVisibility(); reheat(0.3); renderRoster(); };
       filtersEl.appendChild(d);
     }
   }
@@ -739,17 +814,34 @@
   function refreshStats(){ document.getElementById("stat-nodes").textContent=nodes.filter(n=>!n.hidden).length; document.getElementById("stat-links").textContent=links.length; }
 
   // live feed
-  const FEED = (() => {
-    const f = ["LINK ▸ E.Fox ↔ M.Reed — no direct tie; bridged by shared entities"];
-    nodes.filter(n => n.shared).sort((a,b)=>b.sharedBy-a.sharedBy).slice(0,6)
-      .forEach(n => f.push("CROSS-REF ▸ " + n.name + " — shared by " + n.sharedBy + " persons"));
-    f.push("COUNSEL ▸ K.Webb represents both Fox and Reed");
-    f.push("SHELL ▸ Harbor Holdings → Account 7731 → Case #4471");
-    return f;
-  })();
+  const FEED = [
+    "POLE grid synchronized",
+    "Subject E.FOX loaded — 1st-degree circle only",
+    "Objective: prove or rule out a link to M.REED",
+    "▸ right-click an entity → EXPAND to uncover its links",
+    "Dashed ring = shared (cross-referenced) resource",
+  ];
   const tkRun=document.getElementById("tk-run");
   function renderFeed(){ const items=FEED.concat(FEED); tkRun.innerHTML=items.map(f=>`<span><b>▸</b> ${f}</span>`).join(""); }
-  function pushFeed(msg){ FEED.unshift(msg); if(FEED.length>10)FEED.pop(); renderFeed(); }
+  function pushFeed(msg){ FEED.unshift(msg); if(FEED.length>12)FEED.pop(); renderFeed(); }
+
+  // objective tracker + earned reveal
+  function renderObjective(){
+    const el=document.getElementById("obj-body"); if(!el) return;
+    const disc=nodes.filter(n=>n.discovered).length, total=nodes.length;
+    const found=byId.marcus.discovered;
+    el.innerHTML=
+      `<div class="obj-row"><span class="obj-k">Uncovered</span><span class="obj-v val">${disc} / ${total}</span></div>`+
+      `<div class="obj-row"><span class="obj-k">Reed located</span><span class="obj-v" style="color:${found?'#2fe08a':'#7089a1'}">${found?'YES':'—'}</span></div>`+
+      `<div class="obj-row"><span class="obj-k">Fox ⟷ Reed</span><span class="obj-v" style="color:${revealed?'#37e0ff':'#ffab3d'}">${revealed?'✓ PROVEN':'UNPROVEN'}</span></div>`;
+  }
+  function showReveal(hops, chain, bridges){
+    const el=document.getElementById("reveal"); if(!el) return;
+    el.querySelector("#rv-hops").textContent=hops+" degrees of separation";
+    el.querySelector("#rv-chain").textContent=chain;
+    el.querySelector("#rv-bridges").textContent=bridges.length? "Bridged via "+bridges.join(" · ") : "";
+    el.classList.add("show");
+  }
 
   function fadeHint(){ const h=document.getElementById("hint"); h.style.opacity="0"; }
 
@@ -804,8 +896,10 @@
   function finishBoot(delay){ setTimeout(()=>{ document.getElementById("boot").classList.add("done"); reheat(1); select("S"); }, delay); }
 
   // ---------- init ----------
+  const rvClose=document.querySelector("#reveal .rv-close");
+  if (rvClose) rvClose.onclick=()=>document.getElementById("reveal").classList.remove("show");
   window.addEventListener("resize", ()=>{ resize(); });
-  resize(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); frame(); boot();
+  resize(); initDiscovery(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
 })();
 </script>
 
