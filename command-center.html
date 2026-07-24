@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LinkAnalysis // POLE Intelligence Grid</title>
-<meta name="description" content="A guided link-analysis investigation with NLETS/NY-DCJS rap sheets.">
+<meta name="description" content="Link-analysis console with POLE-grouped filters, guided reveal, and rap sheets in two views.">
 </head>
 <body>
 <style>
@@ -105,7 +105,7 @@
   #leftrail { top: 80px; left: 14px; width: 232px; bottom: 58px; border-radius: 4px;
     display: flex; flex-direction: column; padding: 14px; gap: 12px; }
   .rail-h { display: flex; align-items: center; justify-content: space-between; }
-  .filters { display: flex; flex-direction: column; gap: 6px; }
+  .filters { display: flex; flex-direction: column; gap: 10px; }
   .filter { display: flex; align-items: center; gap: 10px; padding: 7px 9px; border-radius: 3px; cursor: pointer;
     border: 1px solid transparent; transition: background .15s, border-color .15s, opacity .15s; user-select: none; }
   .filter:hover { background: color-mix(in oklab, var(--cyan) 8%, transparent); border-color: var(--edge); }
@@ -113,6 +113,14 @@
   .filter .sw { width: 11px; height: 11px; border-radius: 3px; box-shadow: 0 0 10px currentColor; }
   .filter .fname { flex: 1; font-size: 11px; letter-spacing: .08em; color: var(--ink); }
   .filter .fc { font-size: 11px; color: var(--ink-dim); }
+  .pole-grp { display: flex; flex-direction: column; gap: 3px; }
+  .pole-h { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; cursor: pointer;
+    border-radius: 3px; border-left: 2px solid var(--cyan); transition: background .15s, opacity .15s; }
+  .pole-h:hover { background: color-mix(in oklab, var(--cyan) 8%, transparent); }
+  .pole-h.off { opacity: .45; border-left-color: var(--ink-faint); }
+  .pole-h .pole-name { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #cfe3ee; font-weight: 700; }
+  .pole-h .pole-c { font-size: 10px; color: var(--ink-dim); }
+  .filter.sub { margin-left: 9px; padding: 5px 8px; }
   .roster { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; padding-right: 3px; }
   .roster::-webkit-scrollbar { width: 6px; }
   .roster::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 3px; }
@@ -251,6 +259,45 @@
   .rap-btn:hover { background: color-mix(in oklab, var(--amber) 18%, transparent); }
   .rap-btn .rap-n { color: var(--ink-dim); font-size: 9px; letter-spacing: .08em; }
 
+  /* rap sheet — view toggle */
+  .rs-view { display: inline-flex; border: 1px solid var(--edge); border-radius: 5px; overflow: hidden; }
+  .rs-view button { background: transparent; color: var(--ink-dim); border: 0; font-family: var(--mono); font-size: 9px; letter-spacing: .1em; padding: 6px 11px; cursor: pointer; }
+  .rs-view button.on { background: color-mix(in oklab, var(--cyan) 22%, transparent); color: #eaf6ff; }
+
+  /* rap sheet — DOCUMENT (printed paper) mode */
+  .rs-doc.paper { background: #f6f4ec; border-color: #b9b3a2; box-shadow: 0 24px 70px rgba(0,0,0,.6); }
+  .rs-doc.paper .rs-bar { background: #e7e3d5; border-bottom: 1px solid #b9b3a2; }
+  .rs-doc.paper .rs-tag { color: #7a1f1f; }
+  .rs-doc.paper #rs-name { color: #14161a; }
+  .rs-doc.paper .rs-x { color: #5b5f66; border-color: #b9b3a2; }
+  .rs-doc.paper .rs-x:hover { color: #7a1f1f; border-color: #7a1f1f; }
+  .rs-doc.paper .rs-view { border-color: #b9b3a2; }
+  .rs-doc.paper .rs-view button { color: #5b5f66; }
+  .rs-doc.paper .rs-view button.on { background: #14161a; color: #f6f4ec; }
+  .rs-doc.paper .rs-scroll { color: #1b1d22; }
+  .rs-doc.paper .rs-scroll::-webkit-scrollbar-thumb { background: #c9c4b6; }
+  .rs-doc.paper .rs-title { color: #14161a; border-bottom-color: #b9b3a2; font-weight: 700; }
+  .rs-doc.paper .rs-id > div { color: #1b1d22; }
+  .rs-doc.paper .rs-id .rs-k { color: #8a836f; }
+  .rs-doc.paper .rs-sum { background: #efece0; border-color: #b9b3a2; color: #5b5f66; }
+  .rs-doc.paper .rs-sum b { color: #14161a; } .rs-doc.paper .rs-sum b.hot { color: #7a1f1f; }
+  .rs-doc.paper .rs-sec { color: #14161a; border-bottom: 1px solid #14161a; padding-bottom: 3px; font-weight: 700; }
+  .rs-doc.paper .rs-cyc { border-color: #b9b3a2; }
+  .rs-doc.paper .rs-cyc-h { background: #efece0; border-bottom-color: #b9b3a2; }
+  .rs-doc.paper .rs-cyc-h .rs-num { color: #7a1f1f; }
+  .rs-doc.paper .rs-cyc-h .rs-cd { color: #14161a; }
+  .rs-doc.paper .rs-cyc-h .rs-ca { color: #1b1d22; }
+  .rs-doc.paper .rs-cyc-h .rs-cno { color: #5b5f66; }
+  .rs-doc.paper .rs-chg { border-top-color: #d7d2c4; }
+  .rs-doc.paper .rs-sev.fel { color: #7a1f1f; border-color: #7a1f1f; background: #f0dedb; }
+  .rs-doc.paper .rs-sev.mis { color: #6b5a12; border-color: #6b5a12; background: #efe8d2; }
+  .rs-doc.paper .rs-sev.oth { color: #5b5f66; border-color: #b9b3a2; }
+  .rs-doc.paper .rs-stat { color: #14161a; }
+  .rs-doc.paper .rs-disp { color: #5b5f66; }
+  .rs-doc.paper .rs-sent { color: #7a1f1f; }
+  .rs-doc.paper .rs-cnote { color: #8a836f; }
+  .rs-doc.paper .rs-caveat { color: #7a1f1f; border-top-color: #b9b3a2; }
+
   /* --- PieMenu --- */
   #pie { position: absolute; z-index: 20; inset: 0; pointer-events: none; }
   #pie.open { pointer-events: auto; }
@@ -336,7 +383,9 @@
 
   <div id="rapsheet">
     <div class="rs-doc">
-      <div class="rs-bar"><span class="rs-tag">⚖ RAP SHEET</span><span id="rs-name"></span><span class="rs-x">✕ CLOSE · ESC</span></div>
+      <div class="rs-bar"><span class="rs-tag">⚖ RAP SHEET</span><span id="rs-name"></span>
+        <span class="rs-view"><button type="button" data-v="console">CONSOLE</button><button type="button" data-v="paper">DOCUMENT</button></span>
+        <span class="rs-x">✕ ESC</span></div>
       <div id="rs-body" class="rs-scroll"></div>
     </div>
   </div>
@@ -881,21 +930,45 @@
       cycles+
       `<div class="rs-caveat">RESTRICTED — DO NOT USE FOR EMPLOYMENT, LICENSING, PLACEMENT OR CERTIFICATION PURPOSES. CRIMINAL HISTORY RECORD INFORMATION IS FOR CRIMINAL JUSTICE USE ONLY.</div>`;
     document.getElementById("rapsheet").classList.add("show");
+    applyRapView();
     pushFeed("RAP SHEET ▸ "+n.name+" ("+arrests+" arrests)");
   }
   function closeRapSheet(){ const e=document.getElementById("rapsheet"); if(e) e.classList.remove("show"); }
+  let rapView = "console"; // "console" (dark teletype) or "paper" (printed document)
+  function applyRapView(){
+    const doc=document.querySelector("#rapsheet .rs-doc"); if(!doc) return;
+    doc.classList.toggle("paper", rapView==="paper");
+    document.querySelectorAll("#rapsheet .rs-view button").forEach(b=>b.classList.toggle("on", b.dataset.v===rapView));
+  }
 
   // ---------- HUD ----------
   const filtersEl=document.getElementById("filters");
-  const active = { person:true, location:true, vehicle:true, rap_sheet:true, case:true };
+  const active = { person:true, location:true, vehicle:true, rap_sheet:true, case:true, org:true };
+  // POLE taxonomy: People, Objects, Locations, Events — each grouping its classes.
+  const POLE = [
+    { label:"People",    types:["person"] },
+    { label:"Objects",   types:["vehicle","org"] },
+    { label:"Locations", types:["location"] },
+    { label:"Events",    types:["rap_sheet","case"] },
+  ];
   function renderFilters(){
     filtersEl.innerHTML="";
-    for (const [t,meta] of Object.entries(TYPE)){
-      const count=nodes.filter(n=>n.type===t).length;
-      const d=document.createElement("div"); d.className="filter"; d.setAttribute("aria-pressed", active[t]);
-      d.innerHTML=`<span class="sw" style="background:${meta.color};color:${meta.color}"></span><span class="fname">${meta.label}</span><span class="fc val">${count}</span>`;
-      d.onclick=()=>{ active[t]=!active[t]; d.setAttribute("aria-pressed",active[t]); updateVisibility(); reheat(0.3); renderRoster(); };
-      filtersEl.appendChild(d);
+    for (const g of POLE){
+      const total = g.types.reduce((s,t)=>s+nodes.filter(n=>n.type===t).length,0);
+      const anyOn = g.types.some(t=>active[t]);
+      const grp = document.createElement("div"); grp.className="pole-grp";
+      const head = document.createElement("div"); head.className="pole-h"+(anyOn?"":" off");
+      head.innerHTML=`<span class="pole-name">${g.label}</span><span class="pole-c val">${total}</span>`;
+      head.onclick=()=>{ const on=g.types.some(t=>active[t]); g.types.forEach(t=>active[t]=!on); updateVisibility(); reheat(0.3); renderRoster(); renderFilters(); };
+      grp.appendChild(head);
+      for (const t of g.types){
+        const meta=TYPE[t]; const count=nodes.filter(n=>n.type===t).length;
+        const d=document.createElement("div"); d.className="filter sub"; d.setAttribute("aria-pressed", active[t]);
+        d.innerHTML=`<span class="sw" style="background:${meta.color};color:${meta.color}"></span><span class="fname">${meta.label}</span><span class="fc val">${count}</span>`;
+        d.onclick=()=>{ active[t]=!active[t]; updateVisibility(); reheat(0.3); renderRoster(); renderFilters(); };
+        grp.appendChild(d);
+      }
+      filtersEl.appendChild(grp);
     }
   }
   const rosterEl=document.getElementById("roster");
@@ -1034,6 +1107,7 @@
   if (rvClose) rvClose.onclick=()=>document.getElementById("reveal").classList.remove("show");
   const rsx=document.querySelector("#rapsheet .rs-x"); if (rsx) rsx.onclick=closeRapSheet;
   const rsRoot=document.getElementById("rapsheet"); if (rsRoot) rsRoot.addEventListener("click", e=>{ if(e.target===rsRoot) closeRapSheet(); });
+  document.querySelectorAll("#rapsheet .rs-view button").forEach(b=> b.onclick=()=>{ rapView=b.dataset.v; applyRapView(); });
   window.addEventListener("resize", ()=>{ resize(); });
   resize(); initDiscovery(); renderFilters(); renderRoster(); refreshStats(); renderFeed(); renderObjective(); frame(); boot();
 })();
