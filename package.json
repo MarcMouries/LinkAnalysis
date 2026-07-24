@@ -30,7 +30,7 @@
 		"dev": "bun build src/index.js --outfile dist/esm/index.js --format=esm --watch",
 		"test": "bun test",
 		"examples": "bun run examples/pole-graph.js > examples/img/pole-graph.svg",
-		"examples:lib": "bun build src/globals.js --outfile examples/la-globals.js --format=iife",
+		"examples:lib": "bun build src/globals.js --outfile examples/la-globals.js --format=iife && bun build src/index.js --outfile examples/link-analysis.esm.js --format=esm",
 		"prepublishOnly": "bun run build"
 	},
 	"repository": {
@@ -51,7 +51,7 @@
 	},
 	"homepage": "https://github.com/MarcMouries/LinkAnalysis#readme",
 	"dependencies": {
-		"graphjs": "^0.0.6"
+		"graphjs": "^0.0.7"
 	},
 	"devDependencies": {}
 }

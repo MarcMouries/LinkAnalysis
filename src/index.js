@@ -7,7 +7,10 @@
 //      import { RadialLayout } from "link-analysis";   // re-exported
 //      import { RadialLayout } from "graphjs";          // straight from the engine
 // =============================================================
-export { ForceDirected, RadialLayout, TreeLayout } from "graphjs";
+export { ForceDirected, RadialLayout, TreeLayout, GraphChart } from "graphjs";
+// The engine's Graph (keeps Link metadata like `type`/`color`); distinct from
+// LinkAnalysis's own legacy `Graph` below. Used with the GraphChart renderer.
+export { Graph as EngineGraph } from "graphjs";
 export { Graph, Node, Link } from "./Graph.js";
 export { NONE, pi } from "./Constants.js";
 export * from "./trigo.js";

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LinkAnalysis — POLE on GraphChart</title>
+<meta name="description" content="A POLE person-of-interest graph rendered by the GraphJS GraphChart renderer, styled entirely by LinkAnalysis's POLE presets — no bespoke canvas code.">
+<style>
+  :root{
+    --bg:#070b14; --panel:#0b1220; --ink:#cdd9e5; --dim:#7089a1; --line:rgba(88,166,255,.16);
+    --cyan:#37e0ff; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace; color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:radial-gradient(1100px 700px at 50% -10%,rgba(55,224,255,.08),transparent 60%),var(--bg);
+    color:var(--ink);font-family:var(--sans);overflow:hidden}
+  header{position:fixed;inset:0 0 auto 0;height:52px;z-index:5;display:flex;align-items:center;gap:14px;padding:0 18px;
+    background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header b{font-weight:800;font-size:15px;color:#eaf6ff}
+  header .tag{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--cyan)}
+  header .spacer{flex:1}
+  header a{color:var(--dim);text-decoration:none;font-size:11px;letter-spacing:.08em;border:1px solid var(--line);
+    padding:6px 11px;border-radius:6px}
+  header a:hover{color:var(--cyan);border-color:var(--cyan)}
+  #stage{position:fixed;inset:52px 0 0 0}
+  #stage svg{display:block;cursor:grab}
+  #stage svg.dragging{cursor:grabbing}
+  .gjs-node text{paint-order:stroke;stroke:#070b14;stroke-width:3px;font-family:var(--sans)}
+  .gjs-link-label text{font-family:var(--mono);letter-spacing:.04em}
+  .gjs-link-label rect{fill:#0b1220 !important;stroke:var(--line) !important}
+  .cap{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:5;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.05em;color:var(--dim);background:color-mix(in srgb,var(--panel) 80%,transparent);border:1px solid var(--line);
+    padding:6px 14px;border-radius:20px;white-space:nowrap}
+  .cap b{color:var(--cyan)}
+  .legend{position:fixed;top:64px;right:14px;z-index:5;display:flex;flex-direction:column;gap:5px;
+    background:color-mix(in srgb,var(--panel) 78%,transparent);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .legend div{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--dim)}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+<header>
+  <b>LINKANALYSIS</b><span class="tag">POLE · GRAPHCHART</span>
+  <span class="spacer"></span>
+  <a href="../index.html">← All demos</a>
+  <a href="../command-center.html">Command Center</a>
+</header>
+
+<div id="stage"></div>
+<div class="legend" id="legend"></div>
+<div class="cap">Rendered by GraphJS <b>GraphChart</b> · styled by LinkAnalysis <b>POLE presets</b> · your <b>MCanvas</b> is untouched</div>
+
+<script type="module">
+import { EngineGraph as Graph, ForceDirected, GraphChart, poleNodeStyle, POLE_NODE_ICONS, applyPOLEEdgeStyles, POLE_EDGE_LABELS, POLE_NODE_LABELS, POLE_NODE_STYLES }
+  from "./link-analysis.esm.js";
+
+// A person-of-interest network, in POLE shape (node.type / edge.type drive styling).
+const data = {
+  nodes: [
+    { id: "S",   type: "person",       is_subject: true, name: "Eric Fox" },
+    { id: "w",   type: "person",       name: "Jane Fox" },
+    { id: "a",   type: "person",       name: "Rick Vale" },
+    { id: "a2",  type: "person",       name: "Marcus Reed" },
+    { id: "loc", type: "location",     name: "3260 Jay St" },
+    { id: "car", type: "vehicle",      name: "Plate ABC-123" },
+    { id: "gun", type: "weapon",       name: "Glock 19" },
+    { id: "ph",  type: "phone",        name: "Burner 555-0142" },
+    { id: "acct",type: "account",      name: "Acct 7731" },
+    { id: "org", type: "organization", name: "Harbor Holdings" },
+    { id: "rap", type: "rap_sheet",    name: "Arrest 2020" },
+  ],
+  edges: [
+    { source: "S", target: "w",   type: "family" },
+    { source: "S", target: "a",   type: "associate" },
+    { source: "S", target: "a2",  type: "associate" },
+    { source: "S", target: "loc", type: "address" },
+    { source: "S", target: "car", type: "other" },
+    { source: "S", target: "rap", type: "arrest" },
+    { source: "a", target: "loc", type: "address" },
+    { source: "a2", target: "gun", type: "other" },
+    { source: "a2", target: "ph",  type: "other" },
+    { source: "a2", target: "org", type: "other" },
+    { source: "org", target: "acct", type: "other" },
+  ],
+};
+
+const graph = new Graph();
+graph.loadJSON(data);
+applyPOLEEdgeStyles(graph); // writes color/width/dashArray onto each Link from its POLE type
+
+// A POLE-styled node: shape + colour from poleNodeStyle, the type's SVG icon, a label.
+function shapeSVG(shape, r, fill, stroke, sw) {
+  if (shape === "rect")
+    return `<rect x="${-r}" y="${-r * 0.82}" width="${2 * r}" height="${1.64 * r}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  if (shape === "hexagon")
+    return `<polygon points="${-r / 2},${-r * 0.87} ${r / 2},${-r * 0.87} ${r},0 ${r / 2},${r * 0.87} ${-r / 2},${r * 0.87} ${-r},0" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  return `<circle r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+}
+const poleNode = (node) => {
+  const s = poleNodeStyle(node);
+  const r = 19 * (s.sizeMultiplier || 1);
+  const icon = POLE_NODE_ICONS[node.data.type] || "";
+  return shapeSVG(s.shape, r, s.fill, s.stroke, s.subject ? 3 : 1.5) +
+    `<g transform="scale(0.82) translate(-12,-12)" fill="#ffffff">${icon}</g>` +
+    `<text text-anchor="middle" dy="${r + 15}" font-size="11" font-weight="600" fill="#cdd9e5">${node.data.name || node.id}</text>`;
+};
+
+const stage = document.getElementById("stage");
+const chart = new GraphChart(stage, { nodeRadius: 19 })
+  .setNodeRenderer(poleNode)
+  .setLinkLabelRenderer((link) => POLE_EDGE_LABELS[link.type] || "");
+
+const layout = new ForceDirected(graph, {
+  center: { x: 0, y: 0 }, linkDistance: 130, repulsion: 9000, gravity: 0.05, collisionRadius: 42,
+});
+
+function resize() {
+  const w = innerWidth, h = innerHeight - 52;
+  chart.setSize(w, h);
+  layout.center = { x: w / 2, y: h / 2 };
+  layout.options.bounds = { minX: 40, minY: 40, maxX: w - 40, maxY: h - 44 };
+}
+addEventListener("resize", resize);
+resize();
+chart.render(graph, layout);
+layout.pinNode("S", innerWidth / 2, (innerHeight - 52) / 2); // anchor the subject; released on drag
+layout.start();
+
+// Legend from the POLE entity styles actually present in the graph.
+const present = [...new Set(graph.getNodes().map((n) => n.data.type))];
+document.getElementById("legend").innerHTML = present.map((t) => {
+  const s = POLE_NODE_STYLES[t] || POLE_NODE_STYLES.other;
+  return `<div><i style="background:${s.fill}"></i>${POLE_NODE_LABELS[t] || t}</div>`;
+}).join("");
+
+// ---- drag ------------------------------------------------------------------
+const svg = stage.querySelector("svg");
+const pt = (e) => { const r = svg.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+const nodeAt = (x, y) => graph.getNodes().find((n) => (x - n.x) ** 2 + (y - n.y) ** 2 <= 24 * 24) || null;
+let dragging = null;
+svg.addEventListener("mousedown", (e) => {
+  const p = pt(e), n = nodeAt(p.x, p.y);
+  if (n) { dragging = n; svg.classList.add("dragging"); layout.pinNode(n.id, p.x, p.y); layout.restart(0.5); }
+});
+addEventListener("mousemove", (e) => { if (dragging) { const p = pt(e); layout.pinNode(dragging.id, p.x, p.y); layout.restart(0.35); } });
+addEventListener("mouseup", () => { if (dragging) { layout.unpinNode(dragging.id); dragging = null; svg.classList.remove("dragging"); layout.restart(0.2); } });
+</script>
+</body>
+</html>
