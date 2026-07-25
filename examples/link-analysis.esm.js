@@ -1331,11 +1331,24 @@ class GraphChart {
     this.curveParallel = options.curveParallel !== false;
     this.curveStep = options.curveStep ?? 22;
     this.endGap = options.endGap ?? this.nodeRadius + 7;
+    this.interactive = options.interactive !== false;
+    this.minZoom = options.minZoom ?? 0.2;
+    this.maxZoom = options.maxZoom ?? 4;
+    this.tooltipRenderer = options.tooltipRenderer || null;
     this.graph = null;
     this.layout = null;
     this._nodeEls = new Map;
     this._linkEls = [];
     this._onTick = () => this._position();
+    this._tx = 0;
+    this._ty = 0;
+    this._scale = 1;
+    this._adj = new Map;
+    this._hover = null;
+    this._drag = null;
+    this._pan = null;
+    this._tooltip = null;
+    this._listeners = [];
     if (this.doc && container)
       this._mount();
   }
@@ -1352,10 +1365,15 @@ class GraphChart {
     this.linkLabelLayer.setAttribute("class", "gjs-link-labels");
     this.nodeLayer = this._el("g");
     this.nodeLayer.setAttribute("class", "gjs-nodes");
-    this.svg.appendChild(this.linkLayer);
-    this.svg.appendChild(this.linkLabelLayer);
-    this.svg.appendChild(this.nodeLayer);
+    this.scene = this._el("g");
+    this.scene.setAttribute("class", "gjs-viewport");
+    this.scene.appendChild(this.linkLayer);
+    this.scene.appendChild(this.linkLabelLayer);
+    this.scene.appendChild(this.nodeLayer);
+    this.svg.appendChild(this.scene);
     this.container.appendChild(this.svg);
+    if (this.interactive)
+      this._bindInteraction();
   }
   _defs() {
     const defs = this._el("defs");
@@ -1486,6 +1504,18 @@ class GraphChart {
       }
       this.nodeLayer.appendChild(g);
       this._nodeEls.set(node.id, g);
+    }
+    this._buildAdjacency();
+  }
+  _buildAdjacency() {
+    this._adj = new Map;
+    for (const l of this.graph && this.graph.linkList || []) {
+      if (!this._adj.has(l.source.id))
+        this._adj.set(l.source.id, new Set);
+      if (!this._adj.has(l.target.id))
+        this._adj.set(l.target.id, new Set);
+      this._adj.get(l.source.id).add(l.target.id);
+      this._adj.get(l.target.id).add(l.source.id);
     }
   }
   _buildTemplateNode(node, g, spec) {
@@ -1636,17 +1666,198 @@ class GraphChart {
   nodeElement(id) {
     return this._nodeEls.get(id);
   }
+  _applyTransform() {
+    if (this.scene)
+      this.scene.setAttribute("transform", `translate(${this._tx}, ${this._ty}) scale(${this._scale})`);
+  }
+  screenToWorld(px, py) {
+    return { x: (px - this._tx) / this._scale, y: (py - this._ty) / this._scale };
+  }
+  setZoom(scale, cx, cy) {
+    const s = Math.max(this.minZoom, Math.min(this.maxZoom, scale));
+    if (cx != null && cy != null) {
+      const w = this.screenToWorld(cx, cy);
+      this._scale = s;
+      this._tx = cx - w.x * s;
+      this._ty = cy - w.y * s;
+    } else {
+      this._scale = s;
+    }
+    this._applyTransform();
+    return this;
+  }
+  panBy(dx, dy) {
+    this._tx += dx;
+    this._ty += dy;
+    this._applyTransform();
+    return this;
+  }
+  fitToView(padding = 40) {
+    const nodes = this.graph ? this.graph.getNodes() : [];
+    if (!nodes.length)
+      return this;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const n of nodes) {
+      if (n.x < minX)
+        minX = n.x;
+      if (n.y < minY)
+        minY = n.y;
+      if (n.x > maxX)
+        maxX = n.x;
+      if (n.y > maxY)
+        maxY = n.y;
+    }
+    const spanX = maxX - minX || 1, spanY = maxY - minY || 1;
+    this._scale = Math.max(this.minZoom, Math.min(this.maxZoom, Math.min((this.width - 2 * padding) / spanX, (this.height - 2 * padding) / spanY)));
+    this._tx = (this.width - (minX + maxX) * this._scale) / 2;
+    this._ty = (this.height - (minY + maxY) * this._scale) / 2;
+    this._applyTransform();
+    return this;
+  }
+  centerOnNode(id, scale) {
+    const n = this.graph && this.graph.getNode(id);
+    if (!n)
+      return this;
+    if (scale != null)
+      this._scale = Math.max(this.minZoom, Math.min(this.maxZoom, scale));
+    this._tx = this.width / 2 - n.x * this._scale;
+    this._ty = this.height / 2 - n.y * this._scale;
+    this._applyTransform();
+    return this;
+  }
+  hitTestNode(px, py) {
+    const w = this.screenToWorld(px, py);
+    const r = this.nodeRadius + 6;
+    let best = null, bestD = r * r;
+    for (const n of this.graph ? this.graph.getNodes() : []) {
+      const dx = w.x - n.x, dy = w.y - n.y, d2 = dx * dx + dy * dy;
+      if (d2 <= bestD) {
+        bestD = d2;
+        best = n;
+      }
+    }
+    return best;
+  }
+  setHighlight(nodeId) {
+    this._hover = nodeId;
+    const lit = nodeId != null ? new Set([nodeId, ...this._adj.get(nodeId) || []]) : null;
+    for (const [id, g] of this._nodeEls)
+      g.setAttribute("opacity", lit && !lit.has(id) ? "0.25" : "1");
+    for (const { link, el, label } of this._linkEls) {
+      const incident = nodeId == null || link.source.id === nodeId || link.target.id === nodeId;
+      const op = nodeId != null && !incident ? "0.12" : "1";
+      el.setAttribute("opacity", op);
+      if (label)
+        label.setAttribute("opacity", op);
+    }
+    return this;
+  }
+  setTooltipRenderer(fn) {
+    this.tooltipRenderer = fn;
+    return this;
+  }
+  _showTooltip(node, px, py) {
+    if (!this.tooltipRenderer || !this.doc || typeof this.doc.createElement !== "function")
+      return;
+    if (!this._tooltip) {
+      this._tooltip = this.doc.createElement("div");
+      this._tooltip.setAttribute("class", "gjs-tooltip");
+      this._tooltip.style.position = "absolute";
+      this._tooltip.style.pointerEvents = "none";
+      this.container.appendChild(this._tooltip);
+    }
+    this._tooltip.innerHTML = this.tooltipRenderer(node);
+    this._tooltip.style.display = "block";
+    this._tooltip.style.left = px + 14 + "px";
+    this._tooltip.style.top = py + 14 + "px";
+  }
+  _hideTooltip() {
+    if (this._tooltip)
+      this._tooltip.style.display = "none";
+  }
+  _bindInteraction() {
+    const svg = this.svg;
+    if (!svg || typeof svg.addEventListener !== "function")
+      return;
+    const add = (t, ev, fn, opts) => {
+      t.addEventListener(ev, fn, opts);
+      this._listeners.push([t, ev, fn]);
+    };
+    const pos = (e) => {
+      const r = svg.getBoundingClientRect ? svg.getBoundingClientRect() : { left: 0, top: 0 };
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+    add(svg, "mousedown", (e) => {
+      const p = pos(e);
+      const n = this.hitTestNode(p.x, p.y);
+      if (n && this.layout && this.layout.pinNode) {
+        const w = this.screenToWorld(p.x, p.y);
+        this._drag = n;
+        this.layout.pinNode(n.id, w.x, w.y);
+        if (this.layout.restart)
+          this.layout.restart(0.5);
+      } else {
+        this._pan = p;
+      }
+    });
+    add(svg, "mousemove", (e) => {
+      const p = pos(e);
+      if (this._drag) {
+        const w = this.screenToWorld(p.x, p.y);
+        this.layout.pinNode(this._drag.id, w.x, w.y);
+        if (this.layout.restart)
+          this.layout.restart(0.35);
+      } else if (this._pan) {
+        this.panBy(p.x - this._pan.x, p.y - this._pan.y);
+        this._pan = p;
+      } else {
+        const n = this.hitTestNode(p.x, p.y);
+        const id = n ? n.id : null;
+        if (id !== this._hover)
+          this.setHighlight(id);
+        if (n)
+          this._showTooltip(n, p.x, p.y);
+        else
+          this._hideTooltip();
+        if (svg.style)
+          svg.style.cursor = n ? "pointer" : "grab";
+      }
+    });
+    add(this.doc, "mouseup", () => {
+      if (this._drag && this.layout && this.layout.unpinNode) {
+        this.layout.unpinNode(this._drag.id);
+        if (this.layout.restart)
+          this.layout.restart(0.2);
+      }
+      this._drag = null;
+      this._pan = null;
+    });
+    add(svg, "wheel", (e) => {
+      if (e.preventDefault)
+        e.preventDefault();
+      const p = pos(e);
+      this.setZoom(this._scale * Math.exp(-(e.deltaY || 0) * 0.0015), p.x, p.y);
+    }, { passive: false });
+  }
   destroy() {
     if (this.layout && this.layout.off) {
       this.layout.off("tick", this._onTick);
       this.layout.off("end", this._onTick);
     }
+    for (const [t, ev, fn] of this._listeners)
+      if (t.removeEventListener)
+        t.removeEventListener(ev, fn);
+    this._listeners = [];
+    if (this._tooltip && this._tooltip.parentNode)
+      this._tooltip.parentNode.removeChild(this._tooltip);
+    this._tooltip = null;
     if (this.svg && this.svg.parentNode)
       this.svg.parentNode.removeChild(this.svg);
     this._nodeEls.clear();
     this._linkEls = [];
   }
 }
+var TAU = Math.PI * 2;
 class DOMUtil {
   static getDimensions(element) {
     const tempElement = document.createElement("div");

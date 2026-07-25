@@ -37,6 +37,10 @@
     background:color-mix(in srgb,var(--panel) 78%,transparent);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
   .legend div{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--dim)}
   .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .gjs-tooltip{background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-family:var(--sans);
+    box-shadow:0 6px 20px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:2px;z-index:6}
+  .gjs-tooltip b{font-size:12.5px;color:#eaf6ff}
+  .gjs-tooltip span{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.09em}
 </style>
 </head>
 <body>
@@ -134,17 +138,9 @@ document.getElementById("legend").innerHTML = present.map((t) => {
   return `<div><i style="background:${s.fill}"></i>${POLE_NODE_LABELS[t] || t}</div>`;
 }).join("");
 
-// ---- drag ------------------------------------------------------------------
-const svg = stage.querySelector("svg");
-const pt = (e) => { const r = svg.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-const nodeAt = (x, y) => graph.getNodes().find((n) => (x - n.x) ** 2 + (y - n.y) ** 2 <= 24 * 24) || null;
-let dragging = null;
-svg.addEventListener("mousedown", (e) => {
-  const p = pt(e), n = nodeAt(p.x, p.y);
-  if (n) { dragging = n; svg.classList.add("dragging"); layout.pinNode(n.id, p.x, p.y); layout.restart(0.5); }
-});
-addEventListener("mousemove", (e) => { if (dragging) { const p = pt(e); layout.pinNode(dragging.id, p.x, p.y); layout.restart(0.35); } });
-addEventListener("mouseup", () => { if (dragging) { layout.unpinNode(dragging.id); dragging = null; svg.classList.remove("dragging"); layout.restart(0.2); } });
+// Drag / wheel-zoom / pan / hover-highlight are built into GraphChart (0.0.8); add a tooltip.
+chart.setTooltipRenderer((node) =>
+  `<b>${node.data.name}</b><span>${POLE_NODE_LABELS[node.data.type] || node.data.type}</span>`);
 </script>
 </body>
 </html>
